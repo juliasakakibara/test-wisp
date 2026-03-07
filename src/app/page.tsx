@@ -1,6 +1,8 @@
 import { wisp } from "@/lib/wisp";
 import { BlogPostCard } from "@/components/BlogPostCard";
 
+export const revalidate = 60; // ISR: Revalidate page every 60 seconds
+
 export default async function Home() {
   const result = await wisp.getPosts({ limit: 12 });
 

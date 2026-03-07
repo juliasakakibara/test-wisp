@@ -1,8 +1,10 @@
- import { wisp } from "@/lib/wisp";
+import { wisp } from "@/lib/wisp";
 import Image from "next/image";
 import { format } from "date-fns";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+
+export const revalidate = 60; // ISR: Revalidate page every 60 seconds
 
 interface Params {
     params: Promise<{ slug: string }>;
