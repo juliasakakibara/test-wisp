@@ -1,4 +1,4 @@
-import { wisp } from "@/lib/wisp";
+ import { wisp } from "@/lib/wisp";
 import Image from "next/image";
 import { format } from "date-fns";
 import { Metadata } from "next";
