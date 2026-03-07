@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "export",
-  basePath: "/test-wisp",
+  basePath: "/julia1oliveira.26-project",
   images: {
     unoptimized: true,
   },
