@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { ThemeConfig } from "@/lib/redis";
+import { generateThemeCssVariables } from "@/lib/theme-utils";
 
 export function ThemePreviewListener() {
   useEffect(() => {
@@ -16,13 +17,10 @@ export function ThemePreviewListener() {
         style.id = "__theme_preview__";
         document.head.appendChild(style);
       }
+      
+      const themeCss = generateThemeCssVariables(theme);
       style.textContent = `
-        :root {
-          --primary: ${theme.primary};
-          --background: ${theme.background};
-          --foreground: ${theme.foreground};
-          --radius: ${theme.radius};
-        }
+        ${themeCss}
         body {
           font-family: ${theme.fontFamily === "font-mono" ? "monospace" : theme.fontFamily === "font-serif" ? "serif" : "sans-serif"} !important;
         }

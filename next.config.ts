@@ -1,7 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Clean configuration for optimal Vercel deployment
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "imagedelivery.net" },
+      { protocol: "https", hostname: "images.unsplash.com" },
+    ],
+  },
 };
 
 export default nextConfig;

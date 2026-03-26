@@ -4,26 +4,19 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { getTheme } from "@/lib/actions";
 import { ThemePreviewListener } from "@/components/ThemePreviewListener";
+import { generateThemeCssVariables } from "@/lib/theme-utils";
 
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Blog",
+  title: "Travel. | Blog",
   description: "A minimalist blog built with Wisp CMS",
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const theme = await getTheme();
-
-  const themeCss = `
-    :root {
-      --primary: ${theme.primary};
-      --background: ${theme.background};
-      --foreground: ${theme.foreground};
-      --radius: ${theme.radius};
-    }
-  `;
+  const themeCss = generateThemeCssVariables(theme);
 
   return (
     <html lang="en" className={cn(jetbrainsMono.variable, inter.variable)}>
