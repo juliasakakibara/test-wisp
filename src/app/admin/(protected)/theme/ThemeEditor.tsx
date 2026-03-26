@@ -154,7 +154,10 @@ export default function ThemeEditor({ initialTheme, initialConfig }: { initialTh
   }
 
   return (
-    <div className="fixed inset-0 flex bg-[#0f0f0f] font-mono overflow-hidden">
+    <div 
+      className="fixed inset-0 flex bg-[#0f0f0f] font-mono overflow-hidden"
+      style={{ colorScheme: 'dark' }}
+    >
 
       {/* ── Sidebar ──────────────────────────────────────────── */}
       <aside 
@@ -168,7 +171,10 @@ export default function ThemeEditor({ initialTheme, initialConfig }: { initialTh
           <h1 className="text-sm font-semibold text-white mt-0.5">Configurações globais</h1>
         </div>
 
-        <div className="flex-1 p-4 space-y-8 overflow-y-auto custom-scrollbar">
+        <div 
+          className="flex-1 p-4 space-y-8 overflow-y-auto custom-scrollbar"
+          style={{ colorScheme: 'dark' }}
+        >
 
           {/* ── Site & SEO ── */}
           <section className="space-y-4">
