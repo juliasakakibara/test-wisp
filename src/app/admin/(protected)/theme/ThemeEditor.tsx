@@ -92,22 +92,21 @@ export default function ThemeEditor({ initial }: { initial: ThemeConfig }) {
           <h1 className="text-sm font-semibold text-white mt-0.5">Personalizar Blog</h1>
         </div>
 
-        {/* Navigation */}
-        <nav className="p-3 space-y-1 border-b border-white/10">
+        {/* Navigation Tabs */}
+        <nav className="flex border-b border-white/10 bg-white/[0.02]">
           <Link 
             href="/admin/theme" 
-            className="flex items-center gap-3 px-3 py-2 rounded-md text-[11px] text-white bg-white/5 border border-white/10 group"
+            className="flex-1 flex items-center justify-center gap-2 px-3 py-3 text-[10px] uppercase tracking-wider text-white border-b-2 border-primary bg-white/[0.03]"
           >
-            <Layout size={14} className="text-primary" />
-            Tema (Visual)
+            <Layout size={12} className="text-primary" />
+            Tema
           </Link>
           <Link 
             href="/admin/content" 
-            className="flex items-center gap-3 px-3 py-2 rounded-md text-[11px] text-white/40 hover:text-white/90 hover:bg-white/5 transition-all group"
+            className="flex-1 flex items-center justify-center gap-2 px-3 py-3 text-[10px] uppercase tracking-wider text-white/40 hover:text-white/70 transition-all border-l border-white/10"
           >
-            <FileText size={14} className="opacity-50 group-hover:opacity-100" />
-            Conteúdo Estático
-            <ChevronRight size={10} className="ml-auto opacity-0 group-hover:opacity-100" />
+            <FileText size={12} className="opacity-50" />
+            Conteúdo
           </Link>
         </nav>
 
