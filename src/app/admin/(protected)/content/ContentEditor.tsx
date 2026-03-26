@@ -12,6 +12,36 @@ export default function ContentEditor({ initial }: { initial: SiteConfig }) {
   const [isPending, startTransition] = useTransition();
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
+  // ── Resizable Sidebar Logic ──
+  const [sidebarWidth, setSidebarWidth] = useState(320);
+  const [isResizing, setIsResizing] = useState(false);
+  const isResizingRef = useRef(false);
+
+  useEffect(() => {
+    const savedWidth = localStorage.getItem("admin_sidebar_width");
+    if (savedWidth) setSidebarWidth(parseInt(savedWidth));
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isResizingRef.current) {
+        const newWidth = Math.min(Math.max(260, e.clientX), 600);
+        setSidebarWidth(newWidth);
+        localStorage.setItem("admin_sidebar_width", newWidth.toString());
+      }
+    };
+    const handleMouseUp = () => {
+      isResizingRef.current = false;
+      setIsResizing(false);
+      document.body.style.cursor = "";
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, []);
+
   // ── Persistência Local (Cache de Edição) ──
   useEffect(() => {
     const cached = localStorage.getItem("wisp_content_cache");
@@ -98,7 +128,10 @@ export default function ContentEditor({ initial }: { initial: SiteConfig }) {
     <div className="fixed inset-0 flex bg-[#0f0f0f] font-mono overflow-hidden">
       
       {/* ── Sidebar ── */}
-      <aside className="w-[300px] shrink-0 flex flex-col border-r border-white/10">
+      <aside 
+        className="relative z-20 shrink-0 flex flex-col border-r border-white/10 bg-[#0f0f0f]"
+        style={{ width: `${sidebarWidth}px` }}
+      >
         
         {/* Header */}
         <div className="px-5 pt-5 pb-4 border-b border-white/10">
@@ -125,6 +158,8 @@ export default function ContentEditor({ initial }: { initial: SiteConfig }) {
             Conteúdo
           </Link>
         </nav>
+
+
 
         {/* Editor Form */}
         <div className="flex-1 overflow-y-auto p-4 space-y-8 pb-32 custom-scrollbar">
@@ -247,6 +282,19 @@ export default function ContentEditor({ initial }: { initial: SiteConfig }) {
 
       </aside>
 
+      {/* ── Resizer Drag Handle ── */}
+      <div 
+        className="relative z-50 w-4 -ml-2 -mr-2 cursor-col-resize flex flex-col justify-center items-center hover:bg-white/[0.02] transition-colors shrink-0 group self-stretch"
+        onMouseDown={(e) => {
+          e.preventDefault();
+          isResizingRef.current = true;
+          setIsResizing(true);
+          document.body.style.cursor = "col-resize";
+        }}
+      >
+        <div className="w-[2px] h-8 bg-white/10 group-hover:bg-white/40 rounded-full transition-colors" />
+      </div>
+
       {/* ── Preview ── */}
       <main className="flex-1 bg-[#f5f5f5] relative">
         <div className="absolute inset-x-0 top-0 h-10 bg-[#0f0f0f] border-b border-white/10 flex items-center px-4 justify-between z-10">
@@ -266,6 +314,7 @@ export default function ContentEditor({ initial }: { initial: SiteConfig }) {
           src="/"
           className="w-full h-full pt-10"
           title="Preview"
+          style={{ pointerEvents: isResizing ? "none" : "auto" }}
           onLoad={initIframe}
         />
       </main>

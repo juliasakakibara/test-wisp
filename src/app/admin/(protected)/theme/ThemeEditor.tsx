@@ -41,6 +41,36 @@ export default function ThemeEditor({ initial }: { initial: ThemeConfig }) {
   const [isPending, startTransition] = useTransition();
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
+  // ── Resizable Sidebar Logic ──
+  const [sidebarWidth, setSidebarWidth] = useState(320);
+  const isResizingRef = useRef(false);
+  const [isResizing, setIsResizing] = useState(false);
+
+  useEffect(() => {
+    const savedWidth = localStorage.getItem("admin_sidebar_width");
+    if (savedWidth) setSidebarWidth(parseInt(savedWidth));
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isResizingRef.current) {
+        const newWidth = Math.min(Math.max(260, e.clientX), 600);
+        setSidebarWidth(newWidth);
+        localStorage.setItem("admin_sidebar_width", newWidth.toString());
+      }
+    };
+    const handleMouseUp = () => {
+      isResizingRef.current = false;
+      setIsResizing(false);
+      document.body.style.cursor = "";
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, []);
+
   const sendPreview = useCallback((t: ThemeConfig) => {
     iframeRef.current?.contentWindow?.postMessage({ type: "THEME_PREVIEW", theme: t }, "*");
   }, []);
@@ -84,7 +114,10 @@ export default function ThemeEditor({ initial }: { initial: ThemeConfig }) {
     <div className="fixed inset-0 flex bg-[#0f0f0f] font-mono overflow-hidden">
 
       {/* ── Sidebar ──────────────────────────────────────────── */}
-      <aside className="w-[260px] shrink-0 flex flex-col border-r border-white/10 overflow-y-auto">
+      <aside 
+        className="relative z-20 shrink-0 flex flex-col border-r border-white/10 bg-[#0f0f0f]"
+        style={{ width: `${sidebarWidth}px` }}
+      >
 
         {/* Logo/título */}
         <div className="px-5 pt-5 pb-4 border-b border-white/10">
@@ -109,6 +142,8 @@ export default function ThemeEditor({ initial }: { initial: ThemeConfig }) {
             Conteúdo
           </Link>
         </nav>
+
+
 
         <div className="flex-1 p-4 space-y-6 overflow-y-auto">
 
@@ -254,6 +289,19 @@ export default function ThemeEditor({ initial }: { initial: ThemeConfig }) {
         </div>
       </aside>
 
+      {/* ── Resizer Drag Handle ── */}
+      <div 
+        className="relative z-50 w-4 -ml-2 -mr-2 cursor-col-resize flex flex-col justify-center items-center hover:bg-white/[0.02] transition-colors shrink-0 group self-stretch"
+        onMouseDown={(e) => {
+          e.preventDefault();
+          isResizingRef.current = true;
+          setIsResizing(true);
+          document.body.style.cursor = "col-resize";
+        }}
+      >
+        <div className="w-[2px] h-8 bg-white/10 group-hover:bg-white/40 rounded-full transition-colors" />
+      </div>
+
       {/* ── Preview (iframe) ──────────────────────────────── */}
       <div className="flex-1 flex flex-col min-w-0">
         <iframe
@@ -261,6 +309,7 @@ export default function ThemeEditor({ initial }: { initial: ThemeConfig }) {
           src="/"
           className="flex-1 w-full bg-white"
           title="Blog Preview"
+          style={{ pointerEvents: isResizing ? "none" : "auto" }}
           onLoad={() => setTimeout(() => sendPreview(theme), 150)}
         />
       </div>
