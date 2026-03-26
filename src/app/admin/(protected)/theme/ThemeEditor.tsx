@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition, useRef, useCallback } from "react";
+import Link from "next/link";
+import { useState, useTransition, useRef, useCallback, useEffect } from "react";
 import { saveTheme } from "@/lib/actions";
 import { ThemeConfig } from "@/lib/redis";
 
@@ -31,43 +32,6 @@ const FONTS = [
   { label: "Serif", value: "font-serif" },
 ];
 
-// ── Utilitários HEX ↔ oklch ───────────────────────────────────────────────
-function hexToOklch(hex: string): string {
-  const r = parseInt(hex.slice(1, 3), 16) / 255;
-  const g = parseInt(hex.slice(3, 5), 16) / 255;
-  const b = parseInt(hex.slice(5, 7), 16) / 255;
-  const l = (0.2126 * r + 0.7152 * g + 0.0722 * b);
-  const max = Math.max(r, g, b), min = Math.min(r, g, b);
-  const c = ((max - min) * 0.35).toFixed(3);
-  let h = 0;
-  if (max !== min) {
-    if (max === r) h = ((g - b) / (max - min) * 60 + 360) % 360;
-    else if (max === g) h = (b - r) / (max - min) * 60 + 120;
-    else h = (r - g) / (max - min) * 60 + 240;
-  }
-  return `oklch(${l.toFixed(3)} ${c} ${h.toFixed(1)})`;
-}
-
-function oklchToHex(oklch: string): string {
-  const m = oklch.match(/oklch\(([\d.]+)\s+([\d.]+)\s+([\d.]+)\)/);
-  if (!m) return "#888888";
-  const l = Math.round(parseFloat(m[1]) * 255);
-  const hex = l.toString(16).padStart(2, "0");
-  return `#${hex}${hex}${hex}`;
-}
-
-function toHex(val: string): string {
-  if (val.startsWith("#")) return val;
-  if (val.startsWith("oklch")) return oklchToHex(val);
-  return "#888888";
-}
-
-function toOklch(val: string): string {
-  if (val.startsWith("oklch")) return val;
-  if (val.startsWith("#")) return hexToOklch(val);
-  return val;
-}
-
 // ── Componente principal ───────────────────────────────────────────────────
 export default function ThemeEditor({ initial }: { initial: ThemeConfig }) {
   const [theme, setTheme] = useState<ThemeConfig>(initial);
@@ -82,9 +46,9 @@ export default function ThemeEditor({ initial }: { initial: ThemeConfig }) {
 
   function applyPreset(p: typeof THEMES[number]) {
     const newTheme: ThemeConfig = {
-      primary: toOklch(p.primary),
-      background: toOklch(p.bg),
-      foreground: toOklch(p.fg),
+      primary: p.primary,
+      background: p.bg,
+      foreground: p.fg,
       radius: p.radius,
       fontFamily: p.font,
     };
@@ -94,8 +58,8 @@ export default function ThemeEditor({ initial }: { initial: ThemeConfig }) {
     sendPreview(newTheme);
   }
 
-  function updateColor(key: keyof ThemeConfig, hex: string) {
-    const newTheme = { ...theme, [key]: toOklch(hex) };
+  function updateColor(key: keyof ThemeConfig, newColor: string) {
+    const newTheme = { ...theme, [key]: newColor };
     setTheme(newTheme);
     setSaved(false);
     sendPreview(newTheme);
@@ -165,8 +129,7 @@ export default function ThemeEditor({ initial }: { initial: ThemeConfig }) {
             <ColorInput
               label="Primary"
               value={theme.primary}
-              onColorChange={(hex) => updateColor("primary", hex)}
-              onTextChange={(v) => updateRaw("primary", v)}
+              onChange={(hex) => updateColor("primary", hex)}
             />
           </div>
 
@@ -176,14 +139,12 @@ export default function ThemeEditor({ initial }: { initial: ThemeConfig }) {
             <ColorInput
               label="Background"
               value={theme.background}
-              onColorChange={(hex) => updateColor("background", hex)}
-              onTextChange={(v) => updateRaw("background", v)}
+              onChange={(hex) => updateColor("background", hex)}
             />
             <ColorInput
               label="Foreground"
               value={theme.foreground}
-              onColorChange={(hex) => updateColor("foreground", hex)}
-              onTextChange={(v) => updateRaw("foreground", v)}
+              onChange={(hex) => updateColor("foreground", hex)}
             />
           </div>
 
@@ -256,12 +217,12 @@ export default function ThemeEditor({ initial }: { initial: ThemeConfig }) {
                 ✓ Tema salvo com sucesso!
               </p>
               <div className="grid grid-cols-2 gap-1.5">
-                <a
+                <Link
                   href="/"
                   className="text-center py-2 rounded-md border border-white/20 text-xs text-white/60 hover:text-white hover:border-white/40 transition-colors"
                 >
                   Ver Blog
-                </a>
+                </Link>
                 <button
                   onClick={() => setSaved(false)}
                   className="py-2 rounded-md bg-white/10 text-xs text-white/60 hover:bg-white/15 hover:text-white transition-colors"
@@ -298,14 +259,40 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 function ColorInput({
-  label, value, onColorChange, onTextChange,
+  label, value, onChange
 }: {
   label: string;
   value: string;
-  onColorChange: (hex: string) => void;
-  onTextChange: (v: string) => void;
+  onChange: (color: string) => void;
 }) {
-  const hex = toHex(value);
+  const isHex = value.startsWith("#");
+  const defaultHex = isHex ? value.slice(0, 7) : "#888888";
+  const [computedHex, setComputedHex] = useState<string | null>(null);
+
+  const hex = isHex ? defaultHex : (computedHex || "#888888");
+
+  useEffect(() => {
+    let active = true;
+    if (value.startsWith("#")) {
+      return;
+    }
+    // Attempt DOM-based conversion for OKLCH, rgb, hsl, etc.
+    const el = document.createElement("div");
+    el.style.color = value;
+    el.style.display = "none";
+    document.body.appendChild(el);
+    const comp = window.getComputedStyle(el).color;
+    document.body.removeChild(el);
+
+    const match = comp.match(/(?:rgb|rgba)\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match && active) {
+      const toHexStr = (n: string) => parseInt(n, 10).toString(16).padStart(2, "0");
+      setTimeout(() => {
+        if (active) setComputedHex(`#${toHexStr(match[1])}${toHexStr(match[2])}${toHexStr(match[3])}`);
+      }, 0);
+    }
+    return () => { active = false; };
+  }, [value]);
 
   return (
     <div className="flex items-center gap-2 px-2.5 py-2 rounded-md border border-white/10 bg-white/[0.03] hover:border-white/20 transition-colors">
@@ -318,7 +305,7 @@ function ColorInput({
         <input
           type="color"
           value={hex.length === 7 ? hex : "#888888"}
-          onChange={(e) => onColorChange(e.target.value)}
+          onChange={(e) => onChange(e.target.value)}
           className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
         />
       </label>
@@ -326,14 +313,15 @@ function ColorInput({
       {/* Label */}
       <span className="text-[10px] text-white/30 w-16 shrink-0">{label}</span>
 
-      {/* HEX input */}
+      {/* HEX input for manual typing */}
       <input
         type="text"
-        value={hex}
-        onChange={(e) => onColorChange(e.target.value)}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
         className="flex-1 bg-transparent text-[11px] text-white/60 focus:text-white focus:outline-none min-w-0"
         spellCheck={false}
       />
     </div>
   );
 }
+
