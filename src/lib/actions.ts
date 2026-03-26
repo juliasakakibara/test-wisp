@@ -1,6 +1,6 @@
 "use server";
 
-import { redis, THEME_KEY, DEFAULT_THEME, ThemeConfig } from "@/lib/redis";
+import { redis, THEME_KEY, DEFAULT_THEME, ThemeConfig, CONFIG_KEY, DEFAULT_SITE_CONFIG, SiteConfig } from "@/lib/redis";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
@@ -15,6 +15,20 @@ export async function getTheme(): Promise<ThemeConfig> {
 
 export async function saveTheme(theme: ThemeConfig) {
   await redis.set(THEME_KEY, theme);
+  revalidatePath("/", "layout");
+}
+
+export async function getConfig(): Promise<SiteConfig> {
+  try {
+    const config = await redis.get<SiteConfig>(CONFIG_KEY);
+    return { ...DEFAULT_SITE_CONFIG, ...config };
+  } catch {
+    return DEFAULT_SITE_CONFIG;
+  }
+}
+
+export async function saveConfig(config: SiteConfig) {
+  await redis.set(CONFIG_KEY, config);
   revalidatePath("/", "layout");
 }
 

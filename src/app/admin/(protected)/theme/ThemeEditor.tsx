@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useTransition, useRef, useCallback, useEffect } from "react";
 import { saveTheme } from "@/lib/actions";
 import { ThemeConfig } from "@/lib/redis";
+import { Layout, FileText, ChevronRight, Settings } from "lucide-react";
 
 // ── Temas pré-definidos ────────────────────────────────────────────────────
 const THEMES = [
@@ -90,6 +91,25 @@ export default function ThemeEditor({ initial }: { initial: ThemeConfig }) {
           <p className="text-[10px] tracking-[0.2em] uppercase text-white/40">Admin</p>
           <h1 className="text-sm font-semibold text-white mt-0.5">Personalizar Blog</h1>
         </div>
+
+        {/* Navigation */}
+        <nav className="p-3 space-y-1 border-b border-white/10">
+          <Link 
+            href="/admin/theme" 
+            className="flex items-center gap-3 px-3 py-2 rounded-md text-[11px] text-white bg-white/5 border border-white/10 group"
+          >
+            <Layout size={14} className="text-primary" />
+            Tema (Visual)
+          </Link>
+          <Link 
+            href="/admin/content" 
+            className="flex items-center gap-3 px-3 py-2 rounded-md text-[11px] text-white/40 hover:text-white/90 hover:bg-white/5 transition-all group"
+          >
+            <FileText size={14} className="opacity-50 group-hover:opacity-100" />
+            Conteúdo Estático
+            <ChevronRight size={10} className="ml-auto opacity-0 group-hover:opacity-100" />
+          </Link>
+        </nav>
 
         <div className="flex-1 p-4 space-y-6 overflow-y-auto">
 
