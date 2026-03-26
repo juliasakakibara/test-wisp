@@ -3,6 +3,7 @@ import Image from "next/image";
 import { format } from "date-fns";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { WispContent } from "@/components/wisp-content-wrapper";
 
 export const revalidate = 60; // ISR: Revalidate page every 60 seconds
 
@@ -90,10 +91,7 @@ export default async function BlogPostPage({ params }: Params) {
                 </div>
             )}
 
-            <div
-                className="prose prose-lg dark:prose-invert mx-auto max-w-3xl prose-headings:font-bold prose-headings:tracking-tighter prose-a:text-primary hover:prose-a:text-primary/80"
-                dangerouslySetInnerHTML={{ __html: post.content || "" }}
-            />
+            <WispContent content={post.content || ""} />
         </article>
     );
 }
