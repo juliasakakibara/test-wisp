@@ -38,11 +38,15 @@ export default function TipTapEditor({ initialContent, onChange }: TipTapEditorP
   }
 
   return (
-    <div className="w-full editor-wrapper">
+    <div className="w-full editor-wrapper not-prose">
       <EditorProvider
         content={htmlContent}
         onUpdate={handleUpdate}
-        className="prose prose-sm prose-primary sm:prose-base focus:outline-none min-h-[400px] pb-24 text-[#111]"
+        editorProps={{
+          attributes: {
+            class: "prose prose-sm prose-primary sm:prose-base focus:outline-none min-h-[400px] pb-24 text-[#111]",
+          }
+        }}
         placeholder="Escreva sua história a partir daqui..."
       >
         {/* Menu Flutuante que aparece com texto selecionado */}

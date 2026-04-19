@@ -169,8 +169,18 @@ export default function ThemeEditor({ initialTheme, initialConfig }: { initialTh
     startTransition(async () => {
       await savePost(draftPost as BlogPost);
       listPosts(0, 50, true).then(setPosts);
-      alert("Salvo com sucesso!");
-      // Não limpa o activePost para mantermos no modo Edição contínua
+      // Fluxo 1: Salvar e visualizar (Publicar da Sidebar)
+      if (iframeRef.current) iframeRef.current.src = `/blog/${draftPost.slug}`;
+      setActivePost(null);
+    });
+  }
+
+  function handleQuickSave() {
+    if(!draftPost.title || !draftPost.slug) return alert("Ops! Título e Slug são obrigatórios antes de salvar.");
+    startTransition(async () => {
+      await savePost(draftPost as BlogPost);
+      listPosts(0, 50, true).then(setPosts);
+      alert("Alteração salva na nuvem! Continue editando.");
       if(activePost === "new") {
          setActivePost({ ...(draftPost as BlogPost), createdAt: Date.now(), updatedAt: Date.now() });
       }
@@ -251,9 +261,18 @@ export default function ThemeEditor({ initialTheme, initialConfig }: { initialTh
                  ← Voltar para Menu
                </button>
                
-               <InputGroup label="Título da Página" value={draftPost.title || ""} onChange={(v) => setDraftPost(prev => ({...prev, title: v}))} />
+               <InputGroup label="Título da Página" value={draftPost.title || ""} onChange={(v) => {
+                 setDraftPost(prev => ({
+                   ...prev, 
+                   title: v,
+                   // Auto slug if empty or new post
+                   ...(activePost === "new" ? { slug: v.toLowerCase().replace(/[\s_]+/g, '-').replace(/[^\w-]+/g, '') } : {})
+                 }))
+               }} />
                <InputGroup label="Endereço URL (Slug)" value={draftPost.slug || ""} onChange={(v) => setDraftPost(prev => ({...prev, slug: v.toLowerCase().replace(/[\s_]+/g, '-').replace(/[^\w-]+/g, '')}))} />
                
+               <InputGroup label="Imagem de Capa (URL)" value={draftPost.coverImage || ""} onChange={(v) => setDraftPost(prev => ({...prev, coverImage: v}))} />
+
                <div className="flex flex-col gap-1.5 focus-within:ring-1 ring-white/20 rounded-md">
                    <label className="text-[10px] text-white/40 font-medium ml-1">Classificação da Coleção</label>
                    <select value={draftPost.category || "article"} onChange={(e) => setDraftPost(prev => ({...prev, category: e.target.value as "article"|"project"}))} className="bg-white/[0.03] border border-white/10 rounded-md px-3 py-2 text-[11px] text-white/80 focus:outline-none focus:bg-white/[0.05] cursor-pointer appearance-none">
@@ -273,8 +292,8 @@ export default function ThemeEditor({ initialTheme, initialConfig }: { initialTh
                </div>
 
                <div className="pt-6 border-t border-white/10 space-y-2">
-                   <button type="button" onClick={handleSavePost} disabled={isPending} className="w-full py-2.5 bg-white text-black rounded-md text-xs font-bold hover:bg-gray-200 transition-colors disabled:opacity-50 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-                     {isPending ? 'Salvando...' : 'Salvar Alterações'}
+                   <button type="button" onClick={handleSavePost} disabled={isPending} className="w-full py-2.5 bg-blue-600 text-white rounded-md text-xs font-bold hover:bg-blue-500 transition-colors disabled:opacity-50 shadow-[0_0_15px_rgba(37,99,235,0.4)]">
+                     {isPending ? 'Aplicando...' : 'Publicar Alterações P/ Site'}
                    </button>
                    {activePost !== "new" && (
                      <button type="button" onClick={handleDeletePost} className="w-full py-2 text-red-500 bg-red-500/10 rounded-md text-xs font-bold hover:bg-red-500/20 transition-colors">
@@ -298,8 +317,8 @@ export default function ThemeEditor({ initialTheme, initialConfig }: { initialTh
                 <div>
                   <SectionLabel icon={<LayoutTemplate size={12}/>}>Telas Fixas (Layout)</SectionLabel>
                   <div className="space-y-1 mt-2">
-                     <button onClick={() => {if(iframeRef.current) iframeRef.current.src = "/";}} className="w-full text-left px-3 py-2 rounded-md text-white/70 hover:bg-white/5 hover:text-white text-[11px] transition-colors border border-transparent hover:border-white/5 font-medium">✨ Home (Capa)</button>
-                     <button onClick={() => {if(iframeRef.current) iframeRef.current.src = "/about";}} className="w-full text-left px-3 py-2 rounded-md text-white/70 hover:bg-white/5 hover:text-white text-[11px] transition-colors border border-transparent hover:border-white/5 font-medium">✨ Sobre a Autora</button>
+                     <button onClick={() => {if(iframeRef.current) iframeRef.current.src = "/";}} className="w-full text-left px-3 py-2 rounded-md text-white/70 hover:bg-white/5 hover:text-white text-[11px] transition-colors border border-transparent hover:border-white/5 font-medium">Home (Capa)</button>
+                     <button onClick={() => {if(iframeRef.current) iframeRef.current.src = "/about";}} className="w-full text-left px-3 py-2 rounded-md text-white/70 hover:bg-white/5 hover:text-white text-[11px] transition-colors border border-transparent hover:border-white/5 font-medium">Sobre a Autora</button>
                   </div>
                 </div>
 
@@ -461,8 +480,8 @@ export default function ThemeEditor({ initialTheme, initialConfig }: { initialTh
                 
                 {/* Footer Save Button Flutuante (Melhoria requisitada pela usuária) */}
                 <div className="fixed bottom-6 right-6 z-50">
-                   <button type="button" onClick={handleSavePost} disabled={isPending} className="px-6 py-3 bg-black text-white rounded-full text-sm font-bold shadow-xl hover:bg-gray-800 hover:scale-105 transition-all disabled:opacity-50 flex items-center gap-2">
-                     {isPending ? 'Salvando...' : 'Salvar Conteúdo'}
+                   <button type="button" onClick={handleQuickSave} disabled={isPending} className="px-6 py-3 bg-black text-white rounded-full text-sm font-bold shadow-xl hover:bg-gray-800 hover:scale-105 transition-all disabled:opacity-50 flex items-center gap-2 border border-white/10">
+                     {isPending ? 'Salvando...' : 'Salvar Etapa (Rascunho)'}
                    </button>
                 </div>
              </div>
@@ -509,7 +528,6 @@ function MenuButton({ icon, label, isActive, onClick }: { icon: React.ReactNode,
     >
       {icon}
       <span className="text-[9px] font-medium tracking-wide uppercase">{label}</span>
-      {isActive && <div className="absolute left-1 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-full 2xl" />}
     </button>
   );
 }
