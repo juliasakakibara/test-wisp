@@ -120,15 +120,54 @@ p { max-width: 65ch; }
 :first-child { margin-top: 0 !important; }
 :last-child { margin-bottom: 0 !important; }
 
-/* ── 4. COMPONENTS ── */
+/* ── 4. COLORS & STATES ── */
+::selection {
+    background: var(--primary);
+    color: var(--background);
+}
+
+a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--primary) 40%, transparent);
+    transition: all 0.2s ease;
+}
+
+a:hover {
+    text-decoration-color: var(--primary);
+    text-decoration-thickness: 2px;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: var(--foreground);
+    opacity: 0.7;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    opacity: 1;
+    color: var(--primary);
+}
+
+/* ── 5. COMPONENTS ── */
 .main-header {
     border-bottom: var(--pixel) solid var(--border);
     padding: var(--baseline) 0;
 }
 
-.nav-logo { grid-column: 1 / span 4; font-weight: 800; font-size: 1.2rem; }
+.nav-logo { 
+    grid-column: 1 / span 4; 
+    font-weight: 800; 
+    font-size: 1.1rem;
+    color: var(--foreground);
+    text-decoration: none;
+}
+
 .nav-menu { grid-column: 9 / span 4; display: flex; justify-content: flex-end; }
-.nav-menu ul { display: flex; list-style: none; gap: 1.5rem; }
+.nav-menu ul { display: flex; list-style: none; gap: 2rem; }
 
 main > section, .posts {
     grid-column: 1 / -1;
@@ -140,6 +179,33 @@ article {
     grid-column: span 4;
     display: flex;
     flex-direction: column;
+    gap: var(--baseline);
+}
+
+/* Post Cards */
+.post-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.post-title-link {
+    text-decoration: none;
+    color: var(--foreground);
+}
+
+.post-title-link h2 {
+    margin: 0;
+    transition: color 0.2s ease;
+}
+
+.post-title-link:hover h2 {
+    color: var(--primary);
+}
+
+.hero-content {
+    grid-column: 1 / span 8;
+    padding: calc(var(--lineHeight) * 4) 0;
 }
 
 .post-card-image-wrap {
@@ -147,13 +213,14 @@ article {
     aspect-ratio: 16/9;
     position: relative;
     overflow: hidden;
-    margin-bottom: var(--baseline);
     background: var(--muted);
+    border: var(--pixel) solid var(--border);
+    transition: all 0.2s ease;
 }
 
-.hero-content {
-    grid-column: 1 / span 8;
-    padding-bottom: calc(var(--lineHeight) * 2);
+.post-card-image-wrap:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
 }
 
 .footer-text {
