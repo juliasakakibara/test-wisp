@@ -6,17 +6,15 @@ export async function Header() {
 
     return (
         <header className="main-header">
-            <div className="container grid items-center">
-                <div className="c1 s4 md:s2">
-                    <Link href="/" className="nav-logo">
-                        {config.siteName}
-                    </Link>
-                </div>
-                <nav className="c5 s8 md:c10 md:s2 nav-menu">
-                    <Link href="/" className="nav-link">Blog</Link>
-                    <Link href="/about" className="nav-link">About</Link>
-                </nav>
-            </div>
+            <Link href="/" className="nav-logo">
+                {config.siteName}
+            </Link>
+            <nav className="nav-menu">
+                <ul>
+                    <li><Link href="/" className="nav-link">Blog</Link></li>
+                    <li><Link href="/about" className="nav-link">About</Link></li>
+                </ul>
+            </nav>
         </header>
     );
 }

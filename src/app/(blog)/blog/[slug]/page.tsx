@@ -19,7 +19,7 @@ export async function generateStaticParams() {
         if (posts.length === 0) {
             return [{ slug: 'demo-post' }]; // Fallback
         }
-        return posts.map((post) => ({
+        return posts.map((post: { slug: string }) => ({
             slug: post.slug,
         }));
     } catch (err) {

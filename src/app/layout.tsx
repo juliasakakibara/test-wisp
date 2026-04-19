@@ -28,7 +28,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       <head>
         <style dangerouslySetInnerHTML={{ __html: themeCss }} />
       </head>
-      <body className={cn("antialiased flex flex-col min-h-screen", theme.fontFamily)}>
+      <body className={cn("antialiased", theme.fontFamily)}>
         <ThemePreviewListener />
         <TooltipProvider>
           {children}

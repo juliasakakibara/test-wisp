@@ -26,31 +26,24 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
                     </div>
                 )}
             </Link>
-            <div className="post-card-content">
+            
+            <header className="post-card-content">
                 <div className="post-meta">
                     {post.createdAt && (
                         <time dateTime={new Date(post.createdAt).toISOString()}>
                             {format(new Date(post.createdAt), "MMM d, yyyy")}
                         </time>
                     )}
-                    {post.category && (
-                        <>
-                            <span>/</span>
-                            <span>{post.category}</span>
-                        </>
-                    )}
+                    <span>/</span>
+                    <span>{post.category}</span>
                 </div>
+                
                 <Link href={`/blog/${post.slug}`} className="post-title-link">
-                    <h2 className="post-title">
-                        {post.title}
-                    </h2>
+                    <h2 className="post-title">{post.title}</h2>
                 </Link>
-                {description && (
-                    <p className="post-description">
-                        {description}
-                    </p>
-                )}
-            </div>
+
+                {description && <p className="post-description">{description}</p>}
+            </header>
         </article>
     );
 }
