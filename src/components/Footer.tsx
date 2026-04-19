@@ -4,11 +4,17 @@ export async function Footer() {
     const config = await getConfig();
 
     return (
-        <footer className="border-t py-10 md:py-16">
-            <div className="container mx-auto max-w-6xl px-4 flex flex-col items-center justify-between gap-4 md:h-16 md:flex-row md:py-0">
-                <div className="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-                    <p className="text-center text-sm leading-loose text-muted-foreground md:text-left" data-editable="footerText">
-                        {config.footerText}
+        <footer className="main-footer">
+            <div className="container grid">
+                <div className="c1 s12 md:s4 footer-info">
+                    <p className="label opacity-40">About</p>
+                    <p className="footer-text">{config.footerText}</p>
+                </div>
+                <div className="c1 s12 md:c9 md:s4 footer-legal">
+                    <p className="label opacity-40">Legal</p>
+                    <p className="copyright-text">
+                        © {new Date().getFullYear()} {config.siteName}.<br />
+                        All rights reserved.
                     </p>
                 </div>
             </div>

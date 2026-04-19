@@ -201,35 +201,35 @@ export default function ThemeEditor({ initialTheme, initialConfig }: { initialTh
   const articlePosts = posts.filter(p => p.category === "article");
 
   return (
-    <div className="fixed inset-0 flex bg-[#0f0f0f] font-mono overflow-hidden" style={{ colorScheme: 'dark' }}>
+    <div className="fixed inset-0 flex bg-background font-sans overflow-hidden">
 
-      {/* ── Camada 1: Menu Fixo Lateral (Adobe Portfolio Style) ── */}
-      <nav className="w-16 shrink-0 flex flex-col items-center py-4 border-r border-white/10 bg-[#0a0a0a] z-30">
-        <div className="w-8 h-8 rounded-full bg-white text-black font-bold flex items-center justify-center mb-8">P</div>
+      {/* ── Camada 1: Menu Fixo Lateral ── */}
+      <nav className="w-16 shrink-0 flex flex-col items-center py-6 border-r border-border bg-background z-30">
+        <div className="w-8 h-8 rounded-sm bg-foreground text-background font-bold flex items-center justify-center mb-10 text-xs">P</div>
         
-        <div className="flex flex-col gap-4 w-full px-2">
+        <div className="flex flex-col gap-6 w-full px-2">
           <MenuButton 
             icon={<FileText size={18} />} 
-            label="Páginas" 
+            label="Conteúdo" 
             isActive={activeTab === "pages"} 
             onClick={() => { setActiveTab("pages"); setActivePost(null); }} 
           />
           <MenuButton 
             icon={<Palette size={18} />} 
-            label="Temas" 
+            label="Design" 
             isActive={activeTab === "theme"} 
             onClick={() => setActiveTab("theme")} 
           />
           <MenuButton 
             icon={<Settings size={18} />} 
-            label="Ajustes" 
+            label="Geral" 
             isActive={activeTab === "settings"} 
             onClick={() => setActiveTab("settings")} 
           />
         </div>
 
-        <div className="mt-auto pb-2 w-full px-2">
-           <Link href="/" target="_blank" className="flex flex-col items-center gap-1 p-2 rounded-lg text-white/40 hover:text-white hover:bg-white/5 transition-all">
+        <div className="mt-auto pb-4 w-full px-2">
+           <Link href="/" target="_blank" className="flex flex-col items-center gap-1 p-2 rounded text-foreground/40 hover:text-foreground hover:bg-muted transition-all">
              <ExternalLink size={16} />
              <span className="text-[8px] uppercase tracking-widest mt-1">Sair</span>
            </Link>
@@ -238,17 +238,17 @@ export default function ThemeEditor({ initialTheme, initialConfig }: { initialTh
 
       {/* ── Camada 2: Painel Contextual ── */}
       <aside 
-        className="relative z-20 shrink-0 flex flex-col border-r border-white/10 bg-[#0f0f0f]"
+        className="relative z-20 shrink-0 flex flex-col border-r border-border bg-background/50 backdrop-blur-xl"
         style={{ width: `${sidebarWidth}px` }}
       >
-        <div className="px-5 pt-5 pb-4 border-b border-white/10 shrink-0">
-          <p className="text-[10px] tracking-[0.2em] uppercase text-white/40">
-             {activeTab === "pages" ? "Conteúdo" : activeTab === "theme" ? "Visual Editor" : "Global"}
+        <div className="px-6 py-8 border-b border-border shrink-0">
+          <p className="text-[10px] tracking-[0.2em] uppercase opacity-40 font-bold mb-1">
+             {activeTab === "pages" ? "Editor" : activeTab === "theme" ? "Aparência" : "Configurações"}
           </p>
-          <h1 className="text-sm font-semibold text-white mt-0.5">
-             {activeTab === "pages" ? "Publicações" : 
-              activeTab === "theme" ? "Estilo do Site" : 
-              "Configurações gerais"}
+          <h1 className="text-lg font-medium">
+             {activeTab === "pages" ? "Páginas" : 
+              activeTab === "theme" ? "Tema" : 
+              "Preferências"}
           </h1>
         </div>
 
@@ -489,15 +489,15 @@ export default function ThemeEditor({ initialTheme, initialConfig }: { initialTh
         ) : (
           /* Editor de visual (Iframe do site real) */
           <>
-            <div className="absolute inset-x-0 top-0 h-10 bg-[#0f0f0f] border-b border-white/10 flex items-center px-4 justify-between z-10">
-              <div className="flex items-center gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-red-500/30" />
-                <div className="w-2.5 h-2.5 rounded-full bg-amber-500/30" />
-                <div className="w-2.5 h-2.5 rounded-full bg-green-500/50" />
+            <div className="absolute inset-x-0 top-0 h-12 bg-background border-b border-border flex items-center px-6 justify-between z-10">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-border" />
+                <div className="w-2 h-2 rounded-full bg-border" />
+                <div className="w-2 h-2 rounded-full bg-border" />
               </div>
-              <span className="text-[10px] text-white/40 tracking-wider">VISUAL PREVIEW</span>
-              <div className="flex gap-2">
-                <button onClick={() => { if(iframeRef.current) iframeRef.current.src = "/"; }} className="text-[9px] text-white/30 hover:text-white">Home</button>
+              <span className="text-[9px] font-bold tracking-[0.2em] opacity-30">PREVIEW</span>
+              <div className="flex gap-4">
+                <button onClick={() => { if(iframeRef.current) iframeRef.current.src = "/"; }} className="text-[10px] font-medium hover:underline">Ver Site</button>
               </div>
             </div>
             
@@ -522,12 +522,12 @@ function MenuButton({ icon, label, isActive, onClick }: { icon: React.ReactNode,
   return (
     <button 
       onClick={onClick}
-      className={`relative w-full flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl transition-all ${
-        isActive ? 'bg-white/10 text-white' : 'text-white/40 hover:bg-white/5 hover:text-white/80'
+      className={`relative w-full flex flex-col items-center justify-center gap-2 p-3 rounded transition-all ${
+        isActive ? 'bg-foreground text-background' : 'text-foreground/40 hover:bg-muted hover:text-foreground'
       }`}
     >
       {icon}
-      <span className="text-[9px] font-medium tracking-wide uppercase">{label}</span>
+      <span className="text-[8px] font-bold tracking-widest uppercase">{label}</span>
     </button>
   );
 }
@@ -538,9 +538,9 @@ function SectionLabel({ children, icon }: { children: React.ReactNode, icon?: Re
 
 function InputGroup({ label, value, onChange }: { label: string, value: string, onChange: (v: string) => void }) {
   return (
-    <div className="flex flex-col gap-1.5">
-      <label className="text-[10px] text-white/40 font-medium ml-1">{label}</label>
-      <input type="text" value={value ?? ""} onChange={(e) => onChange(e.target.value)} className="bg-white/[0.03] border border-white/10 rounded-md px-3 py-2 text-[11px] text-white/80 focus:outline-none focus:border-white/30 focus:bg-white/[0.05] transition-all" />
+    <div className="flex flex-col gap-2">
+      <label className="text-[10px] uppercase font-bold tracking-widest opacity-40 ml-1">{label}</label>
+      <input type="text" value={value ?? ""} onChange={(e) => onChange(e.target.value)} className="bg-muted/50 border border-border rounded px-3 py-2 text-xs focus:outline-none focus:border-foreground/30 transition-all placeholder:opacity-30" />
     </div>
   );
 }
