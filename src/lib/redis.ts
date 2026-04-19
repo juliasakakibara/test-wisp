@@ -45,3 +45,22 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
 
 export const THEME_KEY = "site_theme";
 export const CONFIG_KEY = "site_config";
+
+// --- Configurações de Postagens (Micro-CMS) ---
+
+export type PostCategory = "project" | "article";
+
+export interface BlogPost {
+  slug: string;
+  title: string;
+  category: PostCategory;
+  tags: string[];
+  content: string; // O conteúdo Markdown completo do post
+  coverImage?: string; // Imagem de destaque (url do verrcel blob)
+  published: boolean;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export const POSTS_ZSET_KEY = "posts_index";
+export const getPostKey = (slug: string) => `post:${slug}`;

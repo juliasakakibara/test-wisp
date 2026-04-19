@@ -1,11 +1,10 @@
-import { wisp } from "@/lib/wisp";
 import { BlogPostCard } from "@/components/BlogPostCard";
-import { getConfig } from "@/lib/actions";
+import { getConfig, listPosts } from "@/lib/actions";
 
 export const revalidate = 60; // ISR: Revalidate page every 60 seconds
 
 export default async function Home() {
-  const result = await wisp.getPosts({ limit: 12 });
+  const posts = await listPosts(0, 12, false);
   const config = await getConfig();
 
   return (
@@ -20,14 +19,8 @@ export default async function Home() {
       </section>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
-        {result.posts.map((post) => (
-          <BlogPostCard
-            key={post.id}
-            post={{
-              ...post,
-              publishedAt: post.publishedAt ? new Date(post.publishedAt) : null,
-            }}
-          />
+        {posts.map((post) => (
+          <BlogPostCard key={post.slug} post={post} />
         ))}
       </div>
     </div>

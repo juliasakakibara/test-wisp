@@ -1,9 +1,11 @@
-import { wisp } from "@/lib/wisp";
 import Image from "next/image";
 import { format } from "date-fns";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { WispContent } from "@/components/wisp-content-wrapper";
+import { getPost, listPosts } from "@/lib/actions";
+import MarkdownIt from "markdown-it";
+
+const md = new MarkdownIt();
 
 export const revalidate = 60; // ISR: Revalidate page every 60 seconds
 
@@ -13,46 +15,50 @@ interface Params {
 
 export async function generateStaticParams() {
     try {
-        const result = await wisp.getPosts({ limit: 100 });
-        if (!result.posts || result.posts.length === 0) {
-            return [{ slug: 'demo-post' }]; // Fallback required for static export
+        const posts = await listPosts(0, 100, false);
+        if (posts.length === 0) {
+            return [{ slug: 'demo-post' }]; // Fallback
         }
-        return result.posts.map((post) => ({
+        return posts.map((post) => ({
             slug: post.slug,
         }));
     } catch (err) {
-        console.error("Error fetching Wisp posts during build:", err);
-        return [{ slug: 'demo-post' }]; // Fallback
+        console.error("Error fetching posts from Redis during build:", err);
+        return [{ slug: 'demo-post' }];
     }
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
     const { slug } = await params;
-    const result = await wisp.getPost(slug);
-    if (!result || !result.post) return {};
+    const post = await getPost(slug);
+    if (!post) return {};
+    
+    // Quick description from content if not available
+    const description = post.content ? post.content.replace(/[#*`_]/g, '').slice(0, 150) + "..." : "";
+
     return {
-        title: result.post.title,
-        description: result.post.description,
+        title: post.title,
+        description: description,
     };
 }
 
 export default async function BlogPostPage({ params }: Params) {
     const { slug } = await params;
-    const result = await wisp.getPost(slug);
+    const post = await getPost(slug);
 
-    if (!result || !result.post) {
+    if (!post) {
         return notFound();
     }
 
-    const { post } = result;
+    const htmlContent = md.render(post.content || "");
 
     return (
         <article className="container mx-auto max-w-4xl px-4 py-16">
             <header className="mb-12 text-center space-y-6">
                 <div className="flex items-center justify-center gap-3 text-sm text-muted-foreground">
-                    {post.publishedAt && (
-                        <time dateTime={post.publishedAt.toString()}>
-                            {format(new Date(post.publishedAt), "LLLL d, yyyy")}
+                    {post.createdAt && (
+                        <time dateTime={new Date(post.createdAt).toISOString()}>
+                            {format(new Date(post.createdAt), "LLLL d, yyyy")}
                         </time>
                     )}
                     {post.tags && post.tags.length > 0 && (
@@ -60,8 +66,8 @@ export default async function BlogPostPage({ params }: Params) {
                             <span className="w-1 h-1 rounded-full bg-muted-foreground/30" />
                             <div className="flex gap-2">
                                 {post.tags.map((tag) => (
-                                    <span key={tag.id} className="uppercase text-xs font-semibold tracking-wider text-primary/80">
-                                        {tag.name}
+                                    <span key={tag} className="uppercase text-xs font-semibold tracking-wider text-primary/80">
+                                        {tag}
                                     </span>
                                 ))}
                             </div>
@@ -71,17 +77,12 @@ export default async function BlogPostPage({ params }: Params) {
                 <h1 className="text-4xl font-black tracking-tighter text-balance sm:text-6xl">
                     {post.title}
                 </h1>
-                {post.description && (
-                    <p className="text-xl text-muted-foreground md:text-2xl text-balance mx-auto max-w-2xl">
-                        {post.description}
-                    </p>
-                )}
             </header>
 
-            {post.image && (
+            {post.coverImage && (
                 <div className="relative aspect-[21/9] w-full mb-16 overflow-hidden rounded-3xl bg-muted">
                     <Image
-                        src={post.image}
+                        src={post.coverImage}
                         alt={post.title}
                         fill
                         className="object-cover"
@@ -91,7 +92,11 @@ export default async function BlogPostPage({ params }: Params) {
                 </div>
             )}
 
-            <WispContent content={post.content || ""} />
+            {/* Rendering Markdown HTML directly */}
+            <div 
+               className="prose prose-lg mx-auto sm:prose-xl lg:prose-2xl prose-slate"
+               dangerouslySetInnerHTML={{ __html: htmlContent }} 
+            />
         </article>
     );
 }

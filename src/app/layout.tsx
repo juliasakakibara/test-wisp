@@ -17,6 +17,8 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+import { TooltipProvider } from "@/components/ui/tooltip";
+
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const theme = await getTheme();
   const themeCss = generateThemeCssVariables(theme);
@@ -28,7 +30,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       </head>
       <body className={cn("antialiased flex flex-col min-h-screen", theme.fontFamily)}>
         <ThemePreviewListener />
-        {children}
+        <TooltipProvider>
+          {children}
+        </TooltipProvider>
       </body>
     </html>
   );
