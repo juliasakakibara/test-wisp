@@ -3,7 +3,6 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { getTheme, getConfig } from "@/lib/actions";
-import { ThemePreviewListener } from "@/components/ThemePreviewListener";
 import { generateThemeCssVariables } from "@/lib/theme-utils";
 
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
@@ -17,8 +16,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-import { TooltipProvider } from "@/components/ui/tooltip";
-
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const theme = await getTheme();
   const themeCss = generateThemeCssVariables(theme);
@@ -28,11 +25,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       <head>
         <style dangerouslySetInnerHTML={{ __html: themeCss }} />
       </head>
-      <body className={cn("antialiased", theme.fontFamily)}>
-        <ThemePreviewListener />
-        <TooltipProvider>
-          {children}
-        </TooltipProvider>
+      <body>
+        {children}
       </body>
     </html>
   );

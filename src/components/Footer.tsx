@@ -5,7 +5,7 @@ export async function Footer() {
 
     return (
         <footer className="main-footer">
-            <p className="footer-text opacity-40">
+            <p className="footer-text">
                 © {new Date().getFullYear()} {config.siteName}. All rights reserved.
             </p>
         </footer>

@@ -63,7 +63,7 @@ export default async function BlogPostPage({ params }: Params) {
                     )}
                     {post.category && (
                         <>
-                            <span>/</span>
+                            <span> / </span>
                             <span>{post.category}</span>
                         </>
                     )}
@@ -80,13 +80,14 @@ export default async function BlogPostPage({ params }: Params) {
                         alt={post.title}
                         fill
                         priority
-                        sizes="(max-width: 1024px) 100vw, 1024px"
+                        className="object-cover"
+                        sizes="100vw"
                     />
                 </div>
             )}
 
             <div
-                className="prose"
+                className="single-post-content"
                 dangerouslySetInnerHTML={{ __html: htmlContent }}
             />
         </article>

@@ -1,243 +1,327 @@
 /* 
-  ── GOLDEN VERSION: DESIGN ENGINE v1.0 (Stable) ──
-  Grid: Unified Raster Matrix (12/8/4 columns)
-  Typography: Impact Scale (4.8rem Hero)
-  Spatial Logic: Vertical Stack Rhythm
-  DPI: Multi-matrix Scaling Active
+   RASTER DESIGN ENGINE 2.0
+   ---
+   1. TOKENS (Variables & Themes)
+   2. RESET (Base Styles)
+   3. GRID SYSTEM (Subgrid Logic)
+   4. TYPOGRAPHY (Vertical Rhythm)
+   5. COMPONENTS (Header, Hero, Cards, Footer)
+   6. NATIVE SYSTEM (Sovereign Elements)
+   7. FLOATING SYSTEM (Tooltips, Popovers, Dropdowns)
 */
 
-/* ── 1. TOKENS & CADEIA UNIFICADA ── */
+/* ──────────────────────────────────────────────────────────────────────────
+   1. TOKENS (The Brain)
+   ────────────────────────────────────────────────────────────────────────── */
+
 :root {
-    /* DPI Aware */
-    --displayScale: 1;
-    --pixel: 1px;
-    
-    /* The Seed (Clamped Base Unit) */
-    --fontSize: clamp(14px, 1vw + 2px, 16px);
-    
-    /* The Rhythm (Derived from Seed) */
-    --lineHeight: calc(var(--fontSize) * 1.5);
-    --baseline: calc(var(--lineHeight) / 2);
-    
-    /* The Grid (Derived from Rhythm & Multiplier) */
-    /* The Grid (Sovereign & Proportional) */
-    --grid-base: 4;
-    --multiplier: 3;
-    --grid-columns: calc(var(--grid-base) * var(--multiplier));
-    --columnGap: calc(var(--lineHeight) * 2);
-    --rowGap: var(--lineHeight);
-    
-    /* Typography Scale (Option 1: Impact Raster) */
-    --h1-size: clamp(3.8rem, 12vw, 6rem);
-    --h2-size: 1.6rem;
-    --h3-size: 1.25rem;
-    --h4-size: 1rem;
-    
-    /* Common Spacing */
-    --container-padding: var(--columnGap);
-    
-    /* Modern Palette */
-    --background: #09090b;
-    --foreground: #fafafa;
-    --primary: #9333ea;
-    --muted: #27272a;
-    --border: color-mix(in srgb, var(--foreground) 15%, transparent);
+  /* DPI & Precision */
+  --displayScale: 1;
+  --pixel: 1px;
+
+  /* Typography Reference */
+  --fontSize: clamp(14px, 1vw + 2px, 16px);
+  --lineHeight: calc(var(--fontSize) * 1.5);
+  --baseline: calc(var(--lineHeight) / 2);
+
+  /* Typography Tokens */
+  --font-sans: var(--font-inter), 'Inter', system-ui, sans-serif;
+  --font-mono: var(--font-mono), 'JetBrains Mono', monospace;
+  --font-main: var(--theme-font, var(--font-sans));
+
+  /* Scale Logic */
+  --h1-size: clamp(3.8rem, 12vw, 6rem);
+  --h2-size: 1.6rem;
+  --h3-size: 1.25rem;
+  --h4-size: 1rem;
+
+  /* Grid Foundation */
+  --grid-base: 4;
+  --multiplier: 3;
+  --grid-columns: calc(var(--grid-base) * var(--multiplier));
+  --columnGap: calc(var(--lineHeight) * 2);
+  --rowGap: var(--lineHeight);
+
+  /* Hybrid Color Palette (Redis + System) */
+  --background: #000000;
+  --foreground: #ffffff;
+  --primary: var(--theme-primary, #9d57ff);
+  --subtle: color-mix(in srgb, var(--foreground) 5%, transparent);
+  --border: color-mix(in srgb, var(--foreground) 10%, transparent);
 }
 
+/* Automatic System Inversion (Light Mode) */
+@media (prefers-color-scheme: light) {
+  :root {
+    --background: var(--theme-bg, #ffffff);
+    --foreground: var(--theme-fg, #000000);
+    --primary: var(--theme-primary, #8227ff);
+  }
+}
+
+/* Responsive Overrides */
 @media (max-width: 1024px) { :root { --multiplier: 2; --columnGap: var(--lineHeight); } }
-@media (max-width: 700px) { 
-    :root { --multiplier: 1; --fontSize: 15px; } 
-    .nav-logo { grid-column: 1 / span 2 !important; }
-    .nav-menu { grid-column: 3 / span 2 !important; }
-}
+@media (max-width: 700px) { :root { --multiplier: 1; --fontSize: 15px; } }
 
-/* High-DPI Matrix (Raster 2.0 Precision) */
+/* High-DPI Matrix */
 @media only screen and (min-resolution: 1.5dppx) { :root { --displayScale: 2; --pixel: 0.5px; } }
 @media only screen and (min-resolution: 2.5dppx) { :root { --displayScale: 3; --pixel: 0.33px; } }
-@media only screen and (min-resolution: 3.5dppx) { :root { --displayScale: 4; --pixel: 0.25px; } }
 
-/* ── 2. BASE STYLES ── */
+/* ──────────────────────────────────────────────────────────────────────────
+   2. RESET (Base Styles)
+   ────────────────────────────────────────────────────────────────────────── */
+
 *, *:before, *:after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font: inherit; /* Essential reset for rhythm */
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font: inherit;
 }
 
 html {
-    font-family: 'Inter', system-ui, sans-serif;
-    font-size: var(--fontSize);
-    line-height: var(--lineHeight);
-    background: var(--background);
-    color: var(--foreground);
-    -webkit-text-size-adjust: 100%;
+  color-scheme: dark light;
+  font-family: var(--font-main);
+  font-size: var(--fontSize);
+  line-height: var(--lineHeight);
+  background: var(--background);
+  color: var(--foreground);
+  -webkit-text-size-adjust: 100%;
 }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   3. GRID SYSTEM (Body & Slots)
+   ────────────────────────────────────────────────────────────────────────── */
 
 body {
-    min-height: 100vh;
-    display: grid;
-    grid-template-columns: repeat(var(--grid-columns), 1fr);
-    column-gap: var(--columnGap);
-    
-    /* Padding LATERAL dinâmico (Estilo Raster) */
-    padding: 0 var(--columnGap);
-    
-    /* Espaçamento vertical entre os blocos mestres */
-    row-gap: calc(var(--lineHeight) * 2);
-    align-content: start;
+  min-height: 100vh;
+  display: grid;
+  padding: 0 !important;
+  /* Grid: Edge Gap | 12 Columns | Edge Gap */
+  grid-template-columns: 
+    [full-start] minmax(var(--columnGap), 1fr) 
+    [main-start] repeat(var(--grid-columns), minmax(0, 1fr)) [main-end]
+    minmax(var(--columnGap), 1fr) [full-end];
+  
+  column-gap: var(--columnGap);
+  row-gap: calc(var(--lineHeight) * 2);
+  align-content: start;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Blindagem de Itens do Grid */
-body > header, body > main, body > footer {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: subgrid;
+/* Children now span the full width but contain subgrids */
+body > header, 
+body > main, 
+body > footer {
+  grid-column: full-start / full-end;
+  display: grid;
+  grid-template-columns: subgrid;
 }
 
-/* Ignora scripts invisíveis */
+/* Component wrapper for nested grids */
+main > *, 
+.hero-content,
+.post-detail {
+  grid-column: main-start / main-end;
+  display: grid;
+  grid-template-columns: subgrid;
+}
+
+/* Clean UI: Hide common injection noise */
 body > *:not(header):not(main):not(footer):not(section) {
-    display: none !important;
+  display: none !important;
 }
 
-/* ── 3. TYPOGRAPHY & VERTICAL RHYTHM ── */
-h1, h2, h3, h4, p, article, section, ul, ol {
-    margin-top: 0;
-    margin-bottom: var(--lineHeight);
+/* ──────────────────────────────────────────────────────────────────────────
+   4. TYPOGRAPHY (Vertical Rhythm)
+   ────────────────────────────────────────────────────────────────────────── */
+
+h1, h2, h3, h4, p, article, ul, ol {
+  margin-top: 0;
+  margin-bottom: var(--lineHeight);
 }
 
-/* Títulos precisam de respiro extra no topo para separar seções */
-h1, h2 {
-    margin-top: calc(var(--lineHeight) * 2);
-}
-
-h1 { font-size: var(--h1-size); line-height: calc(var(--lineHeight) * 2); }
-h2 { font-size: var(--h2-size); line-height: calc(var(--lineHeight) * 2); }
+h1 { font-size: var(--h1-size); line-height: 1.1; letter-spacing: -0.05em; margin-top: calc(var(--lineHeight) * 2); }
+h2 { font-size: var(--h2-size); line-height: 1.2; margin-top: calc(var(--lineHeight) * 2); }
 h3 { font-size: var(--h3-size); margin-bottom: var(--baseline); }
 
 p { max-width: 65ch; }
 
-/* Blindagem de Bordas (O segredo do Raster) */
-:first-child { margin-top: 0 !important; }
-:last-child { margin-bottom: 0 !important; }
-
-/* ── 4. COLORS & STATES ── */
-::selection {
-    background: var(--primary);
-    color: var(--background);
-}
-
 a {
-    color: var(--primary);
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 3px;
-    text-decoration-color: color-mix(in srgb, var(--primary) 40%, transparent);
-    transition: all 0.2s ease;
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--primary) 40%, transparent);
+  transition: all 0.2s ease;
 }
 
-a:hover {
-    text-decoration-color: var(--primary);
-    text-decoration-thickness: 2px;
+a:hover { text-decoration-color: var(--primary); }
+
+::selection { background: var(--primary); color: var(--background); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   5. COMPONENTS (The Organs)
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Header Area */
+.main-header { border-bottom: var(--pixel) solid var(--border); padding: var(--baseline) 0; }
+.nav-logo { grid-column: main-start / span 4; font-weight: 800; font-size: 1.3rem; color: var(--foreground); text-decoration: none; }
+.nav-menu { grid-column: 7 / span 6; display: flex; justify-content: flex-end; }
+.nav-menu ul { display: flex; list-style: none; gap: 2.5rem; }
+.nav-link { text-decoration: none; color: var(--foreground); opacity: 0.6; font-weight: 500; font-size: 0.95rem; }
+.nav-link:hover { opacity: 1; color: var(--primary); }
+
+/* Hero Area */
+.hero-content { padding: calc(var(--lineHeight) * 6) 0; }
+.hero-content > * { grid-column: 1 / span 10; }
+
+/* Post Content Area (Reading Focus) */
+.single-post-content {
+  grid-column: 3 / span 8;
+  font-size: 1.2rem;
+  line-height: 1.6;
 }
 
-.nav-link {
-    text-decoration: none;
-    color: var(--foreground);
-    opacity: 0.7;
-    font-weight: 500;
+.single-post-content h1,
+.single-post-content h2, 
+.single-post-content h3 {
+  margin-top: calc(var(--lineHeight) * 2);
 }
 
-.nav-link:hover {
-    opacity: 1;
-    color: var(--primary);
+.single-post-content img {
+  width: 100%;
+  height: auto;
+  margin: var(--lineHeight) 0;
+  border: var(--pixel) solid var(--border);
 }
 
-/* ── 5. COMPONENTS ── */
-.main-header {
-    border-bottom: var(--pixel) solid var(--border);
-    padding: var(--baseline) 0;
+.single-post-content ul, 
+.single-post-content ol {
+  padding-left: var(--columnGap);
+  margin-bottom: var(--lineHeight);
 }
 
-.nav-logo { 
-    grid-column: 1 / span 4; 
-    font-weight: 800; 
-    font-size: 1.1rem;
-    color: var(--foreground);
-    text-decoration: none;
+/* Post Detail Logic */
+.post-detail-header {
+  grid-column: 3 / span 8;
+  margin-top: calc(var(--lineHeight) * 3);
 }
 
-.nav-menu { grid-column: 9 / span 4; display: flex; justify-content: flex-end; }
-.nav-menu ul { display: flex; list-style: none; gap: 2rem; }
-
-main > section, .posts {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: subgrid;
+.post-meta {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  opacity: 0.5;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--baseline);
 }
 
-article {
-    grid-column: span 4;
-    display: flex;
-    flex-direction: column;
-    gap: var(--baseline);
+.post-detail-title { margin-top: 0; margin-bottom: calc(var(--lineHeight) * 2); }
+
+.post-detail-image {
+  grid-column: main-start / main-end;
+  width: 100%;
+  aspect-ratio: 21/9;
+  position: relative;
+  background: var(--subtle);
+  margin-bottom: calc(var(--lineHeight) * 4);
 }
 
-/* Post Cards */
-.post-card-content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.post-title-link {
-    text-decoration: none;
-    color: var(--foreground);
-}
-
-.post-title-link h2 {
-    margin: 0;
-    transition: color 0.2s ease;
-}
-
-.post-title-link:hover h2 {
-    color: var(--primary);
-}
-
-.hero-content {
-    grid-column: 1 / span 8;
-    padding: calc(var(--lineHeight) * 4) 0;
-}
+/* Blog Grid */
+article { grid-column: span 4; display: flex; flex-direction: column; gap: var(--baseline); }
 
 .post-card-image-wrap {
-    width: 100%;
-    aspect-ratio: 16/9;
-    position: relative;
-    overflow: hidden;
-    background: var(--muted);
-    border: var(--pixel) solid var(--border);
-    transition: all 0.2s ease;
+  width: 100%; aspect-ratio: 16/9; position: relative; overflow: hidden;
+  background: var(--subtle); border: var(--pixel) solid var(--border); transition: all 0.2s ease;
+}
+.post-card-image-wrap:hover { border-color: var(--primary); transform: translateY(-2px); }
+
+.post-title-link { text-decoration: none; color: var(--foreground); }
+.post-card-title { font-size: 1.5rem; line-height: 1.2; margin: 0; transition: color 0.2s ease; }
+.post-title-link:hover .post-card-title { color: var(--primary); }
+
+.post-card-description {
+  font-size: 0.9rem; opacity: 0.6; margin: 0;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
 }
 
-.post-card-image-wrap:hover {
-    border-color: var(--primary);
-    transform: translateY(-2px);
-}
-
+/* Footer Area */
 .footer-text {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: calc(var(--lineHeight) * 4) 0;
-    opacity: 0.4;
-    font-size: 0.8rem;
-    border-top: var(--pixel) solid var(--border);
+  grid-column: 1 / -1; text-align: left; opacity: 0.4; font-size: 0.8rem;
+  padding: calc(var(--lineHeight) * 4) 0; border-top: var(--pixel) solid var(--border);
 }
 
-/* ── 5. THEMES ── */
-.theme-progressive {
-    --background: #2033FF;
-    --foreground: #ffffff;
+/* ──────────────────────────────────────────────────────────────────────────
+   6. NATIVE SYSTEM (Sovereign Elements)
+   ────────────────────────────────────────────────────────────────────────── */
+
+button, .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.25rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: var(--radius, 0px);
+  background: var(--primary);
+  color: var(--background);
+  border: var(--pixel) solid var(--primary);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  gap: 0.6rem;
+  text-decoration: none;
 }
-.theme-minimal {
-    --background: #ffffff;
-    --foreground: #000000;
+
+button:hover, .btn:hover {
+  opacity: 0.9; transform: translateY(-1px);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+button:active, .btn:active { transform: translateY(0); }
+
+input, textarea, .input, .textarea {
+  width: 100%;
+  padding: 0.75rem;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  background: var(--background);
+  color: var(--foreground);
+  border: var(--pixel) solid var(--border);
+  border-radius: var(--radius, 0px);
+  transition: all 0.2s ease;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 10%, transparent);
+}
+
+/* Scrollbar (Minimalist Raster) */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--background); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   7. FLOATING SYSTEM (Tooltips, Popovers, Dropdowns)
+   ────────────────────────────────────────────────────────────────────────── */
+
+[data-slot="popover-content"],
+[data-slot="tooltip-content"],
+[data-slot="dropdown-content"] {
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  border: var(--pixel) solid var(--border) !important;
+  border-radius: var(--radius, 0px) !important;
+  padding: 0.5rem;
+  box-shadow: 8px 8px 0px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+[data-slot="tooltip-content"] {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  box-shadow: none;
 }

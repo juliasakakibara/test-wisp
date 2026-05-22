@@ -1,5 +1,6 @@
 import { getConfig } from "@/lib/actions";
-import { Metadata } from "next";
+import { Metadata } from "next"; 
+import { Hero } from "@/components/Hero";
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getConfig();
@@ -12,22 +13,12 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AboutPage() {
   const config = await getConfig();
   return (
-    <div className="container mx-auto max-w-6xl px-4 py-8">
+    <>
+      <Hero title={config.aboutTitle} description={config.aboutIntro} />
 
-      {/* Hero — mesmo padrão da Home */}
-      <section className="py-20 mb-12 flex flex-col items-start justify-center text-left space-y-6">
-        <h1 className="text-5xl font-black tracking-tighter sm:text-7xl" data-editable="aboutTitle">
-          {config.aboutTitle}
-        </h1>
-        <p className="text-xl text-muted-foreground max-w-2xl" data-editable="aboutIntro">
-          {config.aboutIntro}
-        </p>
-      </section>
-
-      <section className="max-w-2xl space-y-6 text-muted-foreground leading-relaxed pb-20 whitespace-pre-line" data-editable="aboutBody">
+      <div className="about-text-content">
         {config.aboutBody}
-      </section>
-
-    </div>
+      </div>
+    </>
   );
 }

@@ -1,5 +1,6 @@
+import { Hero } from "@/components/Hero";
+import { listPosts, getConfig } from "@/lib/actions";
 import { BlogPostCard } from "@/components/BlogPostCard";
-import { getConfig, listPosts } from "@/lib/actions";
 
 export const revalidate = 60; // ISR: Revalidate page every 60 seconds
 
@@ -9,18 +10,13 @@ export default async function Home() {
 
   return (
     <>
-      <section className="hero subgrid-wrap">
-          <div className="hero-content">
-            <h1 className="hero-title">{config.heroTitle}</h1>
-            <p className="hero-description">{config.heroDescription}</p>
-          </div>
-      </section>
+      <Hero title={config.heroTitle} description={config.heroDescription} />
 
-      <section className="posts">
+      <div className="posts">
         {posts.map((post) => (
           <BlogPostCard key={post.slug} post={post} />
         ))}
-      </section>
+      </div>
     </>
   );
 }
