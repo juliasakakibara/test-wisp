@@ -1,28 +1,74 @@
 import { ThemeConfig } from "./redis";
+import { deriveAccessibleTokens, resolveFontFamily } from "./theme-presets";
 
-export function generateThemeCssVariables(theme: ThemeConfig) {
+const ADMIN_PREVIEW_SCOPE = 'html[data-env="admin"][data-theme-preview="true"]';
+const PUBLIC_SITE_SCOPE = ':root:not([data-env="admin"])';
+
+function themeVarBlock(theme: ThemeConfig, selector: string, withPaint = false): string {
+  const accessibleTokens = deriveAccessibleTokens(theme);
+  const fontStack = resolveFontFamily(theme.fontFamily);
+  const radius = theme.radius || "0";
+
+  const paintRules = withPaint
+    ? `
+    ${selector} body,
+    ${selector} .site-body {
+      background-color: ${theme.background};
+      color: ${theme.foreground};
+    }
+    ${selector} .hero-lead,
+    ${selector} .about-intro,
+    ${selector} .about-body,
+    ${selector} .section-label,
+    ${selector} .footer-text,
+    ${selector} .nav-item-muted {
+      color: ${accessibleTokens["--muted-foreground"]};
+    }
+    ${selector} [data-editable] {
+      outline-color: ${theme.primary};
+      border-radius: ${radius};
+    }
+    ${selector} .work-empty,
+    ${selector} .project-card__image,
+    ${selector} .project-card__link,
+    ${selector} .project-list-item__link,
+    ${selector} .site-logo-link {
+      border-radius: ${radius};
+    }
+  `
+    : "";
+
   return `
-    :root {
+    ${selector} {
+      color-scheme: light dark;
       --primary: ${theme.primary};
       --background: ${theme.background};
       --foreground: ${theme.foreground};
-      --radius: ${theme.radius};
-      
-      /* Derivados baseados no background e foreground */
-      /* --muted-foreground: mistura a luminosidade (60% fg, 40% bg) */
-      --muted-foreground: color-mix(in srgb, var(--foreground) 60%, var(--background));
-      
-      /* --muted: O fundo misturado com apenas ~6% do texto */
-      --muted: color-mix(in srgb, var(--foreground) 6%, var(--background));
-      
-      /* --border: O fundo com ~15% do texto */
-      --border: color-mix(in srgb, var(--foreground) 15%, var(--background));
-      
+      --radius: ${radius};
+      --font-family: ${fontStack};
+      --font-body: ${fontStack};
+      --font-display: ${fontStack};
+      --primary-foreground: ${accessibleTokens["--primary-foreground"]};
+      --muted-foreground: ${accessibleTokens["--muted-foreground"]};
+      --border: ${accessibleTokens["--border"]};
+      --muted: ${accessibleTokens["--muted"]};
+
       --input: var(--border);
       --card: var(--background);
       --card-foreground: var(--foreground);
       --popover: var(--background);
       --popover-foreground: var(--foreground);
     }
+    ${paintRules}
   `;
+}
+
+/** Admin iframe — ephemeral preview with explicit paint rules */
+export function generateThemeCssVariables(theme: ThemeConfig): string {
+  return themeVarBlock(theme, ADMIN_PREVIEW_SCOPE, true);
+}
+
+/** Persisted theme from Redis — public pages only */
+export function generateSiteThemeCss(theme: ThemeConfig): string {
+  return themeVarBlock(theme, PUBLIC_SITE_SCOPE);
 }

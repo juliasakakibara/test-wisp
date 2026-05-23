@@ -1,6 +1,6 @@
 "use server";
 
-import { redis, THEME_KEY, DEFAULT_THEME, ThemeConfig, CONFIG_KEY, DEFAULT_SITE_CONFIG, SiteConfig } from "@/lib/redis";
+import { redis, THEME_KEY, DEFAULT_THEME, ThemeConfig, CONFIG_KEY, DEFAULT_SITE_CONFIG, SiteConfig, normalizeSiteConfig } from "@/lib/redis";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
@@ -21,9 +21,9 @@ export async function saveTheme(theme: ThemeConfig) {
 export async function getConfig(): Promise<SiteConfig> {
   try {
     const config = await redis.get<SiteConfig>(CONFIG_KEY);
-    return { ...DEFAULT_SITE_CONFIG, ...config };
+    return normalizeSiteConfig(config);
   } catch {
-    return DEFAULT_SITE_CONFIG;
+    return normalizeSiteConfig(null);
   }
 }
 
@@ -32,14 +32,28 @@ export async function saveConfig(config: SiteConfig) {
   revalidatePath("/", "layout");
 }
 
+/** Manual cache bust — Wisp has no webhooks yet. We pretend that's fine. */
+export async function republishSite() {
+  revalidatePath("/", "layout");
+  revalidatePath("/");
+}
+
 export async function adminLogin(password: string): Promise<boolean> {
-  const adminPassword = process.env.ADMIN_PASSWORD ?? "admin123";
-  if (password === adminPassword) {
+  const isProd = process.env.NODE_ENV === "production";
+  const adminPassword = process.env.ADMIN_PASSWORD;
+
+  if (isProd && !adminPassword) {
+    console.error("[admin] ADMIN_PASSWORD is required in production");
+    return false;
+  }
+
+  const expectedPassword = adminPassword ?? "admin123";
+  if (password === expectedPassword) {
     const cookieStore = await cookies();
     cookieStore.set("admin_session", "authenticated", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 24, // 24 horas
+      maxAge: 60 * 60 * 24, // 24h — long enough to edit, short enough to forget the password
       path: "/",
     });
     return true;

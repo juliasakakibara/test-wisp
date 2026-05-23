@@ -1,148 +1,174 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import {
+  applyColorModePreference,
+  COLOR_MODE_STORAGE_KEY,
+  preferenceFromPresetName,
+  preferenceLabel,
+  PUBLIC_COLOR_MODE_OPTIONS,
+  readStoredPreference,
+  resolveEffectiveMode,
+  type ColorMode,
+  type ColorModePreference,
+} from "@/lib/color-mode";
 
-/**
- * Theme Switcher - Client Component (Isolated)
- * - Allows visitors to choose themes on the public site
- * - Manages theme state in LocalStorage (not Redis)
- * - Updates CSS Custom Properties on <html> directly
- * - No server round-trip needed for visitor theme preference
- */
+function useHydrated() {
+  return useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
+}
 
-type ThemePreset = {
-  name: string;
-  primary: string;
-  background: string;
-  foreground: string;
-  radius: string;
-  fontFamily: string;
-};
-
-const THEME_PRESETS: ThemePreset[] = [
-  {
-    name: "Neutral",
-    primary: "#6b7280",
-    background: "#ffffff",
-    foreground: "#111827",
-    radius: "0",
-    fontFamily: "font-sans",
-  },
-  {
-    name: "Green",
-    primary: "#16a34a",
-    background: "#ffffff",
-    foreground: "#14532d",
-    radius: "0.5rem",
-    fontFamily: "font-sans",
-  },
-  {
-    name: "Blue",
-    primary: "#2563eb",
-    background: "#ffffff",
-    foreground: "#1e3a8a",
-    radius: "0.5rem",
-    fontFamily: "font-sans",
-  },
-  {
-    name: "Violet",
-    primary: "#7c3aed",
-    background: "#ffffff",
-    foreground: "#2e1065",
-    radius: "0.75rem",
-    fontFamily: "font-sans",
-  },
-  {
-    name: "Dark",
-    primary: "#34d399",
-    background: "#0f172a",
-    foreground: "#f8fafc",
-    radius: "0.5rem",
-    fontFamily: "font-mono",
-  },
-];
+function isInAdminIframe(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.self !== window.top;
+  } catch {
+    return true;
+  }
+}
 
 export function ThemeSwitcher() {
   const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [preference, setPreference] = useState<ColorModePreference>("system");
+  const [effectiveMode, setEffectiveMode] = useState<ColorMode>("light");
+  const [inAdminIframe, setInAdminIframe] = useState(false);
+  const hydrated = useHydrated();
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setMounted(true);
+    if (!hydrated) return;
+    setInAdminIframe(isInAdminIframe());
+  }, [hydrated]);
 
-    // Load persisted theme from localStorage on mount
-    const savedTheme = localStorage.getItem("user_theme_preference");
-    if (savedTheme) {
-      try {
-        const theme = JSON.parse(savedTheme);
-        applyTheme(theme);
-      } catch {
-        // Silently fail if localStorage is corrupted
-      }
+  useEffect(() => {
+    if (!hydrated || inAdminIframe) return;
+
+    const storedRaw = localStorage.getItem(COLOR_MODE_STORAGE_KEY);
+    if (storedRaw === null) {
+      setPreference("system");
+      setEffectiveMode(resolveEffectiveMode("system"));
+      return;
     }
-  }, []);
 
-  const applyTheme = (theme: ThemePreset) => {
-    const html = document.documentElement;
-    html.style.setProperty("--primary", theme.primary);
-    html.style.setProperty("--background", theme.background);
-    html.style.setProperty("--foreground", theme.foreground);
-    html.style.setProperty("--radius", theme.radius);
-    html.style.setProperty(
-      "--font-family",
-      theme.fontFamily === "font-mono"
-        ? "monospace"
-        : theme.fontFamily === "font-serif"
-          ? "serif"
-          : "sans-serif"
-    );
-    // Persist to localStorage
-    localStorage.setItem("user_theme_preference", JSON.stringify(theme));
+    const stored = readStoredPreference();
+    const effective = applyColorModePreference(stored);
+    setPreference(stored);
+    setEffectiveMode(effective);
+  }, [hydrated, inAdminIframe]);
+
+  useEffect(() => {
+    if (!hydrated || inAdminIframe || preference !== "system") return;
+
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const sync = () => {
+      const effective = applyColorModePreference("system");
+      setEffectiveMode(effective);
+    };
+
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, [hydrated, inAdminIframe, preference]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+        toggleRef.current?.focus();
+      }
+    };
+
+    const handlePointerDown = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(target) &&
+        !toggleRef.current?.contains(target)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("mousedown", handlePointerDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("mousedown", handlePointerDown);
+    };
+  }, [isOpen]);
+
+  const handleSelect = (name: string) => {
+    const nextPreference = preferenceFromPresetName(name);
+    localStorage.setItem(COLOR_MODE_STORAGE_KEY, nextPreference);
+    const effective = applyColorModePreference(nextPreference);
+    setPreference(nextPreference);
+    setEffectiveMode(effective);
+    setIsOpen(false);
+    toggleRef.current?.focus();
   };
 
-  // Don't render until hydrated to avoid mismatch
-  if (!mounted) return null;
+  if (!hydrated || inAdminIframe) return null;
+
+  const activeLabel = preferenceLabel(preference);
 
   return (
-    <div className="relative">
+    <div className="theme-switcher">
       <button
+        ref={toggleRef}
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="px-3 py-2 rounded text-sm border border-[var(--foreground)]/20 hover:bg-[var(--background)]/80 transition-colors"
-        aria-label="Toggle theme selector"
+        className="theme-switcher__toggle"
+        aria-label="Toggle color mode"
+        aria-haspopup="menu"
         aria-expanded={isOpen}
+        aria-controls="theme-switcher-menu"
       >
-        🎨
+        <span className="theme-switcher__toggle-label">{activeLabel}</span>
       </button>
 
       {isOpen && (
         <div
-          className="absolute right-0 top-full mt-2 bg-[var(--background)] border border-[var(--foreground)]/20 rounded shadow-lg p-3 min-w-48 z-40"
+          ref={menuRef}
+          id="theme-switcher-menu"
+          className="theme-switcher__menu"
           role="menu"
+          aria-label="Color mode"
         >
-          <div className="space-y-2">
-            {THEME_PRESETS.map((theme) => (
-              <button
-                key={theme.name}
-                onClick={() => {
-                  applyTheme(theme);
-                  setIsOpen(false);
-                }}
-                className="w-full flex items-center gap-3 px-3 py-2 rounded hover:bg-[var(--foreground)]/5 transition-colors text-sm text-left"
-                role="menuitem"
-              >
-                {/* Color preview */}
-                <div className="flex gap-1">
-                  <div
-                    className="w-3 h-3 rounded"
-                    style={{ backgroundColor: theme.primary }}
-                  />
-                  <div
-                    className="w-3 h-3 rounded"
-                    style={{ backgroundColor: theme.background }}
-                  />
-                </div>
-                <span className="text-[var(--foreground)]/80">{theme.name}</span>
-              </button>
-            ))}
+          <div className="theme-switcher__list">
+            {PUBLIC_COLOR_MODE_OPTIONS.map((option) => {
+              const isActive = preference === option.preference;
+
+              return (
+                <button
+                  key={option.name}
+                  type="button"
+                  onClick={() => handleSelect(option.name)}
+                  className={`theme-switcher__option${isActive ? " theme-switcher__option--active" : ""}`}
+                  role="menuitem"
+                  aria-selected={isActive}
+                >
+                  <span className="theme-switcher__mode-icon" aria-hidden="true">
+                    {option.preference === "dark"
+                      ? "●"
+                      : option.preference === "light"
+                        ? "○"
+                        : "◐"}
+                  </span>
+                  {option.name}
+                  {option.preference === "system" && (
+                    <span className="theme-switcher__option-hint">
+                      ({effectiveMode === "dark" ? "dark" : "light"})
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
