@@ -224,7 +224,6 @@ export function HeroModelViewer() {
       className={`hero-viewer${loaded ? " is-loaded" : ""}`}
       aria-label="3D portfolio model"
     >
-      <div className="hero-viewer__screen-glow" aria-hidden="true" />
       <model-viewer
         ref={viewerRef}
         className="hero-viewer__canvas"

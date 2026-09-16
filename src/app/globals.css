@@ -68,11 +68,6 @@
   --hero-load-duration: 700ms;
   --hero-bob-distance: 0.35rem;
   --hero-bob-duration: 4.5s;
-  /* Dark-mode “screen light on face” experiment */
-  --hero-screen-glow-color: color-mix(in srgb, #9ec9ff 55%, transparent);
-  --hero-screen-glow-opacity: 0.55;
-  --hero-screen-glow-size: 55%;
-  --hero-screen-glow-duration: 5.5s;
   --hero-meta-gap: var(--space-4);
   --type-display: clamp(2rem, 5vw, 3rem);
   --type-heading: clamp(1.375rem, 2vw + 0.5rem, 1.75rem);
@@ -1599,40 +1594,6 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
   pointer-events: auto;
 }
 
-.hero-viewer__screen-glow {
-  display: none;
-  position: absolute;
-  inset: 8% 12% 28%;
-  z-index: 2;
-  pointer-events: none;
-  border-radius: 50%;
-  background: radial-gradient(
-    ellipse at 50% 35%,
-    var(--hero-screen-glow-color) 0%,
-    transparent var(--hero-screen-glow-size)
-  );
-  opacity: 0;
-  mix-blend-mode: screen;
-}
-
-:root[data-color-mode="dark"] .hero-viewer.is-loaded .hero-viewer__screen-glow {
-  display: block;
-  opacity: var(--hero-screen-glow-opacity);
-  animation: hero-screen-glow-pulse var(--hero-screen-glow-duration) ease-in-out infinite;
-}
-
-@keyframes hero-screen-glow-pulse {
-  0%,
-  100% {
-    opacity: calc(var(--hero-screen-glow-opacity) * 0.72);
-    transform: scale(0.98);
-  }
-  50% {
-    opacity: var(--hero-screen-glow-opacity);
-    transform: scale(1.03);
-  }
-}
-
 .hero-viewer__canvas {
   width: 100%;
   height: 100%;
@@ -1714,11 +1675,6 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
 
   .hero-visual__bob {
     animation: none;
-  }
-
-  :root[data-color-mode="dark"] .hero-viewer.is-loaded .hero-viewer__screen-glow {
-    animation: none;
-    opacity: calc(var(--hero-screen-glow-opacity) * 0.85);
   }
 }
 
