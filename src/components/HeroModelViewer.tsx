@@ -83,6 +83,8 @@ export function HeroModelViewer() {
 
     const pointer = { x: 0, y: 0 };
     const current = { theta: BASE_THETA, phi: BASE_PHI };
+    /** Mouse offsets from this orbit — updated after drag so follow doesn't yank back to base. */
+    const anchor = { theta: BASE_THETA, phi: BASE_PHI };
     let dragging = false;
     let raf = 0;
     let active = true;
@@ -108,6 +110,8 @@ export function HeroModelViewer() {
       pointer.x = 0;
       pointer.y = 0;
       dragging = false;
+      anchor.theta = BASE_THETA;
+      anchor.phi = BASE_PHI;
       current.theta = BASE_THETA;
       current.phi = BASE_PHI;
       try {
@@ -126,14 +130,18 @@ export function HeroModelViewer() {
       if (!dragging) return;
       dragging = false;
       syncFromViewer();
+      anchor.theta = current.theta;
+      anchor.phi = current.phi;
+      pointer.x = 0;
+      pointer.y = 0;
     };
 
     const tick = () => {
       if (!active || !viewer.isConnected) return;
 
       if (!dragging) {
-        const targetTheta = BASE_THETA - pointer.x * POINTER_THETA_RANGE;
-        const targetPhi = BASE_PHI + pointer.y * POINTER_PHI_RANGE;
+        const targetTheta = anchor.theta - pointer.x * POINTER_THETA_RANGE;
+        const targetPhi = anchor.phi + pointer.y * POINTER_PHI_RANGE;
 
         current.theta += (targetTheta - current.theta) * LERP;
         current.phi += (targetPhi - current.phi) * LERP;
