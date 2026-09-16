@@ -30,9 +30,9 @@ type ModelViewerElement = HTMLElement & {
 
 const LIGHTING = {
   light: {
-    exposure: 1.05,
-    shadowIntensity: 1.25,
-    /** Local 1k HDR — soft sunrise bounce for light mode */
+    exposure: 1.0,
+    shadowIntensity: 1.15,
+    /** Local 1k HDR — white furnace (neutral, less yellow than sunrise) */
     environmentImage: "/environments/hero-light.hdr",
   },
   dark: {
