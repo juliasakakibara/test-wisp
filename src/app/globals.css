@@ -50,9 +50,9 @@
   --type-hero-lead: clamp(1.125rem, 1.25vw + 0.75rem, 1.375rem);
 
   /* Hero layout tokens — ~⅔ of previous 90vh lock */
-  --hero-height: 60dvh;
-  --hero-height-min: 60dvh;
-  --hero-height-max: 60dvh;
+  --hero-height: 70dvh;
+  --hero-height-min: 70dvh;
+  --hero-height-max: 70dvh;
   --hero-stage-inset-bottom: var(--space-4);
   --hero-stage-inset-bottom-lg: var(--space-6);
   --hero-meta-padding-block: 0;
