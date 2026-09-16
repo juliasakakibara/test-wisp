@@ -74,8 +74,12 @@ export function HeroModelViewer() {
     const shell = shellRef.current;
     if (!viewer || !shell) return;
 
-    viewer.cameraOrbit = formatOrbit(BASE_THETA, BASE_PHI);
-    viewer.orientation = formatOrientation(0, 0);
+    try {
+      viewer.cameraOrbit = formatOrbit(BASE_THETA, BASE_PHI);
+      viewer.orientation = formatOrientation(0, 0);
+    } catch {
+      return;
+    }
 
     if (prefersReducedMotion()) return;
 
@@ -101,7 +105,12 @@ export function HeroModelViewer() {
       pointer.x = 0;
       pointer.y = 0;
       dragging = false;
-      viewer.cameraOrbit = formatOrbit(BASE_THETA, BASE_PHI);
+      if (!viewer.isConnected) return;
+      try {
+        viewer.cameraOrbit = formatOrbit(BASE_THETA, BASE_PHI);
+      } catch {
+        /* model-viewer may be tearing down */
+      }
     };
 
     const onPointerDown = (event: PointerEvent) => {
@@ -114,15 +123,28 @@ export function HeroModelViewer() {
     };
 
     const tick = () => {
-      if (!active) return;
+      if (!active || !viewer.isConnected) return;
 
       const targetYaw = dragging ? current.yaw : pointer.x * YAW_RANGE;
       const targetPitch = dragging ? current.pitch : -pointer.y * PITCH_RANGE;
 
-      current.yaw += (targetYaw - current.yaw) * LERP;
-      current.pitch += (targetPitch - current.pitch) * LERP;
+      const nextYaw = current.yaw + (targetYaw - current.yaw) * LERP;
+      const nextPitch = current.pitch + (targetPitch - current.pitch) * LERP;
 
-      viewer.orientation = formatOrientation(current.pitch, current.yaw);
+      if (Math.abs(nextYaw - current.yaw) > 0.01 || Math.abs(nextPitch - current.pitch) > 0.01) {
+        current.yaw = nextYaw;
+        current.pitch = nextPitch;
+        try {
+          viewer.orientation = formatOrientation(current.pitch, current.yaw);
+        } catch {
+          active = false;
+          return;
+        }
+      } else {
+        current.yaw = nextYaw;
+        current.pitch = nextPitch;
+      }
+
       raf = requestAnimationFrame(tick);
     };
 

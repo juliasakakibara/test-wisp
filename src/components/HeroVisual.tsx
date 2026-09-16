@@ -1,50 +1,52 @@
 "use client";
 
-import { useRef } from "react";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { HeroModelViewerLazy } from "@/components/HeroModelViewerLazy";
+import { useEffect, useRef } from "react";
+import { HeroModelViewer } from "@/components/HeroModelViewer";
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function parseCssLength(raw: string): number {
+  const value = Number.parseFloat(raw);
+  if (Number.isNaN(value)) return -48;
+  if (raw.trim().endsWith("rem")) return value * 16;
+  return value;
+}
 
 export function HeroVisual() {
   const parallaxRef = useRef<HTMLDivElement>(null);
 
-  useGSAP(
-    () => {
-      const el = parallaxRef.current;
-      if (!el) return;
+  useEffect(() => {
+    const el = parallaxRef.current;
+    const hero = document.getElementById("hero");
+    if (!el || !hero || prefersReducedMotion()) return;
 
-      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduceMotion) return;
+    const styles = getComputedStyle(document.documentElement);
+    const parallaxPx = parseCssLength(
+      styles.getPropertyValue("--hero-parallax-y").trim() || "-3rem",
+    );
 
-      const styles = getComputedStyle(document.documentElement);
-      const parallaxY = styles.getPropertyValue("--hero-parallax-y").trim() || "-3rem";
+    const onScroll = () => {
+      const rect = hero.getBoundingClientRect();
+      if (rect.height <= 0) return;
+      const progress = Math.min(1, Math.max(0, -rect.top / rect.height));
+      el.style.transform = `translate3d(0, ${progress * parallaxPx}px, 0)`;
+    };
 
-      gsap.fromTo(
-        el,
-        { y: 0 },
-        {
-          y: parallaxY,
-          ease: "none",
-          scrollTrigger: {
-            trigger: "#hero",
-            start: "top top",
-            end: "bottom top",
-            scrub: true,
-          },
-        },
-      );
-    },
-    { dependencies: [] },
-  );
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      el.style.transform = "";
+    };
+  }, []);
 
   return (
     <div id="hero-visual" className="hero-visual">
       <div ref={parallaxRef} className="hero-visual__parallax">
         <div className="hero-visual__bob">
-          <HeroModelViewerLazy />
+          <HeroModelViewer />
         </div>
       </div>
     </div>
