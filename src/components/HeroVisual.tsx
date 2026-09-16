@@ -2,7 +2,7 @@
 
 import { HeroModelViewerLazy } from "@/components/HeroModelViewerLazy";
 
-/** Step 2 — load + idle bob Y. Mouse follow comes next. */
+/** Step 3 — load + idle bob + mouse orbit lerp (via HeroModelViewer). */
 export function HeroVisual() {
   return (
     <div id="hero-visual" className="hero-visual">
