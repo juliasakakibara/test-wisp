@@ -8,25 +8,35 @@ const MODEL_SRC = "/models/hero.glb";
 const BASE_THETA = 12;
 const BASE_PHI = 78;
 const BASE_RADIUS = 135;
-const IDLE_DEG_PER_SEC = 6;
-const POINTER_THETA_RANGE = 18;
-const POINTER_PHI_RANGE = 10;
-const LERP = 0.07;
+const BASE_TARGET_Y = 0.9;
+
+const YAW_RANGE = 28;
+const PITCH_RANGE = 12;
+const LERP = 0.08;
 
 type ModelViewerElement = HTMLElement & {
   cameraOrbit: string;
+  orientation: string;
   addEventListener(
-    type: "progress",
-    listener: (event: CustomEvent<{ totalProgress: number }>) => void,
+    type: "progress" | "load",
+    listener: EventListenerOrEventListenerObject,
   ): void;
   removeEventListener(
-    type: "progress",
-    listener: (event: CustomEvent<{ totalProgress: number }>) => void,
+    type: "progress" | "load",
+    listener: EventListenerOrEventListenerObject,
   ): void;
 };
 
 function prefersReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function formatOrbit(theta: number, phi: number, radius = BASE_RADIUS) {
+  return `${theta.toFixed(2)}deg ${phi.toFixed(2)}deg ${radius}%`;
+}
+
+function formatOrientation(pitch: number, yaw: number, roll = 0) {
+  return `${pitch.toFixed(2)}deg ${yaw.toFixed(2)}deg ${roll.toFixed(2)}deg`;
 }
 
 export function HeroModelViewer() {
@@ -39,19 +49,20 @@ export function HeroModelViewer() {
     const viewer = viewerRef.current;
     if (!viewer) return;
 
-    const onProgress = (event: CustomEvent<{ totalProgress: number }>) => {
-      setProgress(event.detail.totalProgress);
+    const onProgress = (event: Event) => {
+      const detail = (event as CustomEvent<{ totalProgress: number }>).detail;
+      setProgress(detail.totalProgress);
     };
     const onLoad = () => {
       setLoaded(true);
       setProgress(1);
     };
 
-    viewer.addEventListener("progress", onProgress as EventListener);
+    viewer.addEventListener("progress", onProgress);
     viewer.addEventListener("load", onLoad);
 
     return () => {
-      viewer.removeEventListener("progress", onProgress as EventListener);
+      viewer.removeEventListener("progress", onProgress);
       viewer.removeEventListener("load", onLoad);
     };
   }, []);
@@ -63,21 +74,22 @@ export function HeroModelViewer() {
     const shell = shellRef.current;
     if (!viewer || !shell) return;
 
-    if (prefersReducedMotion()) {
-      viewer.cameraOrbit = `${BASE_THETA}deg ${BASE_PHI}deg ${BASE_RADIUS}%`;
-      return;
-    }
+    viewer.cameraOrbit = formatOrbit(BASE_THETA, BASE_PHI);
+    viewer.orientation = formatOrientation(0, 0);
+
+    if (prefersReducedMotion()) return;
 
     const pointer = { x: 0, y: 0 };
-    const current = { theta: BASE_THETA, phi: BASE_PHI };
-    let idleYaw = 0;
+    const current = { pitch: 0, yaw: 0 };
+    let dragging = false;
     let raf = 0;
-    let last = performance.now();
     let active = true;
 
+    const hero = document.getElementById("hero") ?? shell;
+
     const onPointerMove = (event: PointerEvent) => {
-      if (event.pointerType === "touch") return;
-      const rect = shell.getBoundingClientRect();
+      if (event.pointerType === "touch" || dragging) return;
+      const rect = hero.getBoundingClientRect();
       if (rect.width === 0 || rect.height === 0) return;
       const nx = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       const ny = ((event.clientY - rect.top) / rect.height) * 2 - 1;
@@ -88,28 +100,36 @@ export function HeroModelViewer() {
     const onPointerLeave = () => {
       pointer.x = 0;
       pointer.y = 0;
+      dragging = false;
+      viewer.cameraOrbit = formatOrbit(BASE_THETA, BASE_PHI);
     };
 
-    const tick = (now: number) => {
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.pointerType === "touch") return;
+      dragging = true;
+    };
+
+    const onPointerUp = () => {
+      dragging = false;
+    };
+
+    const tick = () => {
       if (!active) return;
-      const dt = Math.min(0.05, (now - last) / 1000);
-      last = now;
 
-      idleYaw += IDLE_DEG_PER_SEC * dt;
-      const targetTheta = BASE_THETA + idleYaw + pointer.x * POINTER_THETA_RANGE;
-      const targetPhi = BASE_PHI - pointer.y * POINTER_PHI_RANGE;
+      const targetYaw = dragging ? current.yaw : pointer.x * YAW_RANGE;
+      const targetPitch = dragging ? current.pitch : -pointer.y * PITCH_RANGE;
 
-      current.theta += (targetTheta - current.theta) * LERP;
-      current.phi += (targetPhi - current.phi) * LERP;
+      current.yaw += (targetYaw - current.yaw) * LERP;
+      current.pitch += (targetPitch - current.pitch) * LERP;
 
-      viewer.cameraOrbit = `${current.theta.toFixed(2)}deg ${current.phi.toFixed(2)}deg ${BASE_RADIUS}%`;
+      viewer.orientation = formatOrientation(current.pitch, current.yaw);
       raf = requestAnimationFrame(tick);
     };
 
-    // Track pointer over the whole hero so the model reacts early
-    const hero = document.getElementById("hero") ?? shell;
     hero.addEventListener("pointermove", onPointerMove);
     hero.addEventListener("pointerleave", onPointerLeave);
+    viewer.addEventListener("pointerdown", onPointerDown as EventListener);
+    window.addEventListener("pointerup", onPointerUp);
     raf = requestAnimationFrame(tick);
 
     return () => {
@@ -117,6 +137,8 @@ export function HeroModelViewer() {
       cancelAnimationFrame(raf);
       hero.removeEventListener("pointermove", onPointerMove);
       hero.removeEventListener("pointerleave", onPointerLeave);
+      viewer.removeEventListener("pointerdown", onPointerDown as EventListener);
+      window.removeEventListener("pointerup", onPointerUp);
     };
   }, [loaded]);
 
@@ -132,16 +154,19 @@ export function HeroModelViewer() {
         src={MODEL_SRC}
         alt="Interactive 3D portfolio model"
         loading="lazy"
+        camera-controls
         disable-zoom
         disable-pan
         shadow-intensity="1.2"
         exposure="1.1"
         environment-image="legacy"
         interaction-prompt="none"
-        camera-orbit={`${BASE_THETA}deg ${BASE_PHI}deg ${BASE_RADIUS}%`}
+        interpolation-decay="40"
+        orientation={formatOrientation(0, 0)}
+        camera-orbit={formatOrbit(BASE_THETA, BASE_PHI)}
         min-camera-orbit="auto 55deg 100%"
         max-camera-orbit="auto 95deg 170%"
-        camera-target="0m 0.9m 0m"
+        camera-target={`0m ${BASE_TARGET_Y}m 0m`}
         field-of-view="28deg"
       >
         <div

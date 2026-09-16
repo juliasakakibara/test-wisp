@@ -67,6 +67,8 @@
   --hero-parallax-y: -3rem;
   --hero-load-scale: 0.92;
   --hero-load-duration: 700ms;
+  --hero-bob-distance: 0.35rem;
+  --hero-bob-duration: 4.5s;
   --hero-meta-gap: var(--space-4);
   --type-display: clamp(2rem, 5vw, 3rem);
   --type-heading: clamp(1.375rem, 2vw + 0.5rem, 1.75rem);
@@ -1447,6 +1449,22 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
   will-change: transform;
 }
 
+.hero-visual__bob {
+  width: 100%;
+  height: 100%;
+  animation: hero-bob var(--hero-bob-duration) ease-in-out infinite;
+}
+
+@keyframes hero-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(var(--hero-bob-distance));
+  }
+}
+
 .hero-title {
   margin: 0;
   width: 100%;
@@ -1664,6 +1682,10 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
 
   .hero-visual__parallax {
     will-change: auto;
+  }
+
+  .hero-visual__bob {
+    animation: none;
   }
 }
 

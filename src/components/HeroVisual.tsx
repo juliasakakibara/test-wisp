@@ -43,7 +43,9 @@ export function HeroVisual() {
   return (
     <div id="hero-visual" className="hero-visual">
       <div ref={parallaxRef} className="hero-visual__parallax">
-        <HeroModelViewerLazy />
+        <div className="hero-visual__bob">
+          <HeroModelViewerLazy />
+        </div>
       </div>
     </div>
   );

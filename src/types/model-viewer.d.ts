@@ -19,6 +19,8 @@ type ModelViewerAttributes = {
   "camera-target"?: string;
   "min-camera-orbit"?: string;
   "max-camera-orbit"?: string;
+  orientation?: string;
+  "interpolation-decay"?: number | string;
 };
 
 declare module "react" {
