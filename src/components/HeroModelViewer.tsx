@@ -95,8 +95,8 @@ export function HeroModelViewer() {
     const tick = () => {
       if (!active || !viewer.isConnected) return;
 
-      const targetTheta = BASE_THETA + pointer.x * POINTER_THETA_RANGE;
-      const targetPhi = BASE_PHI - pointer.y * POINTER_PHI_RANGE;
+      const targetTheta = BASE_THETA - pointer.x * POINTER_THETA_RANGE;
+      const targetPhi = BASE_PHI + pointer.y * POINTER_PHI_RANGE;
 
       current.theta += (targetTheta - current.theta) * LERP;
       current.phi += (targetPhi - current.phi) * LERP;
