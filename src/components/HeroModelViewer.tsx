@@ -15,6 +15,8 @@ const LERP = 0.01;
 
 type ModelViewerElement = HTMLElement & {
   cameraOrbit: string;
+  exposure: number;
+  shadowIntensity: number;
   addEventListener(
     type: "progress" | "load",
     listener: EventListenerOrEventListenerObject,
@@ -24,6 +26,26 @@ type ModelViewerElement = HTMLElement & {
     listener: EventListenerOrEventListenerObject,
   ): void;
 };
+
+const LIGHTING = {
+  light: { exposure: 1.1, shadowIntensity: 1.2 },
+  dark: { exposure: 0.82, shadowIntensity: 1.65 },
+} as const;
+
+function getDocumentColorMode(): "light" | "dark" {
+  const mode = document.documentElement.getAttribute("data-color-mode");
+  return mode === "dark" ? "dark" : "light";
+}
+
+function applyHeroLighting(viewer: ModelViewerElement, mode: "light" | "dark") {
+  const next = LIGHTING[mode];
+  try {
+    viewer.exposure = next.exposure;
+    viewer.shadowIntensity = next.shadowIntensity;
+  } catch {
+    /* model-viewer may not be ready */
+  }
+}
 
 function prefersReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -59,6 +81,7 @@ export function HeroModelViewer() {
     const onLoad = () => {
       setLoaded(true);
       setProgress(1);
+      applyHeroLighting(viewer, getDocumentColorMode());
     };
 
     viewer.addEventListener("progress", onProgress);
@@ -69,6 +92,25 @@ export function HeroModelViewer() {
       viewer.removeEventListener("load", onLoad);
     };
   }, []);
+
+  useEffect(() => {
+    const viewer = viewerRef.current;
+    if (!viewer || !loaded) return;
+
+    const syncLighting = () => {
+      applyHeroLighting(viewer, getDocumentColorMode());
+    };
+
+    syncLighting();
+
+    const observer = new MutationObserver(syncLighting);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-color-mode"],
+    });
+
+    return () => observer.disconnect();
+  }, [loaded]);
 
   useEffect(() => {
     if (!loaded) return;
@@ -182,6 +224,7 @@ export function HeroModelViewer() {
       className={`hero-viewer${loaded ? " is-loaded" : ""}`}
       aria-label="3D portfolio model"
     >
+      <div className="hero-viewer__screen-glow" aria-hidden="true" />
       <model-viewer
         ref={viewerRef}
         className="hero-viewer__canvas"
@@ -191,8 +234,8 @@ export function HeroModelViewer() {
         camera-controls
         disable-zoom
         disable-pan
-        shadow-intensity="1.2"
-        exposure="1.1"
+        shadow-intensity={LIGHTING.light.shadowIntensity}
+        exposure={LIGHTING.light.exposure}
         environment-image="legacy"
         interaction-prompt="none"
         interpolation-decay="40"
