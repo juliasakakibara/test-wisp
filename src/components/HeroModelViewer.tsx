@@ -5,7 +5,7 @@ import "@google/model-viewer";
 
 const MODEL_SRC = "/models/hero.glb";
 
-/** Step 3 — load + mouse orbit lerp. Idle bob stays on CSS wrapper (HeroVisual). */
+/** Step 4 — load + bob + mouse lerp + camera-controls on drag. */
 const BASE_THETA = 12;
 const BASE_PHI = 78;
 const BASE_RADIUS = 135;
@@ -31,6 +31,15 @@ function prefersReducedMotion() {
 
 function formatOrbit(theta: number, phi: number) {
   return `${theta.toFixed(2)}deg ${phi.toFixed(2)}deg ${BASE_RADIUS}%`;
+}
+
+function parseOrbit(orbit: string): { theta: number; phi: number } | null {
+  const parts = orbit.trim().split(/\s+/);
+  if (parts.length < 2) return null;
+  const theta = Number.parseFloat(parts[0]);
+  const phi = Number.parseFloat(parts[1]);
+  if (Number.isNaN(theta) || Number.isNaN(phi)) return null;
+  return { theta, phi };
 }
 
 export function HeroModelViewer() {
@@ -74,11 +83,19 @@ export function HeroModelViewer() {
 
     const pointer = { x: 0, y: 0 };
     const current = { theta: BASE_THETA, phi: BASE_PHI };
+    let dragging = false;
     let raf = 0;
     let active = true;
 
+    const syncFromViewer = () => {
+      const parsed = parseOrbit(viewer.cameraOrbit);
+      if (!parsed) return;
+      current.theta = parsed.theta;
+      current.phi = parsed.phi;
+    };
+
     const onPointerMove = (event: PointerEvent) => {
-      if (event.pointerType === "touch") return;
+      if (event.pointerType === "touch" || dragging) return;
       const rect = shell.getBoundingClientRect();
       if (rect.width === 0 || rect.height === 0) return;
       const nx = ((event.clientX - rect.left) / rect.width) * 2 - 1;
@@ -90,22 +107,43 @@ export function HeroModelViewer() {
     const onPointerLeave = () => {
       pointer.x = 0;
       pointer.y = 0;
+      dragging = false;
+      current.theta = BASE_THETA;
+      current.phi = BASE_PHI;
+      try {
+        viewer.cameraOrbit = formatOrbit(BASE_THETA, BASE_PHI);
+      } catch {
+        /* viewer may be tearing down */
+      }
+    };
+
+    const onDragStart = (event: PointerEvent) => {
+      if (event.pointerType === "touch") return;
+      dragging = true;
+    };
+
+    const onDragEnd = () => {
+      if (!dragging) return;
+      dragging = false;
+      syncFromViewer();
     };
 
     const tick = () => {
       if (!active || !viewer.isConnected) return;
 
-      const targetTheta = BASE_THETA - pointer.x * POINTER_THETA_RANGE;
-      const targetPhi = BASE_PHI + pointer.y * POINTER_PHI_RANGE;
+      if (!dragging) {
+        const targetTheta = BASE_THETA - pointer.x * POINTER_THETA_RANGE;
+        const targetPhi = BASE_PHI + pointer.y * POINTER_PHI_RANGE;
 
-      current.theta += (targetTheta - current.theta) * LERP;
-      current.phi += (targetPhi - current.phi) * LERP;
+        current.theta += (targetTheta - current.theta) * LERP;
+        current.phi += (targetPhi - current.phi) * LERP;
 
-      try {
-        viewer.cameraOrbit = formatOrbit(current.theta, current.phi);
-      } catch {
-        active = false;
-        return;
+        try {
+          viewer.cameraOrbit = formatOrbit(current.theta, current.phi);
+        } catch {
+          active = false;
+          return;
+        }
       }
 
       raf = requestAnimationFrame(tick);
@@ -114,6 +152,9 @@ export function HeroModelViewer() {
     const hero = document.getElementById("hero") ?? shell;
     hero.addEventListener("pointermove", onPointerMove);
     hero.addEventListener("pointerleave", onPointerLeave);
+    viewer.addEventListener("pointerdown", onDragStart as EventListener);
+    window.addEventListener("pointerup", onDragEnd);
+    window.addEventListener("pointercancel", onDragEnd);
     raf = requestAnimationFrame(tick);
 
     return () => {
@@ -121,6 +162,9 @@ export function HeroModelViewer() {
       cancelAnimationFrame(raf);
       hero.removeEventListener("pointermove", onPointerMove);
       hero.removeEventListener("pointerleave", onPointerLeave);
+      viewer.removeEventListener("pointerdown", onDragStart as EventListener);
+      window.removeEventListener("pointerup", onDragEnd);
+      window.removeEventListener("pointercancel", onDragEnd);
     };
   }, [loaded]);
 
@@ -136,12 +180,14 @@ export function HeroModelViewer() {
         src={MODEL_SRC}
         alt="Interactive 3D portfolio model"
         loading="lazy"
+        camera-controls
         disable-zoom
         disable-pan
         shadow-intensity="1.2"
         exposure="1.1"
         environment-image="legacy"
         interaction-prompt="none"
+        interpolation-decay="40"
         camera-orbit={formatOrbit(BASE_THETA, BASE_PHI)}
         min-camera-orbit="auto 55deg 100%"
         max-camera-orbit="auto 95deg 170%"
