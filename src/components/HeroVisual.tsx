@@ -1,13 +1,12 @@
 "use client";
 
-import { HeroModelViewer } from "@/components/HeroModelViewer";
+import { HeroModelViewerLazy } from "@/components/HeroModelViewerLazy";
 
+/** Client wrapper — keeps model-viewer behind dynamic(ssr:false). */
 export function HeroVisual() {
   return (
     <div id="hero-visual" className="hero-visual">
-      <div className="hero-visual__bob">
-        <HeroModelViewer />
-      </div>
+      <HeroModelViewerLazy />
     </div>
   );
 }
