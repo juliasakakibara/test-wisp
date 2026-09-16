@@ -11,7 +11,7 @@ const BASE_PHI = 78;
 const BASE_RADIUS = 135;
 const POINTER_THETA_RANGE = 18;
 const POINTER_PHI_RANGE = 10;
-const LERP = 0.05;
+const LERP = 0.01;
 
 type ModelViewerElement = HTMLElement & {
   cameraOrbit: string;
