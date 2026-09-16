@@ -5,13 +5,10 @@ import "@google/model-viewer";
 
 const MODEL_SRC = "/models/hero.glb";
 
+/** Step 1 — load only. Idle / mouse follow come back in later steps. */
 const BASE_THETA = 12;
 const BASE_PHI = 78;
 const BASE_RADIUS = 135;
-const IDLE_DEG_PER_SEC = 6;
-const POINTER_THETA_RANGE = 18;
-const POINTER_PHI_RANGE = 10;
-const LERP = 0.07;
 
 type ModelViewerElement = HTMLElement & {
   cameraOrbit: string;
@@ -25,17 +22,12 @@ type ModelViewerElement = HTMLElement & {
   ): void;
 };
 
-function prefersReducedMotion() {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
 function formatOrbit(theta: number, phi: number) {
   return `${theta.toFixed(2)}deg ${phi.toFixed(2)}deg ${BASE_RADIUS}%`;
 }
 
 export function HeroModelViewer() {
   const viewerRef = useRef<ModelViewerElement>(null);
-  const shellRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
   const [loaded, setLoaded] = useState(false);
 
@@ -61,78 +53,8 @@ export function HeroModelViewer() {
     };
   }, []);
 
-  useEffect(() => {
-    if (!loaded) return;
-
-    const viewer = viewerRef.current;
-    const shell = shellRef.current;
-    if (!viewer || !shell) return;
-
-    if (prefersReducedMotion()) {
-      viewer.cameraOrbit = formatOrbit(BASE_THETA, BASE_PHI);
-      return;
-    }
-
-    const pointer = { x: 0, y: 0 };
-    const current = { theta: BASE_THETA, phi: BASE_PHI };
-    let idleYaw = 0;
-    let raf = 0;
-    let last = performance.now();
-    let active = true;
-
-    const onPointerMove = (event: PointerEvent) => {
-      if (event.pointerType === "touch") return;
-      const rect = shell.getBoundingClientRect();
-      if (rect.width === 0 || rect.height === 0) return;
-      const nx = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      const ny = ((event.clientY - rect.top) / rect.height) * 2 - 1;
-      pointer.x = Math.max(-1, Math.min(1, nx));
-      pointer.y = Math.max(-1, Math.min(1, ny));
-    };
-
-    const onPointerLeave = () => {
-      pointer.x = 0;
-      pointer.y = 0;
-    };
-
-    const tick = (now: number) => {
-      if (!active || !viewer.isConnected) return;
-      const dt = Math.min(0.05, (now - last) / 1000);
-      last = now;
-
-      idleYaw += IDLE_DEG_PER_SEC * dt;
-      const targetTheta = BASE_THETA + idleYaw + pointer.x * POINTER_THETA_RANGE;
-      const targetPhi = BASE_PHI - pointer.y * POINTER_PHI_RANGE;
-
-      current.theta += (targetTheta - current.theta) * LERP;
-      current.phi += (targetPhi - current.phi) * LERP;
-
-      try {
-        viewer.cameraOrbit = formatOrbit(current.theta, current.phi);
-      } catch {
-        active = false;
-        return;
-      }
-
-      raf = requestAnimationFrame(tick);
-    };
-
-    const hero = document.getElementById("hero") ?? shell;
-    hero.addEventListener("pointermove", onPointerMove);
-    hero.addEventListener("pointerleave", onPointerLeave);
-    raf = requestAnimationFrame(tick);
-
-    return () => {
-      active = false;
-      cancelAnimationFrame(raf);
-      hero.removeEventListener("pointermove", onPointerMove);
-      hero.removeEventListener("pointerleave", onPointerLeave);
-    };
-  }, [loaded]);
-
   return (
     <div
-      ref={shellRef}
       className={`hero-viewer${loaded ? " is-loaded" : ""}`}
       aria-label="3D portfolio model"
     >
