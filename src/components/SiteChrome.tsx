@@ -1,6 +1,7 @@
-import Link from "next/link";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { FooterSocial } from "@/components/FooterSocial";
+import { SiteLogo } from "@/components/SiteLogo";
+import Link from "next/link";
 import type { SiteConfig } from "@/lib/redis";
 
 export function SiteChrome({
@@ -25,15 +26,13 @@ export function SiteChrome({
           <span className="site-header__blur-tint" />
         </div>
         <div className="header-container">
-          <Link href="/" className="site-logo-link">
-            <span className="site-title" data-editable="siteName">
-              {config.siteName}
-            </span>
-            <span className="site-title-role">ux engineer</span>
-          </Link>
+          <SiteLogo siteName={config.siteName} />
           <nav className="nav-list" aria-label="Main">
             <Link href="/#work" className="nav-item">
               work
+            </Link>
+            <Link href="/about" className="nav-item">
+              about
             </Link>
             <a href="/resume/julia-sakakibara-en.html" className="nav-item">
               cv

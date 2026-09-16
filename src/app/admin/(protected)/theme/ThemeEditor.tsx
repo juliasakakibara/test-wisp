@@ -390,7 +390,7 @@ export default function ThemeEditor({
             <button
               type="button"
               className="admin-preview__nav-btn"
-              onClick={() => navigatePreview("/#about")}
+              onClick={() => navigatePreview("/about")}
             >
               About
             </button>

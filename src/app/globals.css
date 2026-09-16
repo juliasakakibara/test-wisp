@@ -398,13 +398,17 @@ html[data-env="admin"] .site-header {
   text-decoration: none;
   color: inherit;
   border-radius: var(--radius);
-  transition: color 160ms ease;
+  transition: color var(--duration-fast) ease;
+}
+
+.site-logo-link:hover {
+  text-decoration: none;
 }
 
 .site-logo-link:hover .site-title {
   color: var(--foreground);
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--foreground) 30%, transparent);
+  font-style: normal;
+  text-decoration: none;
 }
 
 .site-title {
@@ -414,7 +418,10 @@ html[data-env="admin"] .site-header {
   font-size: var(--type-body);
   letter-spacing: -0.01em;
   text-transform: lowercase;
+  font-style: normal;
   color: var(--foreground);
+  white-space: nowrap;
+  box-sizing: content-box;
 }
 
 .site-title-role {
@@ -1393,7 +1400,7 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
   pointer-events: none;
 }
 
-.hero-copy :is(nav, a, button, .hero-visual, .hero-title__scramble) {
+.hero-copy :is(nav, a, button, .hero-visual) {
   pointer-events: auto;
 }
 
@@ -1443,11 +1450,6 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
   color: var(--foreground);
   text-align: center;
   text-transform: uppercase;
-}
-
-.hero-title__scramble {
-  display: inline;
-  cursor: pointer;
 }
 
 @media (min-width: 768px) {
