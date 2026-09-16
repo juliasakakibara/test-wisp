@@ -74,9 +74,9 @@
   --type-caption: 0.75rem;
 
   --font-weight-body: 400;
-  --font-weight-medium: 600;
-  --font-weight-heading: 700;
-  --font-weight-display: 700;
+  --font-weight-medium: 500;
+  --font-weight-heading: 300;
+  --font-weight-display: 500;
 
   /* Shape — default sharp (Raster); overridden by theme preview / Redis */
   --radius: 0;
@@ -1713,6 +1713,7 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
   padding: var(--space-3);
   pointer-events: none;
   filter: invert(var(--project-card-label-invert));
+  mix-blend-mode: difference;
 }
 
 .project-card__category,
