@@ -16,6 +16,7 @@ type ModelViewerAttributes = {
   "environment-image"?: string;
   "interaction-prompt"?: "auto" | "when-focused" | "none";
   "camera-orbit"?: string;
+  "camera-target"?: string;
   "min-camera-orbit"?: string;
   "max-camera-orbit"?: string;
 };

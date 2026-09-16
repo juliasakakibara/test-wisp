@@ -5,19 +5,33 @@ import "@google/model-viewer";
 
 const MODEL_SRC = "/models/hero.glb";
 
+const BASE_THETA = 12;
+const BASE_PHI = 78;
+const BASE_RADIUS = 135;
+const IDLE_DEG_PER_SEC = 6;
+const POINTER_THETA_RANGE = 18;
+const POINTER_PHI_RANGE = 10;
+const LERP = 0.07;
+
 type ModelViewerElement = HTMLElement & {
+  cameraOrbit: string;
   addEventListener(
     type: "progress",
-    listener: (event: CustomEvent<{ totalProgress: number }>) => void
+    listener: (event: CustomEvent<{ totalProgress: number }>) => void,
   ): void;
   removeEventListener(
     type: "progress",
-    listener: (event: CustomEvent<{ totalProgress: number }>) => void
+    listener: (event: CustomEvent<{ totalProgress: number }>) => void,
   ): void;
 };
 
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 export function HeroModelViewer() {
   const viewerRef = useRef<ModelViewerElement>(null);
+  const shellRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
   const [loaded, setLoaded] = useState(false);
 
@@ -42,8 +56,73 @@ export function HeroModelViewer() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!loaded) return;
+
+    const viewer = viewerRef.current;
+    const shell = shellRef.current;
+    if (!viewer || !shell) return;
+
+    if (prefersReducedMotion()) {
+      viewer.cameraOrbit = `${BASE_THETA}deg ${BASE_PHI}deg ${BASE_RADIUS}%`;
+      return;
+    }
+
+    const pointer = { x: 0, y: 0 };
+    const current = { theta: BASE_THETA, phi: BASE_PHI };
+    let idleYaw = 0;
+    let raf = 0;
+    let last = performance.now();
+    let active = true;
+
+    const onPointerMove = (event: PointerEvent) => {
+      if (event.pointerType === "touch") return;
+      const rect = shell.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      const nx = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      const ny = ((event.clientY - rect.top) / rect.height) * 2 - 1;
+      pointer.x = Math.max(-1, Math.min(1, nx));
+      pointer.y = Math.max(-1, Math.min(1, ny));
+    };
+
+    const onPointerLeave = () => {
+      pointer.x = 0;
+      pointer.y = 0;
+    };
+
+    const tick = (now: number) => {
+      if (!active) return;
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+
+      idleYaw += IDLE_DEG_PER_SEC * dt;
+      const targetTheta = BASE_THETA + idleYaw + pointer.x * POINTER_THETA_RANGE;
+      const targetPhi = BASE_PHI - pointer.y * POINTER_PHI_RANGE;
+
+      current.theta += (targetTheta - current.theta) * LERP;
+      current.phi += (targetPhi - current.phi) * LERP;
+
+      viewer.cameraOrbit = `${current.theta.toFixed(2)}deg ${current.phi.toFixed(2)}deg ${BASE_RADIUS}%`;
+      raf = requestAnimationFrame(tick);
+    };
+
+    // Track pointer over the whole hero so the model reacts early
+    const hero = document.getElementById("hero") ?? shell;
+    hero.addEventListener("pointermove", onPointerMove);
+    hero.addEventListener("pointerleave", onPointerLeave);
+    raf = requestAnimationFrame(tick);
+
+    return () => {
+      active = false;
+      cancelAnimationFrame(raf);
+      hero.removeEventListener("pointermove", onPointerMove);
+      hero.removeEventListener("pointerleave", onPointerLeave);
+    };
+  }, [loaded]);
+
   return (
     <div
+      ref={shellRef}
       className={`hero-viewer${loaded ? " is-loaded" : ""}`}
       aria-label="3D portfolio model"
     >
@@ -53,14 +132,13 @@ export function HeroModelViewer() {
         src={MODEL_SRC}
         alt="Interactive 3D portfolio model"
         loading="lazy"
-        camera-controls
         disable-zoom
         disable-pan
         shadow-intensity="1.2"
         exposure="1.1"
         environment-image="legacy"
         interaction-prompt="none"
-        camera-orbit="12deg 78deg 135%"
+        camera-orbit={`${BASE_THETA}deg ${BASE_PHI}deg ${BASE_RADIUS}%`}
         min-camera-orbit="auto 55deg 100%"
         max-camera-orbit="auto 95deg 170%"
         camera-target="0m 0.9m 0m"

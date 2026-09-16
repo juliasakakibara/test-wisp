@@ -1,5 +1,5 @@
 import type { SiteConfig } from "@/lib/redis";
-import { HeroModelViewerLazy } from "@/components/HeroModelViewerLazy";
+import { HeroVisual } from "@/components/HeroVisual";
 
 type HeroSectionProps = {
   config: Pick<SiteConfig, "heroTitle">;
@@ -15,9 +15,7 @@ export function HeroSection({ config }: HeroSectionProps) {
               {config.heroTitle}
             </h1>
 
-            <div id="hero-visual" className="hero-visual">
-              <HeroModelViewerLazy />
-            </div>
+            <HeroVisual />
           </div>
         </div>
       </div>
