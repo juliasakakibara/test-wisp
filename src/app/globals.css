@@ -1685,17 +1685,35 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
   --grid-template: 1;
 }
 
-/* Max 2 per row — orphan last card spans full (e.g. 5 → 2+2+1) */
+/*
+  Option A — alternating featured:
+  mobile: 1 col
+  ≥640: 2-col base; 1 alone = full; 2 = half·half;
+  3+: first full, then pairs; even count also ends with full (e.g. 4 → F H H F, 5 → F H H H H)
+*/
 @media (min-width: 640px) {
   .project-grid {
     --grid-template: 2;
   }
 
-  .project-grid > .project-card:last-child:nth-child(odd) {
+  .project-grid > .project-card:only-child {
     grid-column: 1 / -1;
   }
 
-  .project-grid > .project-card:last-child:nth-child(odd) .project-card__media {
+  .project-grid:has(> .project-card:nth-child(3)) > .project-card:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .project-grid:has(> .project-card:nth-child(3)):has(> .project-card:nth-child(even):last-child)
+    > .project-card:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .project-grid > .project-card:only-child .project-card__media,
+  .project-grid:has(> .project-card:nth-child(3)) > .project-card:first-child .project-card__media,
+  .project-grid:has(> .project-card:nth-child(3)):has(> .project-card:nth-child(even):last-child)
+    > .project-card:last-child
+    .project-card__media {
     aspect-ratio: var(--project-card-aspect-featured);
   }
 }
