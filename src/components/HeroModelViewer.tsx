@@ -17,6 +17,7 @@ type ModelViewerElement = HTMLElement & {
   cameraOrbit: string;
   exposure: number;
   shadowIntensity: number;
+  environmentImage: string;
   addEventListener(
     type: "progress" | "load",
     listener: EventListenerOrEventListenerObject,
@@ -28,8 +29,17 @@ type ModelViewerElement = HTMLElement & {
 };
 
 const LIGHTING = {
-  light: { exposure: 1.1, shadowIntensity: 1.2 },
-  dark: { exposure: 0.82, shadowIntensity: 1.65 },
+  light: {
+    exposure: 1.1,
+    shadowIntensity: 1.2,
+    environmentImage: "legacy",
+  },
+  dark: {
+    exposure: 0.78,
+    shadowIntensity: 1.8,
+    /** Local 1k HDR — indoor workshop bounce for cooler face light in dark mode */
+    environmentImage: "/environments/hero-dark.hdr",
+  },
 } as const;
 
 function getDocumentColorMode(): "light" | "dark" {
@@ -42,6 +52,7 @@ function applyHeroLighting(viewer: ModelViewerElement, mode: "light" | "dark") {
   try {
     viewer.exposure = next.exposure;
     viewer.shadowIntensity = next.shadowIntensity;
+    viewer.environmentImage = next.environmentImage;
   } catch {
     /* model-viewer may not be ready */
   }
@@ -235,7 +246,7 @@ export function HeroModelViewer() {
         disable-pan
         shadow-intensity={LIGHTING.light.shadowIntensity}
         exposure={LIGHTING.light.exposure}
-        environment-image="legacy"
+        environment-image={LIGHTING.light.environmentImage}
         interaction-prompt="none"
         interpolation-decay="40"
         camera-orbit={formatOrbit(BASE_THETA, BASE_PHI)}
