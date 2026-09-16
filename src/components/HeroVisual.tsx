@@ -2,11 +2,13 @@
 
 import { HeroModelViewerLazy } from "@/components/HeroModelViewerLazy";
 
-/** Client wrapper — keeps model-viewer behind dynamic(ssr:false). */
+/** Step 2 — load + idle bob Y. Mouse follow comes next. */
 export function HeroVisual() {
   return (
     <div id="hero-visual" className="hero-visual">
-      <HeroModelViewerLazy />
+      <div className="hero-visual__bob">
+        <HeroModelViewerLazy />
+      </div>
     </div>
   );
 }
