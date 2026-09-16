@@ -22,7 +22,7 @@ export function ProjectCard({ post }: ProjectCardProps) {
               alt=""
               fill
               className="project-card__image-fill"
-              sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 33vw"
+              sizes="(max-width: 639px) 100vw, 50vw"
             />
           ) : null}
           <div className="project-card__label">

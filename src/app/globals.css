@@ -1685,48 +1685,18 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
   --grid-template: 1;
 }
 
+/* Max 2 per row — orphan last card spans full (e.g. 5 → 2+2+1) */
 @media (min-width: 640px) {
   .project-grid {
     --grid-template: 2;
   }
 
-  /* 2-col: orphan last card spans full row (e.g. 5 → 2+2+1) */
   .project-grid > .project-card:last-child:nth-child(odd) {
     grid-column: 1 / -1;
   }
 
   .project-grid > .project-card:last-child:nth-child(odd) .project-card__media {
     aspect-ratio: var(--project-card-aspect-featured);
-  }
-}
-
-@media (min-width: 1024px) {
-  .project-grid {
-    --grid-template: 3;
-  }
-
-  /* Reset 2-col orphan rules before 3-col fill logic */
-  .project-grid > .project-card:last-child:nth-child(odd) {
-    grid-column: span calc(var(--grid-columns) / var(--grid-template));
-  }
-
-  .project-grid > .project-card:last-child:nth-child(odd) .project-card__media {
-    aspect-ratio: var(--project-card-aspect);
-  }
-
-  /* 3-col rem 1: last alone → full row (e.g. 4, 7) */
-  .project-grid > .project-card:last-child:nth-child(3n + 1) {
-    grid-column: 1 / -1;
-  }
-
-  .project-grid > .project-card:last-child:nth-child(3n + 1) .project-card__media {
-    aspect-ratio: var(--project-card-aspect-featured);
-  }
-
-  /* 3-col rem 2: last pair each half row (e.g. 5 → 3+2) — keeps image scale close to peers */
-  .project-grid > .project-card:nth-last-child(2):nth-child(3n + 1),
-  .project-grid > .project-card:nth-last-child(1):nth-child(3n + 2) {
-    grid-column: span calc(var(--grid-columns) / 2);
   }
 }
 
