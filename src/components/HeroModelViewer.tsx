@@ -30,9 +30,9 @@ type ModelViewerElement = HTMLElement & {
 
 const LIGHTING = {
   light: {
-    exposure: 1.15,
-    shadowIntensity: 1.35,
-    /** Local 1k HDR — Poly Haven studio_small_03 (neutral + directional, not flat furnace) */
+    exposure: 1.05,
+    shadowIntensity: 1.3,
+    /** Local 1k HDR — Poly Haven brown_photostudio_02 (warm-neutral softbox, not white/yellow) */
     environmentImage: "/environments/hero-light.hdr",
   },
   dark: {
