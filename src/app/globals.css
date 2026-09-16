@@ -64,7 +64,6 @@
   --hero-model-height: calc(var(--hero-model-size) * 1.1);
   --hero-mobile-model-size: min(48vw, calc(var(--grid-unit) * 26));
   --hero-mobile-model-height: calc(var(--hero-mobile-model-size) * 1.1);
-  --hero-parallax-y: -3rem;
   --hero-load-scale: 0.92;
   --hero-load-duration: 700ms;
   --hero-bob-distance: 0.35rem;
@@ -1443,12 +1442,6 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
   transform: translate(-50%, -40%);
 }
 
-.hero-visual__parallax {
-  width: 100%;
-  height: 100%;
-  will-change: transform;
-}
-
 .hero-visual__bob {
   width: 100%;
   height: 100%;
@@ -1678,10 +1671,6 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
   .hero-viewer__progress-bar,
   .hero-viewer__progress {
     transition: none;
-  }
-
-  .hero-visual__parallax {
-    will-change: auto;
   }
 
   .hero-visual__bob {
