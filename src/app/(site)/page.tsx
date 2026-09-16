@@ -27,8 +27,6 @@ export default async function HomePage() {
           config={{
             heroTitle: config.heroTitle,
             heroDescription: config.heroDescription,
-            githubUrl: config.githubUrl,
-            linkedinUrl: config.linkedinUrl,
           }}
         />
       </div>
@@ -45,6 +43,17 @@ export default async function HomePage() {
           <div className="about-body" data-editable="aboutBody">
             {config.aboutBody}
           </div>
+          <p className="about-resume">
+            <a href="/resume/julia-sakakibara-en.html" className="about-resume__link">
+              Download CV
+            </a>
+            <span className="meta-separator" aria-hidden="true">
+              {" · "}
+            </span>
+            <a href="/resume/julia-sakakibara-pt.html" className="about-resume__link">
+              CV em português
+            </a>
+          </p>
         </section>
 
         <section id="work" className="work-section site-section" aria-labelledby="work-title">

@@ -356,6 +356,10 @@ html[data-env="admin"] .site-header {
 }
 
 .nav-item {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-block: var(--space-2);
   color: var(--foreground);
   text-decoration: none;
   transition: color 160ms ease;
@@ -432,6 +436,10 @@ html[data-env="admin"] .site-header {
 }
 
 .footer-social__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-block: var(--space-2);
   font-size: var(--type-meta);
   font-weight: var(--font-weight-medium);
   color: var(--muted-foreground);
@@ -1665,6 +1673,7 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-1);
+  min-height: 44px;
   text-decoration: none;
   color: inherit;
   padding-block: var(--space-3);
@@ -1760,6 +1769,28 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
   color: var(--muted-foreground);
   white-space: pre-line;
   margin: var(--space-6) 0 0;
+}
+
+.about-resume {
+  margin: var(--space-4) 0 0;
+  font-size: var(--type-meta);
+  line-height: 1.5;
+}
+
+.about-resume__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-block: var(--space-2);
+  font-weight: var(--font-weight-medium);
+  color: var(--foreground);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--foreground) 30%, transparent);
+  text-underline-offset: 0.2em;
+}
+
+.about-resume__link:hover {
+  text-decoration-color: var(--foreground);
 }
 
 /* Project detail page */
@@ -2018,7 +2049,10 @@ html[data-env="admin"] body {
 }
 
 .theme-switcher__toggle {
-  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: var(--space-2) 0;
   border-radius: 0;
   font-size: var(--type-meta);
   line-height: 1.4;
@@ -2093,6 +2127,7 @@ html[data-env="admin"] body {
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  min-height: 44px;
   padding: var(--space-2);
   border: none;
   border-radius: 0;

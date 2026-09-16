@@ -422,6 +422,8 @@ src/app/(blog)/page.tsx
 
 **Ideia About (Julia, 12/09):** viewer R3F ou model-viewer com clip de dança, só desktop / `prefers-reduced-motion: no`; mobile = poster estático.
 
+**Decisão UI (16/09):** ThemeSwitcher Light/Dark **permanece** (funciona). Admin **permanece** (protegido por senha) — não desligar; só não investir polish agora.
+
 ---
 
 ## Próximos passos opcionais
@@ -431,6 +433,7 @@ src/app/(blog)/page.tsx
 - Falhar CI sem `WISP_BLOG_ID` (modo strict)
 - Aplicar `ThemeConfig` do Redis no site público (hoje: neutro + preview no iframe)
 - **P3:** `dancing.glb` animado na About (ver tabela acima)
+- Hero scroll 3D (GSAP + yaw) — quando autorizar `pode executar hero-scroll-3d`
 
 ---
 

@@ -15,13 +15,34 @@ const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getConfig();
+  const siteUrl = getSiteUrl();
   return {
-    metadataBase: new URL(getSiteUrl()),
+    metadataBase: new URL(siteUrl),
     title: {
       default: config.siteName,
       template: `%s | ${config.siteName}`,
     },
     description: config.siteDescription,
+    applicationName: config.siteName,
+    authors: [{ name: config.siteName }],
+    creator: config.siteName,
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      url: siteUrl,
+      siteName: config.siteName,
+      title: config.siteName,
+      description: config.siteDescription,
+    },
+    twitter: {
+      card: "summary",
+      title: config.siteName,
+      description: config.siteDescription,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
   };
 }
 
