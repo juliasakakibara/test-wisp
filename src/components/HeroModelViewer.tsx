@@ -6,11 +6,12 @@ import "@google/model-viewer";
 const MODEL_SRC = "/models/hero.glb";
 
 /** Step 4 — load + bob + mouse lerp + camera-controls on drag. */
-const BASE_THETA = 12;
-const BASE_PHI = 78;
+const BASE_THETA = 0;
+const BASE_PHI = 80;
 const BASE_RADIUS = 135;
-const POINTER_THETA_RANGE = 18;
-const POINTER_PHI_RANGE = 10;
+const POINTER_THETA_RANGE = 20;
+/** Vertical orbit follow — inverted so mouse up tilts the expected way */
+const POINTER_PHI_RANGE = 20;
 const LERP = 0.01;
 
 type ModelViewerElement = HTMLElement & {
@@ -30,13 +31,13 @@ type ModelViewerElement = HTMLElement & {
 
 const LIGHTING = {
   light: {
-    exposure: 1.05,
-    shadowIntensity: 1.3,
+    exposure: 1.5,
+    shadowIntensity: 0.9,
     /** Local 1k HDR — Poly Haven brown_photostudio_02 (warm-neutral softbox, not white/yellow) */
     environmentImage: "/environments/hero-light.hdr",
   },
   dark: {
-    exposure: 0.78,
+    exposure: 0.85,
     shadowIntensity: 1.8,
     /** Local 1k HDR — indoor workshop bounce for cooler face light in dark mode */
     environmentImage: "/environments/hero-dark.hdr",
@@ -195,7 +196,7 @@ export function HeroModelViewer() {
 
       if (!dragging) {
         const targetTheta = anchor.theta - pointer.x * POINTER_THETA_RANGE;
-        const targetPhi = anchor.phi + pointer.y * POINTER_PHI_RANGE;
+        const targetPhi = anchor.phi - pointer.y * POINTER_PHI_RANGE;
 
         current.theta += (targetTheta - current.theta) * LERP;
         current.phi += (targetPhi - current.phi) * LERP;
