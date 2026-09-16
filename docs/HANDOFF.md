@@ -411,12 +411,26 @@ src/app/(blog)/page.tsx
 
 ---
 
+## Assets 3D (hero + reserva About)
+
+| Asset | Uso | Fonte local | No repo |
+|-------|-----|-------------|---------|
+| **`working.glb`** | **Home hero** — estático, sem animação skeletal | `~/Downloads/working.glb` (~28 MB export) | `public/models/hero.glb` após `npm run models:optimize` (~1,6 MB Draco, set/2026) |
+| **`dancing.glb`** | **Reserva P3** — personagem animado na seção **About** (se sobrar tempo pós-ship) | `~/Downloads/dancing.glb` (~19 MB) | Não commitado ainda — otimizar antes de `public/models/dancing.glb` |
+
+**Pipeline:** export Blender → copiar para `public/models/hero.glb` → `npm run models:optimize` → testar `HeroModelViewer` (sem `auto-rotate`; drag orbit opcional).
+
+**Ideia About (Julia, 12/09):** viewer R3F ou model-viewer com clip de dança, só desktop / `prefers-reduced-motion: no`; mobile = poster estático.
+
+---
+
 ## Próximos passos opcionais
 
 - Conteúdo real: [`docs/CONTENT-PLAYBOOK.md`](./CONTENT-PLAYBOOK.md) — Auway primeiro no Wisp
 - Adicionar seção `#contact`
 - Falhar CI sem `WISP_BLOG_ID` (modo strict)
 - Aplicar `ThemeConfig` do Redis no site público (hoje: neutro + preview no iframe)
+- **P3:** `dancing.glb` animado na About (ver tabela acima)
 
 ---
 

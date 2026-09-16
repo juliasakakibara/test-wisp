@@ -43,9 +43,10 @@
 
   /* Typography scale — rsms-like: hero >> section >> body */
   --type-hero: clamp(2.75rem, 5vw + 1.25rem, 4.5rem);
-  --type-hero-massive: clamp(2.25rem, 11vw, 5.5rem);
-  --type-hero-massive-md: clamp(3rem, 14vw, 8rem);
-  --type-hero-massive-lg: clamp(4.5rem, 15vw, 12rem);
+  /* Long pixel headline — conservative caps so copy não estoura o viewport */
+  --type-hero-massive: clamp(1.5rem, 4.5vw + 0.35rem, 2.35rem);
+  --type-hero-massive-md: clamp(1.65rem, 4vw + 0.5rem, 2.75rem);
+  --type-hero-massive-lg: clamp(1.85rem, 2.8vw + 0.85rem, 3.35rem);
   --type-hero-lead: clamp(1.125rem, 1.25vw + 0.75rem, 1.375rem);
 
   /* Hero layout tokens — mobile-first; overridden at 640px / 768px */
@@ -1247,7 +1248,8 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
 
 .hero-section {
   width: 100%;
-  overflow: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
 }
 
 /* Hero — uma coluna: meta → título (+ 3D) → subtítulo → CTA */
@@ -1379,7 +1381,7 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
 .hero-title.hero-type {
   font-weight: 400;
   letter-spacing: 0.02em;
-  line-height: 1;
+  line-height: 1.08;
   text-transform: uppercase;
 }
 
@@ -1393,7 +1395,7 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
   }
 
   .hero-title.hero-type {
-    line-height: 1;
+    line-height: 1.06;
   }
 }
 
@@ -1403,7 +1405,7 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
   }
 
   .hero-title.hero-type {
-    line-height: 1;
+    line-height: 1.05;
   }
 }
 
@@ -1533,24 +1535,6 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
   background: transparent;
 }
 
-.hero-viewer__hint {
-  position: absolute;
-  bottom: 18%;
-  right: 12%;
-  margin: 0;
-  padding: calc(var(--space-1) * 0.75) var(--space-2);
-  font-size: var(--type-caption);
-  line-height: 1.4;
-  color: var(--muted-foreground);
-  background: color-mix(in srgb, var(--background) 82%, transparent);
-  border: 1px solid var(--border);
-  border-radius: calc(var(--radius) + var(--space-1));
-  backdrop-filter: blur(8px);
-  white-space: nowrap;
-  z-index: 2;
-  pointer-events: none;
-}
-
 .hero-viewer::before {
   display: none;
 }
@@ -1601,8 +1585,7 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
   }
 
   .hero-viewer__progress-bar,
-  .hero-viewer__progress,
-  .hero-viewer__hint {
+  .hero-viewer__progress {
     transition: none;
   }
 }

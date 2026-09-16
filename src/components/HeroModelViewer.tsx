@@ -20,15 +20,6 @@ export function HeroModelViewer() {
   const viewerRef = useRef<ModelViewerElement>(null);
   const [progress, setProgress] = useState(0);
   const [loaded, setLoaded] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => setReducedMotion(mq.matches);
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
 
   useEffect(() => {
     const viewer = viewerRef.current;
@@ -54,7 +45,7 @@ export function HeroModelViewer() {
   return (
     <div
       className={`hero-viewer${loaded ? " is-loaded" : ""}`}
-      aria-label="Interactive 3D model — drag to rotate"
+      aria-label="3D portfolio model"
     >
       <model-viewer
         ref={viewerRef}
@@ -74,7 +65,6 @@ export function HeroModelViewer() {
         max-camera-orbit="auto 95deg 170%"
         camera-target="0m 0.9m 0m"
         field-of-view="28deg"
-        {...(!reducedMotion ? { "auto-rotate": true, "rotation-per-second": "12deg" } : {})}
       >
         <div
           slot="progress-bar"
@@ -87,12 +77,6 @@ export function HeroModelViewer() {
           />
         </div>
       </model-viewer>
-
-      {loaded ? (
-        <p className="hero-viewer__hint" aria-hidden="true">
-          drag to rotate
-        </p>
-      ) : null}
     </div>
   );
 }
