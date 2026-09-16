@@ -49,10 +49,10 @@
   --type-hero-massive-lg: clamp(2.5rem, 4vw + 1rem, 3.75rem);
   --type-hero-lead: clamp(1.125rem, 1.25vw + 0.75rem, 1.375rem);
 
-  /* Hero layout tokens — mobile-first; overridden at 640px / 768px */
-  --hero-height: min(90dvh, calc(var(--grid-unit) * 110));
-  --hero-height-min: calc(var(--grid-unit) * 48);
-  --hero-height-max: calc(var(--grid-unit) * 125);
+  /* Hero layout tokens — lock scene to ~90vh (svh on small screens) */
+  --hero-height: 90dvh;
+  --hero-height-min: 90dvh;
+  --hero-height-max: 90dvh;
   --hero-stage-inset-bottom: var(--space-4);
   --hero-stage-inset-bottom-lg: var(--space-6);
   --hero-meta-padding-block: 0;
@@ -85,7 +85,7 @@
   /* Project cards — keep media scale stable when orphan/pair spans widen */
   --project-card-aspect: 4 / 3;
   --project-card-aspect-featured: 2 / 1;
-  --project-card-label-gap: var(--space-2);
+  --project-card-label-invert: 1;
 
   /* Motion */
   --duration-fast: 200ms;
@@ -143,7 +143,8 @@ html[data-env="admin"] {
     --grid-columns: 8;
     --julia-gap: var(--space-4);
     --hero-height: 90dvh;
-    --hero-height-min: calc(var(--grid-unit) * 52);
+    --hero-height-min: 90dvh;
+    --hero-height-max: 90dvh;
     --hero-model-size: min(28vw, calc(var(--grid-unit) * 36));
     --hero-model-height: calc(var(--hero-model-size) * 1.12);
   }
@@ -1438,15 +1439,15 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
 
 @media (max-width: 639px) {
   :root {
-    --hero-height: auto;
-    --hero-height-min: 0;
-    --hero-height-max: none;
+    --hero-height: 90svh;
+    --hero-height-min: 90svh;
+    --hero-height-max: 90svh;
   }
 
   .hero-scene {
-    height: auto;
-    min-height: 0;
-    max-height: none;
+    height: var(--hero-height);
+    min-height: var(--hero-height-min);
+    max-height: var(--hero-height-max);
     padding-bottom: var(--space-6);
   }
 
@@ -1673,9 +1674,7 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
 }
 
 .project-card__link {
-  display: flex;
-  flex-direction: column;
-  gap: var(--project-card-label-gap);
+  display: block;
   text-decoration: none;
   color: inherit;
 }
@@ -1703,19 +1702,29 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
 }
 
 .project-card__label {
+  position: absolute;
+  inset: auto auto 0 0;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: calc(var(--grid-unit) * 0.5);
-  max-width: min(100%, 24rem);
+  max-width: min(90%, 24rem);
+  padding: var(--space-3);
   pointer-events: none;
+  filter: invert(var(--project-card-label-invert));
+}
+
+.project-card__category,
+.project-card__name {
+  color: var(--foreground);
+  text-shadow: none;
 }
 
 .project-card__category {
   font-size: var(--type-meta);
   font-weight: var(--font-weight-body);
   line-height: 1.3;
-  color: var(--muted-foreground);
 }
 
 .project-card__name {
@@ -1723,7 +1732,6 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
   font-weight: var(--font-weight-body);
   line-height: 1.2;
   letter-spacing: -0.02em;
-  color: var(--foreground);
 }
 
 .work-empty {
