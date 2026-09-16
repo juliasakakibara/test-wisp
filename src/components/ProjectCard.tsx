@@ -25,10 +25,10 @@ export function ProjectCard({ post }: ProjectCardProps) {
               sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 33vw"
             />
           ) : null}
-          <div className="project-card__label">
-            <span className="project-card__category">{category}</span>
-            <span className="project-card__name">{post.title}</span>
-          </div>
+        </div>
+        <div className="project-card__label">
+          <span className="project-card__category">{category}</span>
+          <span className="project-card__name">{post.title}</span>
         </div>
       </Link>
     </li>
