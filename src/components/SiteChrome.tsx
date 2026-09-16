@@ -16,6 +16,14 @@ export function SiteChrome({
         Skip to content
       </a>
       <header className="site-header">
+        <div className="site-header__blur" aria-hidden="true">
+          <span className="site-header__blur-layer" data-blur="1" />
+          <span className="site-header__blur-layer" data-blur="2" />
+          <span className="site-header__blur-layer" data-blur="3" />
+          <span className="site-header__blur-layer" data-blur="4" />
+          <span className="site-header__blur-layer" data-blur="5" />
+          <span className="site-header__blur-tint" />
+        </div>
         <div className="header-container">
           <Link href="/" className="site-logo-link">
             <span className="site-title" data-editable="siteName">
@@ -26,9 +34,6 @@ export function SiteChrome({
           <nav className="nav-list" aria-label="Main">
             <Link href="/#work" className="nav-item">
               work
-            </Link>
-            <Link href="/#about" className="nav-item">
-              about
             </Link>
             <a href="/resume/julia-sakakibara-en.html" className="nav-item">
               cv

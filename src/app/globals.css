@@ -49,10 +49,10 @@
   --type-hero-massive-lg: clamp(2.5rem, 4vw + 1rem, 3.75rem);
   --type-hero-lead: clamp(1.125rem, 1.25vw + 0.75rem, 1.375rem);
 
-  /* Hero layout tokens — lock scene to ~90vh (svh on small screens) */
-  --hero-height: 90dvh;
-  --hero-height-min: 90dvh;
-  --hero-height-max: 90dvh;
+  /* Hero layout tokens — ~⅔ of previous 90vh lock */
+  --hero-height: 60dvh;
+  --hero-height-min: 60dvh;
+  --hero-height-max: 60dvh;
   --hero-stage-inset-bottom: var(--space-4);
   --hero-stage-inset-bottom-lg: var(--space-6);
   --hero-meta-padding-block: 0;
@@ -80,18 +80,26 @@
 
   /* Shape — default sharp (Raster); overridden by theme preview / Redis */
   --radius: 0;
-  --radius-card-hover: 0.5rem;
+  --radius-card: 0.5rem;
+  --radius-card-hover: 0;
 
   /* Project cards — keep media scale stable when orphan/pair spans widen */
   --project-card-aspect: 4 / 3;
   --project-card-aspect-featured: 2 / 1;
   --project-card-label-invert: 1;
+  --project-card-image-scale-hover: 1.1;
 
   /* Motion */
   --duration-fast: 200ms;
 
-  /* Nav underline — muted only (no black flash) */
-  --nav-underline: color-mix(in srgb, var(--foreground) 35%, transparent);
+  /* Sticky header progressive blur (AColorBright-style) */
+  --header-blur-extent: calc(var(--grid-unit) * 6);
+  --header-blur-1: 1px;
+  --header-blur-2: 2px;
+  --header-blur-3: 4px;
+  --header-blur-4: 8px;
+  --header-blur-5: 16px;
+  --header-tint: color-mix(in srgb, var(--background) 72%, transparent);
 }
 
 /* Neutral color modes — public only (admin iframe uses theme preview) */
@@ -142,9 +150,9 @@ html[data-env="admin"] {
   :root {
     --grid-columns: 8;
     --julia-gap: var(--space-4);
-    --hero-height: 90dvh;
-    --hero-height-min: 90dvh;
-    --hero-height-max: 90dvh;
+    --hero-height: 60dvh;
+    --hero-height-min: 60dvh;
+    --hero-height-max: 60dvh;
     --hero-model-size: min(28vw, calc(var(--grid-unit) * 36));
     --hero-model-height: calc(var(--hero-model-size) * 1.12);
   }
@@ -293,10 +301,69 @@ html[data-env="admin"] {
 }
 
 .site-header {
-  position: static;
-  z-index: 10;
+  position: sticky;
+  top: 0;
+  z-index: 50;
   padding-block: var(--space-4);
-  background: var(--background);
+  background: transparent;
+  isolation: isolate;
+}
+
+.site-header__blur {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: calc(100% + var(--header-blur-extent));
+  pointer-events: none;
+  z-index: -1;
+}
+
+.site-header__blur-layer,
+.site-header__blur-tint {
+  position: absolute;
+  inset: 0;
+}
+
+.site-header__blur-layer {
+  -webkit-backdrop-filter: blur(var(--blur));
+  backdrop-filter: blur(var(--blur));
+  -webkit-mask-image: var(--mask);
+  mask-image: var(--mask);
+}
+
+.site-header__blur-layer[data-blur="1"] {
+  --blur: var(--header-blur-1);
+  --mask: linear-gradient(to bottom, #000 0%, #000 35%, transparent 70%);
+}
+
+.site-header__blur-layer[data-blur="2"] {
+  --blur: var(--header-blur-2);
+  --mask: linear-gradient(to bottom, #000 0%, #000 28%, transparent 58%);
+}
+
+.site-header__blur-layer[data-blur="3"] {
+  --blur: var(--header-blur-3);
+  --mask: linear-gradient(to bottom, #000 0%, #000 22%, transparent 48%);
+}
+
+.site-header__blur-layer[data-blur="4"] {
+  --blur: var(--header-blur-4);
+  --mask: linear-gradient(to bottom, #000 0%, #000 16%, transparent 38%);
+}
+
+.site-header__blur-layer[data-blur="5"] {
+  --blur: var(--header-blur-5);
+  --mask: linear-gradient(to bottom, #000 0%, #000 10%, transparent 28%);
+}
+
+.site-header__blur-tint {
+  background: linear-gradient(
+    to bottom,
+    var(--header-tint) 0%,
+    color-mix(in srgb, var(--background) 35%, transparent) 45%,
+    transparent 100%
+  );
 }
 
 html[data-env="admin"] .site-header {
@@ -392,19 +459,17 @@ html[data-env="admin"] .site-header {
   min-height: 44px;
   padding-block: var(--space-2);
   color: var(--foreground);
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-underline-offset: 0.2em;
+  text-decoration: none;
   text-transform: lowercase;
-  transition:
-    color var(--duration-fast) ease,
-    text-decoration-color var(--duration-fast) ease;
+  font-style: normal;
+  transition: color var(--duration-fast) ease;
   cursor: pointer;
 }
 
 .nav-item:hover {
-  color: var(--foreground);
-  text-decoration-color: var(--nav-underline);
+  color: var(--muted-foreground);
+  font-style: italic;
+  text-decoration: none;
 }
 
 .nav-item-muted {
@@ -608,11 +673,6 @@ a:hover {
 .site-logo-link:hover .site-title,
 .project-nav__back:hover {
   color: var(--foreground);
-}
-
-/* Nav keeps muted underline on hover (see .nav-item); block global a:hover black flash */
-.nav-item:hover {
-  text-decoration-color: var(--nav-underline);
 }
 
 /* ============================================================
@@ -1333,7 +1393,7 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
   pointer-events: none;
 }
 
-.hero-copy :is(nav, a, button, .hero-visual) {
+.hero-copy :is(nav, a, button, .hero-visual, .hero-title__scramble) {
   pointer-events: auto;
 }
 
@@ -1383,6 +1443,11 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
   color: var(--foreground);
   text-align: center;
   text-transform: uppercase;
+}
+
+.hero-title__scramble {
+  display: inline;
+  cursor: pointer;
 }
 
 @media (min-width: 768px) {
@@ -1439,9 +1504,9 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
 
 @media (max-width: 639px) {
   :root {
-    --hero-height: 90svh;
-    --hero-height-min: 90svh;
-    --hero-height-max: 90svh;
+    --hero-height: 60svh;
+    --hero-height-min: 60svh;
+    --hero-height-max: 60svh;
   }
 
   .hero-scene {
@@ -1683,7 +1748,7 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
   position: relative;
   aspect-ratio: var(--project-card-aspect);
   background: var(--muted);
-  border-radius: var(--radius);
+  border-radius: var(--radius-card);
   overflow: hidden;
   transition: border-radius var(--duration-fast) ease;
 }
@@ -1699,6 +1764,13 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
 
 .project-card__image-fill {
   object-fit: cover;
+  transform: scale(1);
+  transition: transform var(--duration-fast) ease;
+}
+
+.project-card__link:hover .project-card__image-fill,
+.project-card__link:focus-visible .project-card__image-fill {
+  transform: scale(var(--project-card-image-scale-hover));
 }
 
 .project-card__label {
@@ -2094,6 +2166,11 @@ html.byte-verse-mode .site-title {
   }
 
   .project-card__link:hover .project-card__image {
+    transform: none;
+  }
+
+  .project-card__link:hover .project-card__image-fill,
+  .project-card__link:focus-visible .project-card__image-fill {
     transform: none;
   }
 
