@@ -41,7 +41,7 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
   siteName: "Julia Sakakibara",
   siteDescription:
     "Design engineer portfolio — Auway (Strava for pets), Academy apps, semantic web, and hardware that fits on a collar. Cat-approved. Telepathy: beta.",
-  heroTitle: "Julia Sakakibara",
+  heroTitle: "Making unconventional connections with unusual things between design and code.",
   heroDescription:
     "Designer who codes. I build things that could ship tomorrow — like a pet activity app with a smart collar smaller than anything I could buy. Also: design systems, 3D, and tilting your phone to shoot aliens.",
   aboutTitle: "/about",

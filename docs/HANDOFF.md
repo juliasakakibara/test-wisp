@@ -424,6 +424,8 @@ src/app/(blog)/page.tsx
 
 **Decisão UI (16/09):** ThemeSwitcher Light/Dark **permanece** (funciona). Admin **permanece** (protegido por senha) — não desligar; só não investir polish agora.
 
+**UI híbrida (16/09):** WOUQ chrome + JT ordem (Hero → Work → About curto) + cards imagem no Julia Grid. Home usa `--container-max-width` (1200). Hero: tagline center sans + 3D center menor. Radius card 0 → 0.25rem no hover. Motion scroll = fase seguinte.
+
 ---
 
 ## Próximos passos opcionais

@@ -17,26 +17,23 @@ export function SiteChrome({
       </a>
       <header className="site-header">
         <div className="header-container">
-          <div>
-            <Link href="/" className="site-logo-link">
-              <span className="site-title" data-editable="siteName">
-                {config.siteName}
-              </span>
+          <Link href="/" className="site-logo-link">
+            <span className="site-title" data-editable="siteName">
+              {config.siteName}
+            </span>
+            <span className="site-title-role">ux engineer</span>
+          </Link>
+          <nav className="nav-list" aria-label="Main">
+            <Link href="/#work" className="nav-item">
+              work
             </Link>
-          </div>
-          <div className="site-navigation">
-            <nav className="nav-list" aria-label="Main">
-              <Link href="/#about" className="nav-item">
-                About
-              </Link>
-              <span className="nav-separator" aria-hidden="true">
-                ·
-              </span>
-              <Link href="/#work" className="nav-item nav-item-muted">
-                Work
-              </Link>
-            </nav>
-          </div>
+            <Link href="/#about" className="nav-item">
+              about
+            </Link>
+            <a href="/resume/julia-sakakibara-en.html" className="nav-item">
+              cv
+            </a>
+          </nav>
         </div>
       </header>
 
@@ -46,13 +43,13 @@ export function SiteChrome({
 
       <footer className="site-footer">
         <div className="footer-container">
-          <div className="footer-main">
-            <p className="footer-text" data-editable="footerText">
-              {config.footerText}
-            </p>
+          <p className="footer-text" data-editable="footerText">
+            {config.footerText}
+          </p>
+          <div className="footer-end">
             <FooterSocial githubUrl={config.githubUrl} linkedinUrl={config.linkedinUrl} />
+            <ThemeSwitcher />
           </div>
-          <ThemeSwitcher />
         </div>
       </footer>
     </>

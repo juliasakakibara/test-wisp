@@ -1,47 +1,35 @@
 import Link from "next/link";
-import { format } from "date-fns";
+import Image from "next/image";
 import type { ProjectSummary } from "@/lib/projects";
 
 type ProjectCardProps = {
   post: ProjectSummary;
 };
 
-const MAX_DISCIPLINES = 2;
-
 export function ProjectCard({ post }: ProjectCardProps) {
   const href = `/projects/${post.slug}`;
-  const year = post.publishedAt
-    ? format(new Date(post.publishedAt), "yyyy")
-    : null;
-  const disciplines = post.tags?.slice(0, MAX_DISCIPLINES) ?? [];
-  const hiddenDisciplineCount = Math.max(
-    (post.tags?.length ?? 0) - MAX_DISCIPLINES,
-    0
-  );
+  const category = post.tags?.[0]?.name ?? "Case study";
 
   return (
-    <li className="project-list-item">
-      <Link href={href} className="project-list-item__link">
-        <h3 className="project-list-item__title">{post.title}</h3>
-        {post.description && (
-          <p className="project-list-item__description">{post.description}</p>
-        )}
-        {(year || disciplines.length > 0) && (
-          <p className="project-list-item__meta">
-            {year && <time dateTime={year}>{year}</time>}
-            {year && disciplines.length > 0 && (
-              <span className="project-list-item__meta-separator" aria-hidden="true">
-                {" · "}
-              </span>
-            )}
-            {disciplines.length > 0 && (
-              <span className="project-list-item__tags">
-                {disciplines.map((tag) => tag.name).join(", ")}
-                {hiddenDisciplineCount > 0 && ` +${hiddenDisciplineCount}`}
-              </span>
-            )}
-          </p>
-        )}
+    <li className="julia-item project-card">
+      <Link href={href} className="project-card__link">
+        <div
+          className={`project-card__media${post.image ? "" : " project-card__media--placeholder"}`}
+        >
+          {post.image ? (
+            <Image
+              src={post.image}
+              alt=""
+              fill
+              className="project-card__image-fill"
+              sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 33vw"
+            />
+          ) : null}
+          <div className="project-card__label">
+            <span className="project-card__category">{category}</span>
+            <span className="project-card__name">{post.title}</span>
+          </div>
+        </div>
       </Link>
     </li>
   );
