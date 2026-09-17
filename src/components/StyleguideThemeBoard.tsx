@@ -2,10 +2,9 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import {
-  FUN_THEMES,
   getFunTheme,
   readStoredFunTheme,
-  type FunThemeId,
+  THEME_CHANGE_EVENT,
 } from "@/lib/fun-themes";
 import {
   preferenceLabel,
@@ -14,7 +13,6 @@ import {
   type ColorModePreference,
 } from "@/lib/color-mode";
 import { contrastRatio } from "@/lib/theme-presets";
-import { THEME_CHANGE_EVENT } from "@/lib/fun-themes";
 
 function useHydrated() {
   return useSyncExternalStore(
@@ -28,9 +26,6 @@ type PreviewPair = {
   name: string;
   background: string;
   foreground: string;
-  primary: string;
-  mutedForeground: string;
-  border: string;
   source: "fun" | "core";
 };
 
@@ -41,9 +36,6 @@ function readCorePair(preference: ColorModePreference): PreviewPair {
       name: preferenceLabel(preference) + (preference === "system" ? " → Dark" : ""),
       background: "#000000",
       foreground: "#ffffff",
-      primary: "#ffffff",
-      mutedForeground: "#a3a3a3",
-      border: "rgba(255, 255, 255, 0.15)",
       source: "core",
     };
   }
@@ -51,9 +43,6 @@ function readCorePair(preference: ColorModePreference): PreviewPair {
     name: preferenceLabel(preference) + (preference === "system" ? " → Light" : ""),
     background: "#ffffff",
     foreground: "#000000",
-    primary: "#000000",
-    mutedForeground: "#737373",
-    border: "rgba(0, 0, 0, 0.15)",
     source: "core",
   };
 }
@@ -66,27 +55,29 @@ function resolvePreview(): PreviewPair {
       name: theme.label,
       background: theme.background,
       foreground: theme.foreground,
-      primary: theme.primary,
-      mutedForeground: theme.mutedForeground,
-      border: theme.border,
       source: "fun",
     };
   }
   return readCorePair(readStoredPreference());
 }
 
-/** randoma11y-style pair board for the active home/styleguide theme */
+function wcagLabel(ratio: number): string {
+  if (ratio >= 7) return "AAA";
+  if (ratio >= 4.5) return "AA";
+  if (ratio >= 3) return "AA large";
+  return "fail";
+}
+
+/** Lean randoma11y / colorable-style board for the active theme */
 export function StyleguideThemeBoard() {
   const hydrated = useHydrated();
   const [pair, setPair] = useState<PreviewPair | null>(null);
-  const [funId, setFunId] = useState<FunThemeId | null>(null);
 
   useEffect(() => {
     if (!hydrated) return;
 
     const refresh = () => {
       setPair(resolvePreview());
-      setFunId(readStoredFunTheme());
     };
 
     refresh();
@@ -111,8 +102,8 @@ export function StyleguideThemeBoard() {
 
   if (!hydrated || !pair) {
     return (
-      <section className="sg-theme-board sg-theme-board--pending" aria-label="Theme preview">
-        <p className="sg-theme-board__hint">Loading theme…</p>
+      <section className="sg-lean sg-lean--pending" aria-label="Theme preview">
+        <p>Loading theme…</p>
       </section>
     );
   }
@@ -120,54 +111,47 @@ export function StyleguideThemeBoard() {
   const ratio = contrastRatio(pair.foreground, pair.background);
 
   return (
-    <section className="sg-theme-board" aria-label="Active theme style guide">
-      <div
-        className="sg-theme-board__stage"
-        style={{ backgroundColor: pair.background, color: pair.foreground }}
-      >
-        <p className="sg-theme-board__eyebrow">
-          {pair.source === "fun" ? "Fun theme" : "Core"} · live from localStorage
+    <section className="sg-lean" aria-label="Active theme style guide">
+      <header className="sg-lean__hero">
+        <p className="sg-lean__specimen" aria-hidden="true">
+          Aa
         </p>
-        <h2 className="sg-theme-board__title">{pair.name}</h2>
-        <p className="sg-theme-board__ratio">
-          Contrast {ratio.toFixed(2)}:1 · WCAG {ratio >= 7 ? "AAA" : ratio >= 4.5 ? "AA" : "fail"}
-        </p>
-        <p className="sg-theme-board__sample">
-          The quick brown fox jumps over the lazy dog. Design tokens stay readable when contrast
-          holds.
-        </p>
+        <div className="sg-lean__score">
+          <p className="sg-lean__ratio">
+            {ratio.toFixed(2)} <span>{wcagLabel(ratio)}</span>
+          </p>
+          <p className="sg-lean__name">
+            {pair.source === "fun" ? "Fun" : "Core"} · {pair.name}
+          </p>
+          <p className="sg-lean__blurb">
+            Contrast is the difference in luminance that makes text distinguishable from its
+            background. Pick a theme in the header to live-update this page.
+          </p>
+        </div>
+      </header>
+
+      <div className="sg-lean__pair">
+        <div className="sg-lean__swatch">
+          <span className="sg-lean__swatch-label">Background</span>
+          <code className="sg-lean__hex">{pair.background}</code>
+        </div>
+        <div className="sg-lean__swatch">
+          <span className="sg-lean__swatch-label">Text</span>
+          <code className="sg-lean__hex">{pair.foreground}</code>
+        </div>
       </div>
 
-      <ul className="sg-theme-board__swatches">
-        {(
-          [
-            ["background", pair.background],
-            ["foreground", pair.foreground],
-            ["primary", pair.primary],
-            ["muted", pair.mutedForeground],
-            ["border", pair.border],
-          ] as const
-        ).map(([label, value]) => (
-          <li key={label} className="sg-theme-board__swatch-item">
-            <span
-              className="sg-theme-board__chip"
-              style={{ background: value }}
-              aria-hidden="true"
-            />
-            <span className="sg-theme-board__swatch-meta">
-              <strong>{label}</strong>
-              <code>{value}</code>
-            </span>
-          </li>
-        ))}
-      </ul>
+      <blockquote className="sg-lean__quote">
+        <p>
+          “Color is my day-long obsession, joy, and torment.”
+        </p>
+        <cite>— Claude Monet</cite>
+      </blockquote>
 
-      <p className="sg-theme-board__note">
-        Change theme in the header (home / styleguide). Fun themes persist in{" "}
-        <code>home_fun_theme</code>
-        {funId ? ` · active: ${FUN_THEMES.find((t) => t.id === funId)?.label}` : ""}. Project pages
-        keep Core only.
-      </p>
+      <pre className="sg-lean__code">{`:root {
+  --background: ${pair.background};
+  --foreground: ${pair.foreground};
+}`}</pre>
     </section>
   );
 }

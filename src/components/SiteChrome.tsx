@@ -38,7 +38,7 @@ export function SiteChrome({
               cv
             </a>
             <Link href="/styleguide" className="nav-item">
-              styleguide
+              style guide
             </Link>
             <ThemeSwitcher />
           </nav>

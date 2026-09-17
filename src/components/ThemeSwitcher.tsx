@@ -1,12 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useId, useState, useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
 import {
   applyColorModePreference,
   COLOR_MODE_STORAGE_KEY,
-  preferenceFromPresetName,
-  preferenceLabel,
   PUBLIC_COLOR_MODE_OPTIONS,
   readStoredPreference,
   resolveEffectiveMode,
@@ -16,6 +14,7 @@ import {
 import {
   applyFunTheme,
   FUN_THEMES,
+  isFunThemeId,
   notifyThemeChange,
   pathAllowsFunThemes,
   syncFunThemeForPath,
@@ -40,17 +39,23 @@ function isInAdminIframe(): boolean {
   }
 }
 
+type SelectValue = ColorModePreference | FunThemeId;
+
+function displayThemeLabel(value: SelectValue): string {
+  if (isFunThemeId(value)) {
+    return FUN_THEMES.find((t) => t.id === value)?.label.toLowerCase() ?? value;
+  }
+  return value;
+}
+
 export function ThemeSwitcher() {
   const pathname = usePathname() ?? "/";
   const allowFun = pathAllowsFunThemes(pathname);
-  const [isOpen, setIsOpen] = useState(false);
+  const selectId = useId();
   const [preference, setPreference] = useState<ColorModePreference>("system");
-  const [effectiveMode, setEffectiveMode] = useState<ColorMode>("light");
   const [funTheme, setFunTheme] = useState<FunThemeId | null>(null);
   const [inAdminIframe, setInAdminIframe] = useState(false);
   const hydrated = useHydrated();
-  const toggleRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -63,12 +68,10 @@ export function ThemeSwitcher() {
     const storedRaw = localStorage.getItem(COLOR_MODE_STORAGE_KEY);
     if (storedRaw === null) {
       setPreference("system");
-      setEffectiveMode(resolveEffectiveMode("system"));
     } else {
       const stored = readStoredPreference();
-      const effective = applyColorModePreference(stored);
+      applyColorModePreference(stored);
       setPreference(stored);
-      setEffectiveMode(effective);
     }
 
     const activeFun = syncFunThemeForPath(pathname);
@@ -80,8 +83,7 @@ export function ThemeSwitcher() {
 
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const sync = () => {
-      const effective = applyColorModePreference("system");
-      setEffectiveMode(effective);
+      applyColorModePreference("system");
     };
 
     sync();
@@ -89,165 +91,67 @@ export function ThemeSwitcher() {
     return () => media.removeEventListener("change", sync);
   }, [hydrated, inAdminIframe, preference, funTheme]);
 
-  useEffect(() => {
-    if (!isOpen) return;
+  const handleChange = (value: SelectValue) => {
+    if (isFunThemeId(value)) {
+      writeStoredFunTheme(value);
+      applyFunTheme(value);
+      setFunTheme(value);
+      notifyThemeChange();
+      return;
+    }
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setIsOpen(false);
-        toggleRef.current?.focus();
-      }
-    };
-
-    const handlePointerDown = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(target) &&
-        !toggleRef.current?.contains(target)
-      ) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    document.addEventListener("mousedown", handlePointerDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.removeEventListener("mousedown", handlePointerDown);
-    };
-  }, [isOpen]);
-
-  const handleSelectCore = (name: string) => {
-    const nextPreference = preferenceFromPresetName(name);
-    localStorage.setItem(COLOR_MODE_STORAGE_KEY, nextPreference);
+    localStorage.setItem(COLOR_MODE_STORAGE_KEY, value);
     writeStoredFunTheme(null);
     applyFunTheme(null);
-    const effective = applyColorModePreference(nextPreference);
-    setPreference(nextPreference);
-    setEffectiveMode(effective);
+    applyColorModePreference(value);
+    setPreference(value);
     setFunTheme(null);
-    setIsOpen(false);
     notifyThemeChange();
-    toggleRef.current?.focus();
-  };
-
-  const handleSelectFun = (id: FunThemeId) => {
-    writeStoredFunTheme(id);
-    applyFunTheme(id);
-    setFunTheme(id);
-    setIsOpen(false);
-    notifyThemeChange();
-    toggleRef.current?.focus();
   };
 
   if (!hydrated || inAdminIframe) return null;
 
-  const activeLabel = funTheme
-    ? FUN_THEMES.find((t) => t.id === funTheme)?.label ?? "Theme"
-    : preferenceLabel(preference);
+  const selectValue: SelectValue = funTheme ?? preference;
+  const activeLabel = displayThemeLabel(selectValue);
 
   return (
     <div className="theme-switcher">
-      <button
-        ref={toggleRef}
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className="theme-switcher__toggle"
+      <span className="theme-switcher__face" aria-hidden="true">
+        <span className="theme-switcher__prefix">theme:</span>{" "}
+        <span className="theme-switcher__value">{activeLabel}</span>{" "}
+        <span className="theme-switcher__chevron">▼</span>
+      </span>
+      <label className="theme-switcher__sr-only" htmlFor={selectId}>
+        Theme
+      </label>
+      <select
+        id={selectId}
+        className="theme-switcher__select"
+        value={selectValue}
+        onChange={(event) => handleChange(event.target.value as SelectValue)}
         aria-label="Theme"
-        aria-haspopup="menu"
-        aria-expanded={isOpen}
-        aria-controls="theme-switcher-menu"
       >
-        <span className="theme-switcher__toggle-icon" aria-hidden="true">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
-            <rect x="2" y="3" width="20" height="14" rx="2" />
-            <path d="M8 21h8M12 17v4" />
-          </svg>
-        </span>
-        <span className="theme-switcher__toggle-label">{activeLabel}</span>
-      </button>
-
-      {isOpen && (
-        <div
-          ref={menuRef}
-          id="theme-switcher-menu"
-          className="theme-switcher__menu"
-          role="menu"
-          aria-label="Theme"
-        >
-          <div className="theme-switcher__list" role="group" aria-label="Core">
-            <p className="theme-switcher__group-label">Core</p>
-            {PUBLIC_COLOR_MODE_OPTIONS.map((option) => {
-              const isActive = !funTheme && preference === option.preference;
-
-              return (
-                <button
-                  key={option.name}
-                  type="button"
-                  onClick={() => handleSelectCore(option.name)}
-                  className={`theme-switcher__option${isActive ? " theme-switcher__option--active" : ""}`}
-                  role="menuitemradio"
-                  aria-checked={isActive}
-                >
-                  {isActive ? (
-                    <span className="theme-switcher__check" aria-hidden="true">
-                      ✓
-                    </span>
-                  ) : (
-                    <span className="theme-switcher__check theme-switcher__check--empty" aria-hidden="true" />
-                  )}
-                  {option.name}
-                  {option.preference === "system" && !funTheme && (
-                    <span className="theme-switcher__option-hint">
-                      ({effectiveMode === "dark" ? "dark" : "light"})
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-
-          {allowFun ? (
-            <div className="theme-switcher__list" role="group" aria-label="Fun">
-              <p className="theme-switcher__group-label">Fun</p>
-              {FUN_THEMES.map((theme) => {
-                const isActive = funTheme === theme.id;
-
-                return (
-                  <button
-                    key={theme.id}
-                    type="button"
-                    onClick={() => handleSelectFun(theme.id)}
-                    className={`theme-switcher__option${isActive ? " theme-switcher__option--active" : ""}`}
-                    role="menuitemradio"
-                    aria-checked={isActive}
-                  >
-                    {isActive ? (
-                      <span className="theme-switcher__check" aria-hidden="true">
-                        ✓
-                      </span>
-                    ) : (
-                      <span className="theme-switcher__check theme-switcher__check--empty" aria-hidden="true" />
-                    )}
-                    <span
-                      className="theme-switcher__swatch"
-                      style={{ background: theme.background, boxShadow: `inset 0 0 0 1px ${theme.border}` }}
-                      aria-hidden="true"
-                    />
-                    <span
-                      className="theme-switcher__swatch"
-                      style={{ background: theme.foreground }}
-                      aria-hidden="true"
-                    />
-                    {theme.label}
-                  </button>
-                );
-              })}
-            </div>
-          ) : null}
-        </div>
-      )}
+        <optgroup label="Core">
+          {PUBLIC_COLOR_MODE_OPTIONS.map((option) => (
+            <option key={option.preference} value={option.preference}>
+              {option.preference === "system"
+                ? `System (${resolveEffectiveMode("system")})`
+                : option.preference === "light"
+                  ? "Light"
+                  : "Dark"}
+            </option>
+          ))}
+        </optgroup>
+        {allowFun ? (
+          <optgroup label="Fun">
+            {FUN_THEMES.map((theme) => (
+              <option key={theme.id} value={theme.id}>
+                {theme.label}
+              </option>
+            ))}
+          </optgroup>
+        ) : null}
+      </select>
     </div>
   );
 }

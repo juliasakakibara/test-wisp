@@ -1,4 +1,4 @@
-/** Fun themes inspired by designtokens.org (Core + Fun switcher). Home/styleguide only. */
+/** Fun themes — lean, high-contrast pairs (home/styleguide only). */
 
 export const FUN_THEME_STORAGE_KEY = "home_fun_theme";
 export const THEME_CHANGE_EVENT = "julia:theme-change";
@@ -8,13 +8,7 @@ export function notifyThemeChange(): void {
   window.dispatchEvent(new Event(THEME_CHANGE_EVENT));
 }
 
-export type FunThemeId =
-  | "matrix"
-  | "nier"
-  | "rebeccapurple"
-  | "sunset"
-  | "virtualboy"
-  | "zengarden";
+export type FunThemeId = "electric" | "neon" | "signal" | "albers";
 
 export type FunThemeTokens = {
   id: FunThemeId;
@@ -29,79 +23,58 @@ export type FunThemeTokens = {
   muted: string;
 };
 
-/** Hex values adapted from DTCG `:root[data-theme=…]` semantic tokens → Julia tokens. */
+/**
+ * Four playful pairs inspired by randoma11y / colorable refs —
+ * not the old DTCG Matrix/NieR set.
+ */
 export const FUN_THEMES: FunThemeTokens[] = [
   {
-    id: "matrix",
-    label: "Matrix",
+    id: "electric",
+    label: "Electric",
     colorScheme: "dark",
-    primary: "#00a544",
-    background: "#000600",
-    foreground: "#00c758",
-    primaryForeground: "#000600",
-    mutedForeground: "#008138",
-    border: "rgba(13, 84, 43, 0.55)",
-    muted: "rgba(0, 197, 88, 0.08)",
+    primary: "#ffffff",
+    background: "#4338ca",
+    foreground: "#ffffff",
+    primaryForeground: "#4338ca",
+    mutedForeground: "rgba(255, 255, 255, 0.72)",
+    border: "rgba(255, 255, 255, 0.35)",
+    muted: "rgba(255, 255, 255, 0.1)",
   },
   {
-    id: "nier",
-    label: "NieR",
-    colorScheme: "light",
-    primary: "#525051",
-    background: "#ccc8b2",
-    foreground: "#525051",
-    primaryForeground: "#ccc8b2",
-    mutedForeground: "#646363",
-    border: "rgba(82, 80, 81, 0.35)",
-    muted: "rgba(82, 80, 81, 0.08)",
-  },
-  {
-    id: "rebeccapurple",
-    label: "rebeccapurple",
-    colorScheme: "light",
-    primary: "#663399",
-    background: "#e5d7fa",
-    foreground: "#21003b",
-    primaryForeground: "#e5d7fa",
-    mutedForeground: "#56337c",
-    border: "rgba(102, 51, 153, 0.35)",
-    muted: "rgba(102, 51, 153, 0.08)",
-  },
-  {
-    id: "sunset",
-    label: "Sunset",
-    colorScheme: "light",
-    primary: "#c53c00",
-    background: "#ffedd5",
-    foreground: "#861043",
-    primaryForeground: "#ffedd5",
-    mutedForeground: "#b75000",
-    border: "rgba(197, 60, 0, 0.3)",
-    muted: "rgba(197, 60, 0, 0.08)",
-  },
-  {
-    id: "virtualboy",
-    label: "VirtualBoy",
+    id: "neon",
+    label: "Neon",
     colorScheme: "dark",
-    primary: "#bf000f",
-    background: "#0f0000",
-    foreground: "#e40014",
-    primaryForeground: "#0f0000",
-    mutedForeground: "#bf000f",
-    border: "rgba(130, 24, 26, 0.55)",
-    muted: "rgba(228, 0, 20, 0.1)",
+    primary: "#c8f542",
+    background: "#2a1038",
+    foreground: "#c8f542",
+    primaryForeground: "#2a1038",
+    mutedForeground: "rgba(200, 245, 66, 0.7)",
+    border: "rgba(200, 245, 66, 0.35)",
+    muted: "rgba(200, 245, 66, 0.1)",
   },
   {
-    id: "zengarden",
-    label: "Zen Garden",
+    id: "signal",
+    label: "Signal",
     colorScheme: "light",
-    primary: "#49968e",
-    background: "#fcfcfc",
-    foreground: "#335050",
+    primary: "#e10600",
+    background: "#ffffff",
+    foreground: "#e10600",
     primaryForeground: "#ffffff",
-    mutedForeground: "#4f6969",
-    border: "rgba(73, 150, 142, 0.3)",
-    muted: "rgba(73, 150, 142, 0.08)",
+    mutedForeground: "rgba(225, 6, 0, 0.72)",
+    border: "rgba(225, 6, 0, 0.28)",
+    muted: "rgba(225, 6, 0, 0.08)",
+  },
+  {
+    id: "albers",
+    label: "Albers",
+    colorScheme: "light",
+    primary: "#30223e",
+    background: "#d2dfc4",
+    foreground: "#30223e",
+    primaryForeground: "#d2dfc4",
+    mutedForeground: "rgba(48, 34, 62, 0.72)",
+    border: "rgba(48, 34, 62, 0.28)",
+    muted: "rgba(48, 34, 62, 0.08)",
   },
 ];
 
@@ -123,7 +96,11 @@ export function pathAllowsFunThemes(pathname: string): boolean {
 export function readStoredFunTheme(): FunThemeId | null {
   if (typeof window === "undefined") return null;
   const stored = localStorage.getItem(FUN_THEME_STORAGE_KEY);
-  return isFunThemeId(stored) ? stored : null;
+  if (!isFunThemeId(stored)) {
+    if (stored) localStorage.removeItem(FUN_THEME_STORAGE_KEY);
+    return null;
+  }
+  return stored;
 }
 
 export function writeStoredFunTheme(id: FunThemeId | null): void {
