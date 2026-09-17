@@ -5,10 +5,10 @@ import "@google/model-viewer";
 
 const MODEL_SRC = "/models/hero.glb";
 
-/** Step 4 — load + bob + mouse lerp + camera-controls on drag. */
+/** Frontal portrait angle — matches hero reference (eye-level, face-on). */
 const BASE_THETA = 0;
-const BASE_PHI = 80;
-const BASE_RADIUS = 135;
+const BASE_PHI = 90;
+const BASE_RADIUS = 118;
 const POINTER_THETA_RANGE = 20;
 /** Vertical orbit follow — inverted so mouse up tilts the expected way */
 const POINTER_PHI_RANGE = 20;
@@ -255,10 +255,10 @@ export function HeroModelViewer() {
         interaction-prompt="none"
         interpolation-decay="40"
         camera-orbit={formatOrbit(BASE_THETA, BASE_PHI)}
-        min-camera-orbit="auto 55deg 100%"
-        max-camera-orbit="auto 95deg 170%"
-        camera-target="0m 0.9m 0m"
-        field-of-view="28deg"
+        min-camera-orbit="auto 70deg 95%"
+        max-camera-orbit="auto 105deg 150%"
+        camera-target="0m 0.85m 0m"
+        field-of-view="26deg"
       >
         <div
           slot="progress-bar"
