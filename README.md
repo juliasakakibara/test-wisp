@@ -8,13 +8,24 @@ A personal portfolio that doubles as a **technical case study**: semantic CSS ar
 
 | Skill | How it's shown |
 |-------|----------------|
-| **CSS architecture** | HTML semântico + tokens CSS (`--grid-unit`, `color-mix()`) — no utility frameworks |
-| **Design systems** | Shared scale (`--space-*`, `--type-*`, `--font-*`); 3-layer theming (visitor / preview / persist) |
+| **CSS architecture** | Semantic HTML + CSS tokens (`--grid-unit`, `color-mix()`) — no utility frameworks |
+| **Design systems** | Shared scale (`--space-*`, `--type-*`, `--font-*`); Core color-mode + Fun themes; admin preview/persist |
 | **Headless CMS** | Case studies from **Wisp CMS** (Server Components, ISR) |
 | **Visual admin** | Static copy + theme editable via **Upstash Redis** — iframe preview is ephemeral until Save |
 | **Components as data** | `data-editable` fields synced live in the admin iframe |
+| **3D craft** | Hero `model-viewer` + whoami cursor → `/about` |
 
-Live design system reference: [`/styleguide`](http://localhost:3000/styleguide) (ghost page, `noindex`).
+Live design system reference: [`/styleguide`](/styleguide) (`noindex`, linked in nav).
+
+### Docs map
+
+| Doc | Audience |
+|-----|----------|
+| [`README.md`](./README.md) | GitHub — case study (this file) |
+| [`docs/HANDOFF.md`](./docs/HANDOFF.md) | Continuity for agents / deep architecture |
+| [`docs/CLEANUP-AUDIT.md`](./docs/CLEANUP-AUDIT.md) | Backlog: audit, product (nav/i18n/perf), GitHub docs |
+| [`docs/REFERENCES.md`](./docs/REFERENCES.md) | External specs (DTCG, W3C, MarkText, …) |
+| [`docs/CONTENT-PLAYBOOK.md`](./docs/CONTENT-PLAYBOOK.md) | Shipping real copy / Wisp |
 
 ---
 
@@ -23,10 +34,12 @@ Live design system reference: [`/styleguide`](http://localhost:3000/styleguide) 
 ```mermaid
 flowchart TB
   subgraph public [Public site]
-    Home["/ — hero + about + work"]
+    Home["/ — hero + work"]
+    About["/about"]
     Project["/projects/slug"]
+    Styleguide["/styleguide"]
     SiteChrome["SiteChrome — header/footer"]
-    ColorMode["data-color-mode — neutral palette"]
+    ColorMode["data-color-mode + data-fun-theme"]
   end
 
   subgraph admin [Admin — --admin-* tokens]
@@ -43,11 +56,12 @@ flowchart TB
   subgraph persist [Source of truth]
     Wisp["Wisp CMS"]
     Redis["Upstash Redis — ThemeConfig + SiteConfig"]
-    LS["localStorage user_color_mode"]
+    LS["localStorage user_color_mode + home_fun_theme"]
   end
 
   Home --> Wisp
   Home --> Redis
+  About --> Redis
   Project --> Wisp
   SiteChrome --> Redis
   ColorMode --> LS
@@ -78,19 +92,20 @@ Fields with `data-editable` map to `SiteConfig` keys (`heroTitle`, `workSectionT
 
 ---
 
-## Three-layer theming
+## Theming layers
 
 Same spatial/typographic scale everywhere. Different persistence per layer.
 
 | Layer | Mechanism | Persists? |
 |-------|-----------|-----------|
-| **Visitor** | `ThemeSwitcher` → `[data-color-mode]` | Yes — `localStorage` (`user_color_mode`) |
+| **Visitor — Core** | `ThemeSwitcher` → `[data-color-mode]` | Yes — `user_color_mode` (System / Light / Dark) |
+| **Visitor — Fun** | `ThemeSwitcher` → `[data-fun-theme]` | Yes — `home_fun_theme` (Electric / Neon / Signal / Albers); **only** `/` and `/styleguide` |
 | **Admin iframe preview** | `THEME_PREVIEW` postMessage → `#__theme_preview__` | **No** — refresh restores server state |
 | **Admin Save** | `saveTheme` + `saveConfig` → Redis | **Yes** — source of truth |
 
-Public site uses a **neutral monochrome** palette (Raster-like). Colorful theme presets are demonstrated in the admin iframe preview; only **Save** writes to Redis.
+Public Core palette is **neutral monochrome**. Fun themes are playful pairs on home/styleguide. Colorful Redis presets show in the admin iframe; only **Save** writes theme config.
 
-Admin panel chrome uses separate **`--admin-*`** tokens (dark shell). Login and ThemeEditor share the site's `--space-*` and `--type-*` scale.
+Admin panel chrome uses separate **`--admin-*`** tokens. Login and ThemeEditor share `--space-*` / `--type-*`.
 
 ---
 
@@ -134,7 +149,7 @@ ThemePreviewListener (iframe only)
 
 **Refresh iframe** = back to server-rendered state. **Save** = Redis + revalidate.
 
-Public visitors: `ThemeSwitcher` sets `data-color-mode` (System / Light / Dark) via `src/lib/color-mode.ts`.
+Public visitors: `ThemeSwitcher` face `theme: value ▼` — Core color-mode plus Fun themes on home/styleguide (`src/lib/color-mode.ts`, `src/lib/fun-themes.ts`). Focus uses an inverted solid block on the label.
 
 ---
 
@@ -163,11 +178,12 @@ Public visitors: `ThemeSwitcher` sets `data-color-mode` (System / Light / Dark) 
 
 | Route | Purpose |
 |-------|---------|
-| `/` | One-page portfolio (hero, `#about`, `#work`) |
+| `/` | Home — hero (3D + whoami → `/about`) + `#work` |
+| `/about` | About page (SiteConfig) |
 | `/projects/[slug]` | Case study detail |
 | `/blog/:slug` | 301 → `/projects/:slug` |
-| `/about` | Redirect → `/#about` |
-| `/styleguide` | Internal design system docs |
+| `/styleguide` | Design system docs (`noindex`, linked in nav) |
+| `/resume/*.html` | Static CV EN/PT |
 | `/admin/login` | Admin auth |
 | `/admin/theme` | Visual editor |
 
@@ -212,17 +228,20 @@ NEXT_PUBLIC_SITE_URL=https://your-domain.com
 | `src/middleware.ts` | Pathname header — admin routes skip public chrome |
 | `src/components/SiteChrome.tsx` | Header, main, footer wrapper |
 | `src/app/admin/layout.tsx` | `.admin-app` shell |
-| `src/lib/color-mode.ts` | Public color mode (System / Light / Dark) |
+| `src/lib/color-mode.ts` | Public color mode (System / Light / Dark) + Fun path gate |
+| `src/lib/fun-themes.ts` | Fun theme pairs + storage |
+| `src/components/ThemeSwitcher.tsx` | Nav face `theme: value ▼` (Core + Fun) |
+| `src/components/HeroVisual.tsx` | Hero 3D + whoami cursor |
 | `src/lib/projects.ts` | Wisp fetch layer + `cache()` |
 | `src/lib/metadata.ts` | OG, Twitter, JSON-LD helpers |
 | `src/lib/theme-presets.ts` | Theme presets for admin preview |
 | `src/lib/theme-utils.ts` | `generateThemeCssVariables()` — iframe-scoped |
 | `src/components/ThemePreviewListener.tsx` | Admin iframe bridge |
-| `docs/HANDOFF.md` | Full architecture, history & checklist |
-| `docs/CONTENT-PLAYBOOK.md` | **Checklist conteúdo real** (copy, Wisp, mídia) |
-| `docs/WISP-POST-DRAFTS.md` | Rascunhos dos case studies para o CMS |
-| `docs/REFERENCES.md` | Design tokens, spec tooling, W3C, colors, components.ai |
-| `docs/CLEANUP-AUDIT.md` | Plano limpeza + audit (W3C API, ThemeSwitcher) |
+| `docs/HANDOFF.md` | Architecture continuity (agents / future you) |
+| `docs/CONTENT-PLAYBOOK.md` | **Real content checklist** (copy, Wisp, media) |
+| `docs/WISP-POST-DRAFTS.md` | Case study drafts for the CMS |
+| `docs/REFERENCES.md` | DTCG, W3C DS/API, colors — refs → repo deliverables |
+| `docs/CLEANUP-AUDIT.md` | Cleanup + audit + product (D) + GitHub docs (E) |
 
 ---
 
@@ -232,6 +251,8 @@ NEXT_PUBLIC_SITE_URL=https://your-domain.com
 npm run dev
 npm run build
 npm run lint
+npm run a11y:audit
+npm run models:optimize   # Draco-compress public/models/hero.glb
 ```
 
 ## Deploy on Vercel

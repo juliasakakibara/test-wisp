@@ -56,9 +56,10 @@ Site de **portfólio pessoal** que demonstra habilidades técnicas:
 ```mermaid
 flowchart TB
   subgraph public [Site público — Server Components]
-    Home["/ — one-page"]
+    Home["/ — Hero + Work"]
+    About["/about"]
     Project["/projects/slug"]
-    StyleGuide["/styleguide — fantasma"]
+    StyleGuide["/styleguide — noindex, linkado no nav"]
     RootLayout["layout.tsx — html mínimo"]
     SiteChrome["SiteChrome — header/footer"]
   end
@@ -78,10 +79,12 @@ flowchart TB
     Wisp["Wisp CMS — posts = projetos"]
     Redis["Upstash Redis — tema + SiteConfig"]
     ColorMode["localStorage user_color_mode"]
+    FunTheme["localStorage home_fun_theme"]
   end
 
   Home --> Wisp
   Home --> Redis
+  About --> Redis
   Project --> Wisp
   RootLayout --> SiteChrome
   SiteChrome --> Redis
@@ -89,6 +92,7 @@ flowchart TB
   ThemeEditor -->|postMessage| Listener
   Listener --> StyleTag
   RootLayout --> ColorMode
+  RootLayout --> FunTheme
   AdminLayout --> Login
   AdminLayout --> ThemeEditor
 ```
@@ -116,9 +120,9 @@ flowchart TB
 | `siteDescription` | — | Metadata |
 | `heroTitle` | `heroTitle` | Home |
 | `heroDescription` | `heroDescription` | Home |
-| `aboutTitle` | `aboutTitle` | About (→ migrar para `/#about`) |
-| `aboutIntro` | `aboutIntro` | About |
-| `aboutBody` | `aboutBody` | About |
+| `aboutTitle` | `aboutTitle` | `/about` |
+| `aboutIntro` | `aboutIntro` | `/about` |
+| `aboutBody` | `aboutBody` | `/about` |
 | `workSectionTitle` | `workSectionTitle` | Work `#work` |
 | `workSectionIntro` | `workSectionIntro` | Work intro |
 | `footerText` | `footerText` | Footer |
@@ -127,22 +131,26 @@ Copy padrão: [`redis.ts`](../src/lib/redis.ts) · guia completo: [CONTENT-PLAYB
 
 ---
 
-## Camadas de theming (3 contextos)
+## Camadas de theming (visitante + Fun + admin)
 
 Mesma escala espacial/tipográfica (`--space-*`, `--type-meta`, `--font-*`). Persistência diferente por camada.
 
 | Camada | Mecanismo | Persistência | Objetivo |
 |--------|-----------|--------------|----------|
-| **Visitante** | `[data-color-mode]` via `ThemeSwitcher` | `localStorage` → `user_color_mode` | Light / Dark / System — paleta neutra monocromática |
+| **Visitante — Core** | `[data-color-mode]` via `ThemeSwitcher` | `localStorage` → `user_color_mode` | System / Light / Dark — paleta neutra |
+| **Visitante — Fun** | `[data-fun-theme]` via `ThemeSwitcher` | `localStorage` → `home_fun_theme` | Electric / Neon / Signal / Albers — só `/` e `/styleguide` |
 | **Preview (iframe)** | `#__theme_preview__` via `THEME_PREVIEW` postMessage | **Nenhuma** — refresh restaura servidor | Demonstrar que o design system responde ao vivo |
 | **Admin Save** | `saveTheme` + `saveConfig` → Redis | **Fonte da verdade** | Conteúdo estático + estilização persistida |
 
 ### Visitante (público)
 
-- `src/lib/color-mode.ts` — `applyColorMode()`, init script no `<head>`
+- `src/lib/color-mode.ts` — `applyColorMode()`, init script no `<head>` (também restaura Fun se o path permitir)
+- `src/lib/fun-themes.ts` — pares Fun + `pathAllowsFunThemes`
 - Tokens neutros em `globals.css`: `:root[data-color-mode="light|dark"]`
-- **Sem** inline CSS vars no `<html>` — color mode vem só do CSS + script
+- Fun themes: `:root[data-fun-theme="…"]` (home/styleguide)
+- **Sem** inline CSS vars no `<html>` — color mode / Fun vêm do CSS + script
 - Tipografia pública: **Inter** sempre (`--font-body` / `--font-display`); mono só em `code`
+- Focus do switcher: bloco invertido no face `theme: value ▼`
 
 ### Preview (iframe admin)
 
@@ -172,7 +180,7 @@ Mesma escala espacial/tipográfica (`--space-*`, `--type-meta`, `--font-*`). Per
 6. **Cores derivadas** (nunca hardcoded na UI pública): `--border`, `--muted`, `--muted-foreground` via `color-mix()`
 7. **Grid:** `.julia-grid` + `--grid-template` + `.julia-item` / `.julia-subgrid`
 8. **Admin chrome:** tokens `--admin-*` — independentes do color mode público
-9. **ThemeSwitcher:** System / Light / Dark → `user_color_mode` (não altera paleta colorida do Redis)
+9. **ThemeSwitcher:** Core (System / Light / Dark → `user_color_mode`) + Fun (`home_fun_theme`, só home/styleguide). Não altera a paleta colorida do Redis admin.
 10. **Prose Wisp:** class `.prose` — CSS puro em `globals.css` §8
 
 ### Mapa do `globals.css`
@@ -191,65 +199,72 @@ Mesma escala espacial/tipográfica (`--space-*`, `--type-meta`, `--font-*`). Per
 
 ### Style guide vivo
 
-- URL: **`/styleguide`** (página fantasma — não linkada, `noindex`)
-- Arquivos: `src/app/styleguide/page.tsx`, `layout.tsx`
-- Documentação visual completa do design system — **usar como referência ao implementar PR-1+**
+- URL: **`/styleguide`** (`noindex`, **linkado** no nav como “style guide”)
+- Arquivos: `src/app/styleguide/page.tsx`, `layout.tsx`, `StyleguideThemeBoard`
+- Documentação visual do design system + board de tema ativo (lean / randoma11y-style)
 
 ---
 
-## IA alvo (one-page + slugs)
+## IA atual (código)
 
 ```
-/                     Hero + About + Work (grid Wisp)
+/                     Hero (3D + whoami→/about) + Work (#work)
+/about                Página About (SiteConfig)
 /projects/[slug]      Detalhe do case study
-/styleguide           Docs internas (fantasma)
+/styleguide           Design system docs (noindex, no nav)
+/resume/*.html        CV estático EN/PT
 /admin/theme          Editor visual
-/about                → redirect para /#about (a fazer)
+/blog/:slug           301 → /projects/:slug
 ```
 
-**Navegação mínima no header:**
+**Navegação no header (`SiteChrome`):**
 - Logo → `/`
-- Âncoras `#work`, `#about` (sem rotas extras)
-- ThemeSwitcher 🎨
-- Remover links "Blog" / "About" como rotas separadas
+- work → `/#work` · about → `/about` · cv → resume EN · style guide → `/styleguide`
+- ThemeSwitcher — face `theme: value ▼` (Core + Fun onde permitido)
+
+**Decisão About (C2-A):** rota `/about` mantida — **não** redirect para `/#about`.
 
 ---
 
-## Estado atual vs. alvo
+## Estado atual
 
 | Área | Estado |
 |------|--------|
-| Home | ✓ Classes tokenizadas + `ProjectCard` + empty state |
-| About | ✓ Seção `/#about` na home; `/about` → redirect |
+| Home | ✓ Hero 3D + Work (`#work`) — sem About embutido |
+| About | ✓ Página `/about` (não redirect) |
 | Detalhe | ✓ `/projects/[slug]` + tokens + JSON-LD |
 | Preview admin | ✓ `ThemePreviewListener` — preview efêmero + Save → Redis |
 | Color mode | ✓ System / Light / Dark via `color-mode.ts` |
+| Fun themes | ✓ Electric / Neon / Signal / Albers — home + styleguide |
+| Hero cursor | ✓ whoami PNG → `/about` (click vs drag) |
 | Admin CSS | ✓ Login + ThemeEditor em `.admin-*` — zero Tailwind |
 | Tailwind | ✓ **Removido** — `.prose` em CSS puro |
 | Layout admin | ✓ `/admin/*` sem chrome público (`middleware` + `SiteChrome`) |
 | Wisp fetch | ✓ `src/lib/projects.ts` + `cache()` |
 | SEO | ✓ `metadata.ts` + OG + canonical |
-| Styleguide | ✓ Atualizado — 3 camadas, seção Admin |
+| Styleguide | ✓ Linkado no nav + theme board |
 | Toolchain | ✓ ESLint OK, package `julia-portfolio` |
 
-**Refatoração PR-1 → PR-6 + migração CSS pura concluída.**
+**Refatoração PR-1 → PR-6 + migração CSS pura concluída.** Backlog atual: [`CLEANUP-AUDIT.md`](./CLEANUP-AUDIT.md) (Fases 0/A/B/C/D/E).
 
 ---
 
 ## O que já foi feito
 
 - [x] PR-1 — Consolidação CSS (`ProjectCard`, `theme-presets`, ThemeSwitcher tokenizado)
-- [x] PR-2 — One-page + rotas `/projects/[slug]`
+- [x] PR-2 — Rotas `/projects/[slug]` + home Hero+Work (About virou página própria depois)
 - [x] PR-3 — Admin preview unificado (`ThemePreviewListener`)
 - [x] PR-4 — Camada de dados Wisp (`projects.ts`, empty state, `cache()`)
 - [x] PR-5 — SEO mínimo (`metadata.ts`, JSON-LD)
 - [x] Polish final — deps Shadcn removidas, package `julia-portfolio`, route group `(site)`, ESLint fix
-- [x] Página fantasma `/styleguide` com documentação viva do design system
+- [x] `/styleguide` com documentação viva do design system (linkado no nav)
 - [x] **Migração CSS pura** — admin (`--admin-*`), ThemeEditor, login, `.prose` Wisp
 - [x] **Tailwind removido** — `tailwindcss`, `@tailwindcss/typography`, `@tailwindcss/postcss`
-- [x] **3 camadas de theming** — visitante / preview iframe / Save Redis
-- [x] **`color-mode.ts`** — System/Light/Dark; limpeza de inline vars legadas
+- [x] **Theming visitante** — Core color-mode + Fun themes (`fun-themes.ts`)
+- [x] **`color-mode.ts`** — System/Light/Dark + init script; limpeza de inline vars legadas
 - [x] **`SiteChrome`** + `middleware.ts` — admin isolado do header/footer público
+- [x] **Hero 3D** + cursor whoami → `/about`
+- [x] **ThemeSwitcher** face + focus invertido
 
 ---
 
@@ -293,24 +308,23 @@ src/app/admin/(protected)/theme/ThemeEditor.tsx
 
 ---
 
-### PR-2 — One-page + rotas de projeto
+### PR-2 — Rotas de projeto + home (histórico)
 
-**Objetivo:** Navegação mínima; portfólio como single-page.
+**Objetivo original:** one-page; **resultado atual:** home Hero+Work; About em `/about` (C2-A).
 
-#### Tasks
+#### Tasks (histórico)
 
-- [x] **2.1** Seção `#about` na home
+- [x] **2.1** About na home como `#about` — **superseded:** página `/about`
 - [x] **2.2** Rota `/projects/[slug]`
 - [x] **2.3** Redirect `/blog/[slug]` → `/projects/[slug]`
-- [x] **2.4** Header com âncoras `#work`, `#about`
-- [x] **2.5** Redirect `/about` → `/#about`
+- [x] **2.4** Header: work / about / cv / style guide (não só âncoras)
+- [x] **2.5** ~~Redirect `/about` → `/#about`~~ — **não feito;** `/about` é página real
 - [x] **2.6** Página de projeto tokenizada
 - [x] **2.7** Tags como `.project-tag`
 
-#### Critérios de aceite
+#### Critérios de aceite (atualizados)
 
-- `/` contém hero + about + work
-- Header com ≤ 3 interações (logo, âncoras, theme)
+- `/` contém hero + work; `/about` é rota própria
 - Detalhe de projeto em `/projects/[slug]`
 
 #### Arquivos principais
@@ -393,15 +407,15 @@ src/app/(blog)/page.tsx
 
 ---
 
-## Decisões pendentes (perguntar ao usuário se necessário)
+## Decisões (resolvidas vs pendentes)
 
-| # | Pergunta | Opções |
-|---|----------|--------|
-| 1 | Rota de detalhe | `/projects/[slug]` ✓ sugerido ou `/work/[slug]` |
-| 2 | About | Merge total em `/#about` ✓ sugerido ou manter deep link |
-| 3 | Naming no código | `post` vs `project` na camada de dados |
-| 4 | Seções extras | Só hero + about + work ✓ ou adicionar `#contact` |
-| 5 | Build strict | Falhar CI sem `WISP_BLOG_ID` ou degradar graciosamente |
+| # | Tema | Decisão |
+|---|------|--------|
+| 1 | Rota de detalhe | `/projects/[slug]` ✓ |
+| 2 | About | **Página `/about`** (C2-A) — não merge `/#about` |
+| 3 | Naming | `project` na UI; Wisp ainda usa posts por baixo |
+| 4 | Home | Hero + Work; About separado |
+| 5 | Build strict | Pendente — hoje degrada sem `WISP_BLOG_ID` |
 
 ---
 
@@ -410,6 +424,8 @@ src/app/(blog)/page.tsx
 | Problema | Status |
 |----------|--------|
 | Build strict sem `WISP_BLOG_ID` | Decisão pendente — hoje degrada graciosamente |
+| Nav mobile | Pendente — [`CLEANUP-AUDIT.md`](./CLEANUP-AUDIT.md) **D1** |
+| HANDOFF/README drift | **C0 feito** (set/2026) |
 
 ---
 
@@ -418,24 +434,25 @@ src/app/(blog)/page.tsx
 | Asset | Uso | Fonte local | No repo |
 |-------|-----|-------------|---------|
 | **`working.glb`** | **Home hero** — estático, sem animação skeletal | `~/Downloads/working.glb` (~28 MB export) | `public/models/hero.glb` após `npm run models:optimize` (~1,6 MB Draco, set/2026) |
-| **`dancing.glb`** | **Reserva P3** — personagem animado na seção **About** (se sobrar tempo pós-ship) | `~/Downloads/dancing.glb` (~19 MB) | Não commitado ainda — otimizar antes de `public/models/dancing.glb` |
+| **`dancing.glb`** | **Reserva P3** — personagem animado na **About** (se sobrar tempo) | `~/Downloads/dancing.glb` (~19 MB) | Não commitado ainda — otimizar antes de `public/models/dancing.glb` |
 
-**Pipeline:** export Blender → copiar para `public/models/hero.glb` → `npm run models:optimize` → testar `HeroModelViewer` (sem `auto-rotate`; drag orbit opcional).
+**Pipeline:** export Blender → copiar para `public/models/hero.glb` → `npm run models:optimize` → testar `HeroModelViewer` (sem `auto-rotate`; drag orbit; whoami cursor → `/about`).
 
-**Ideia About (Julia, 12/09):** viewer R3F ou model-viewer com clip de dança, só desktop / `prefers-reduced-motion: no`; mobile = poster estático.
+**Ideia About (Julia, 12/09):** viewer com clip de dança, só desktop / `prefers-reduced-motion: no`; mobile = poster — ainda opcional.
 
-**Decisão UI (16/09):** ThemeSwitcher Light/Dark **permanece** (funciona). Admin **permanece** (protegido por senha) — não desligar; só não investir polish agora.
+**Decisão UI (16–17/09):** ThemeSwitcher Core + Fun + focus invertido. Admin permanece. Home = Hero + Work; About = `/about`. Cursor whoami shipped.
 
-**UI híbrida (16/09):** WOUQ chrome + JT ordem (Hero → Work → About curto) + cards imagem no Julia Grid. Home usa `--container-max-width` (1200). Hero: tagline center sans + 3D center menor. Radius card 0 → 0.25rem no hover. Motion scroll = fase seguinte.
+**UI híbrida:** WOUQ chrome + cards no Julia Grid. Home usa `--container-max-width` (1200). Hero: tagline + 3D. Backlog produto: nav mobile, i18n, perf — ver CLEANUP-AUDIT Fase D.
 
 ---
 
 ## Próximos passos opcionais
 
+- Plano ativo: [`docs/CLEANUP-AUDIT.md`](./CLEANUP-AUDIT.md) — próximo produto **D1 nav mobile**; docs GitHub **E1**
 - Conteúdo real: [`docs/CONTENT-PLAYBOOK.md`](./CONTENT-PLAYBOOK.md) — Auway primeiro no Wisp
 - Adicionar seção `#contact`
 - Falhar CI sem `WISP_BLOG_ID` (modo strict)
-- Aplicar `ThemeConfig` do Redis no site público (hoje: neutro + preview no iframe)
+- Aplicar `ThemeConfig` do Redis no site público (hoje: neutro + Fun + preview no iframe)
 - **P3:** `dancing.glb` animado na About (ver tabela acima)
 - Hero scroll 3D (GSAP + yaw) — quando autorizar `pode executar hero-scroll-3d`
 
@@ -483,11 +500,14 @@ open http://localhost:3000/admin/theme # editor
 | `src/middleware.ts` | Header `x-pathname` — omite chrome público em `/admin/*` |
 | `src/components/SiteChrome.tsx` | Header + main + footer (só rotas públicas) |
 | `src/app/admin/layout.tsx` | Wrapper `.admin-app` |
-| `src/lib/color-mode.ts` | Color mode público + init script + limpeza inline vars |
-| `src/app/(site)/page.tsx` | Home (hero + about + work) |
+| `src/lib/color-mode.ts` | Color mode público + init script (+ Fun path gate) |
+| `src/lib/fun-themes.ts` | Fun themes Core+Fun (ids, CSS vars, storage) |
+| `src/app/(site)/page.tsx` | Home (hero 3D + work) |
+| `src/app/(site)/about/page.tsx` | About |
 | `src/app/projects/[slug]/page.tsx` | Detalhe do case study |
 | `src/app/styleguide/page.tsx` | Docs vivas — referência visual |
-| `src/components/ThemeSwitcher.tsx` | Color mode (System / Light / Dark) |
+| `src/components/ThemeSwitcher.tsx` | Core + Fun — face `theme: value ▼` |
+| `src/components/HeroVisual.tsx` | Hero 3D + whoami → `/about` |
 | `src/components/ThemePreviewListener.tsx` | Bridge iframe — preview efêmero |
 | `src/components/wisp-content-wrapper.tsx` | Render HTML Wisp (client, `.prose`) |
 | `src/lib/wisp.ts` | Cliente Wisp singleton |
@@ -514,9 +534,9 @@ open http://localhost:3000/admin/theme # editor
 
 ## Próximo passo recomendado
 
-**Refatoração técnica concluída** (PR-1 → PR-6 + CSS puro + Tailwind removido).
+**C0 feito.** Seguinte: [`docs/CLEANUP-AUDIT.md`](./CLEANUP-AUDIT.md) — **D1** nav mobile (ou **E2** stubs de DESIGN-SYSTEM/TESTING).
 
-**Conteúdo real:** seguir [`docs/CONTENT-PLAYBOOK.md`](./CONTENT-PLAYBOOK.md) — Auway primeiro no Wisp, copy já rascunhada em `redis.ts`.
+Conteúdo real: [`docs/CONTENT-PLAYBOOK.md`](./CONTENT-PLAYBOOK.md).
 
 Melhorias opcionais: [Próximos passos opcionais](#próximos-passos-opcionais) e [Problemas conhecidos](#problemas-conhecidos).
 

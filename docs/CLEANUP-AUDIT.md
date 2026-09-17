@@ -18,21 +18,23 @@ Fontes: [`REFERENCES.md`](./REFERENCES.md) · script atual `npm run a11y:audit` 
 | Focus invertido no face | bloco sólido foreground/background (`0038d04`) |
 | Styleguide lean board | estilo randoma11y |
 | Hero 3D + whoami cursor | PNG com placa preta, hotspot alinhado |
-| Decisão About (C2-A) | `/about` página existe; docs ainda misturam redirect |
+| Decisão About (C2-A) | `/about` página existe; docs sincronizados (C0) |
+| **C0 Docs = código** | HANDOFF + README alinhados ao ship atual |
 
-### Parcial (Fase B)
+### Parcial (Fase B / E)
 
 | Passo | Estado |
 |-------|--------|
-| B2 | Código separa color-mode / Fun / Redis; **HANDOFF ainda descreve só System/Light/Dark** |
+| B2 | Código + **HANDOFF** descrevem Fun; audit formal B1 ainda pendente |
 | B3 | Pares Fun inspirados em randoma11y — sem npm `randoma11y` no pipeline |
 | B4 | Face + optgroups Core/Fun — não é redesign swatches/components.ai |
 | B5 | Focus visual ok; contraste formal ainda entra no A1 |
-| B1 | Audit a11y dedicado (Escape / `aria-expanded` se custom) **pendente** |
+| B1 | Audit a11y dedicado **pendente** |
+| E1 | README face + docs map — **feito com C0**; DESIGN-SYSTEM.md etc. ainda E2 |
 
-### Não iniciado (pipeline formal + produto + docs GitHub)
+### Não iniciado (pipeline formal + produto + docs restantes)
 
-Fase **0**, **A1–A8**, **C0–C1**, **C3–C5**, **D1–D3**, **E1–E4** (README/docs públicos, tokens schema, perf tests, mapa W3C).
+Fase **0**, **A1–A8**, **C1**, **C3–C5**, **D1–D3**, **E2–E4**.
 
 ---
 
@@ -133,11 +135,11 @@ Não misturar B com delete de CSS até A4 rodar.
 
 ## Fase C — Limpeza (depois dos reports)
 
-### C0 — Docs = código · **próximo útil (com E1)**
+### C0 — Docs = código · **feito (set 2026)**
 
-- `HANDOFF` / `README` / styleguide: home = Hero + Work; `/about` página; hero 3D shipped; Fun themes; sem “redirect #about” mentiroso
-- ThemeSwitcher: Core + Fun + focus invertido
-- README GitHub face alinhado — ver **E1**
+- [x] `HANDOFF` / `README`: home = Hero + Work; `/about` página; hero 3D; Fun themes; sem redirect `#about` mentiroso
+- [x] ThemeSwitcher: Core + Fun + focus invertido documentados
+- [x] README docs map → `docs/` (E1.1–E1.2)
 
 ### C1 — Remover morto (guiado por A4/A5) · pendente
 
@@ -282,16 +284,15 @@ Hoje no GitHub: `README.md` (público) + `docs/*` (HANDOFF interno, playbook, dr
 ## Ordem de execução sugerida (restante)
 
 ```
-C0 + E1   Docs sync + README GitHub face     ← baixo risco, alto valor portfolio
-D1        Nav mobile                         ← produto, alta
+D1        Nav mobile                         ← próximo produto
 D3.1+E4.1 Baseline perf (medir + anotar)
-0         Spec pin (W3C API)                 → docs/spec-pins.json
 E2        DESIGN-SYSTEM + TESTING stubs
+0         Spec pin (W3C API)                 → docs/spec-pins.json
 A1        Expandir a11y:audit
 A4 + E3   Token orphans + schema DTCG-minded
 D2.1      Pass EN
 A2        axe (inclui nav mobile)
-B1 + B2   ThemeSwitcher a11y + HANDOFF Fun
+B1        ThemeSwitcher a11y formal
 D3.2–D3.5 Otimizações guiadas pelo baseline
 C1        Deletes guiados
 D2.2–D2.5 Locale PT (+ E2.3 I18N.md)
@@ -308,8 +309,8 @@ B3/B5 · A3/A5–A8 · C3–C5 · E2.4 CONTRIBUTING
 | Contraste | `a11y:audit` passa presets **e** color-modes (+ Fun) | ❌ |
 | Páginas | axe limpo nas rotas A2 | ❌ |
 | Tokens | inventário/schema + A4 limpo ou justificado | ❌ |
-| Docs internos | HANDOFF = código real | ❌ |
-| Docs GitHub | README atualizado + mapa `docs/` + TESTING/PERF | ❌ |
+| Docs internos | HANDOFF = código real | ✓ C0 |
+| Docs GitHub | README atualizado + mapa `docs/`; TESTING/PERF ainda E2/E4 | parcial |
 | ThemeSwitcher | focus invertido shipped; ARIA/audit B1; docs B2 | parcial |
 | W3C API | usada no pipeline de audit | ❌ |
 | Nav mobile | header usável ≤639px + a11y | ❌ |
