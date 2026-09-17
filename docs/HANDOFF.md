@@ -53,15 +53,17 @@ Site de **portfólio pessoal** que demonstra habilidades técnicas:
 
 ## Arquitetura de dados
 
+Setas **fonte → consumidor** = leitura. **Save** / **postMessage** = escrita explícita.
+
 ```mermaid
 flowchart TB
   subgraph public [Site público — Server Components]
+    RootLayout["layout.tsx — getConfig + getTheme + #__site_theme__"]
+    SiteChrome["SiteChrome — header/footer"]
     Home["/ — Hero + Work"]
     About["/about"]
     Project["/projects/slug"]
     StyleGuide["/styleguide — noindex, linkado no nav"]
-    RootLayout["layout.tsx — html mínimo"]
-    SiteChrome["SiteChrome — header/footer"]
   end
 
   subgraph admin [Admin — CSS --admin-*]
@@ -77,24 +79,36 @@ flowchart TB
 
   subgraph sources [Fontes da verdade]
     Wisp["Wisp CMS — posts = projetos"]
-    Redis["Upstash Redis — tema + SiteConfig"]
+    Redis["Upstash Redis — ThemeConfig + SiteConfig"]
     ColorMode["localStorage user_color_mode"]
     FunTheme["localStorage home_fun_theme"]
   end
 
-  Home --> Wisp
-  Home --> Redis
-  About --> Redis
-  Project --> Wisp
-  RootLayout --> SiteChrome
-  SiteChrome --> Redis
+  Redis -->|tema + config| RootLayout
+  Redis -->|config| SiteChrome
+  Redis -->|config| Home
+  Redis -->|config| About
+  Redis -->|config| Project
+  Redis -->|load| ThemeEditor
   ThemeEditor -->|Save| Redis
-  ThemeEditor -->|postMessage| Listener
-  Listener --> StyleTag
-  RootLayout --> ColorMode
-  RootLayout --> FunTheme
+
+  Wisp --> Home
+  Wisp --> Project
+
+  ColorMode -->|data-color-mode no html| RootLayout
+  FunTheme -->|data-fun-theme| Home
+  FunTheme -->|data-fun-theme| StyleGuide
+
+  RootLayout --> SiteChrome
+  SiteChrome --> Home
+  SiteChrome --> About
+  SiteChrome --> Project
+  SiteChrome --> StyleGuide
+
   AdminLayout --> Login
   AdminLayout --> ThemeEditor
+  ThemeEditor -->|postMessage| Listener
+  Listener --> StyleTag
 ```
 
 ### Wisp CMS (conteúdo dinâmico)

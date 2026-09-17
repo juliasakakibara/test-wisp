@@ -31,15 +31,17 @@ Live design system reference: [`/styleguide`](/styleguide) (`noindex`, linked in
 
 ## Architecture
 
+Arrows **source → consumer** = read. **Save** / **postMessage** = explicit write.
+
 ```mermaid
 flowchart TB
   subgraph public [Public site]
+    RootLayout["layout.tsx — getConfig + getTheme + #__site_theme__"]
+    SiteChrome["SiteChrome — header/footer"]
     Home["/ — hero + work"]
     About["/about"]
     Project["/projects/slug"]
     Styleguide["/styleguide"]
-    SiteChrome["SiteChrome — header/footer"]
-    ColorMode["data-color-mode + data-fun-theme"]
   end
 
   subgraph admin [Admin — --admin-* tokens]
@@ -56,20 +58,35 @@ flowchart TB
   subgraph persist [Source of truth]
     Wisp["Wisp CMS"]
     Redis["Upstash Redis — ThemeConfig + SiteConfig"]
-    LS["localStorage user_color_mode + home_fun_theme"]
+    ColorMode["localStorage user_color_mode"]
+    FunTheme["localStorage home_fun_theme"]
   end
 
-  Home --> Wisp
-  Home --> Redis
-  About --> Redis
-  Project --> Wisp
-  SiteChrome --> Redis
-  ColorMode --> LS
+  Redis -->|theme + config| RootLayout
+  Redis -->|config| SiteChrome
+  Redis -->|config| Home
+  Redis -->|config| About
+  Redis -->|config| Project
+  Redis -->|load| ThemeEditor
   ThemeEditor -->|Save| Redis
-  ThemeEditor -->|postMessage| Listener
-  Listener --> StyleTag
+
+  Wisp --> Home
+  Wisp --> Project
+
+  ColorMode -->|data-color-mode on html| RootLayout
+  FunTheme -->|data-fun-theme| Home
+  FunTheme -->|data-fun-theme| Styleguide
+
+  RootLayout --> SiteChrome
+  SiteChrome --> Home
+  SiteChrome --> About
+  SiteChrome --> Project
+  SiteChrome --> Styleguide
+
   AdminApp --> ThemeEditor
   AdminApp --> Login
+  ThemeEditor -->|postMessage| Listener
+  Listener --> StyleTag
 ```
 
 ### Hybrid data layer
