@@ -1492,8 +1492,8 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
 
 .hero-visual--whoami,
 .hero-visual--whoami * {
-  /* System cursor replaced — hotspot = tip of index finger (11, 0) */
-  cursor: url("/cursors/whoami-cursor.png") 11 0, pointer !important;
+  /* System cursor replaced — hotspot = tip of index finger (2, 0) */
+  cursor: url("/cursors/whoami-cursor.png") 2 0, pointer !important;
 }
 
 .hero-visual__bob {

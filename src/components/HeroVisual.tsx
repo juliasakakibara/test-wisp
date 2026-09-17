@@ -11,7 +11,7 @@ import {
 import { HeroModelViewerLazy } from "@/components/HeroModelViewerLazy";
 
 const CLICK_SLOP_PX = 10;
-const CURSOR_CSS = `* { cursor: url("/cursors/whoami-cursor.png") 11 0, pointer !important; }`;
+const CURSOR_CSS = `* { cursor: url("/cursors/whoami-cursor.png") 2 0, pointer !important; }`;
 
 /** Step 4 — load + idle bob + mouse lerp + drag orbit + whoami → /about. */
 export function HeroVisual() {
