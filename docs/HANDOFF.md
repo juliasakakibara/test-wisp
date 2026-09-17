@@ -14,8 +14,14 @@ Leia este arquivo inteiro antes de implementar qualquer task.
 | [CONTENT-PLAYBOOK.md](./CONTENT-PLAYBOOK.md) | Checklist fases 0–4, ordem Auway → … |
 | [CONTENT-STRATEGY.md](./CONTENT-STRATEGY.md) | Estratégia, tiers, tom de voz, SiteConfig §6 |
 | [WISP-POST-DRAFTS.md](./WISP-POST-DRAFTS.md) | Posts prontos para colar no Wisp |
-| [REFERENCES.md](./REFERENCES.md) | Tokens DTCG, W3C DS/API, colors — mapa refs → entregas do repo |
+| [REFERENCES.md](./REFERENCES.md) | Tokens DTCG, W3C DS/API, Component Contracts, Adam Silver, Kelp/Once UI — mapa refs → entregas |
 | [CLEANUP-AUDIT.md](./CLEANUP-AUDIT.md) | Plano limpeza + audit W3C-first + produto (D) + docs GitHub (E) |
+| [STYLE-GUIDE-REVIEW.md](./STYLE-GUIDE-REVIEW.md) | Board OPEN/DECIDED — skill `style-guide-review` |
+| [UI-REFINEMENT-WORKFLOW.md](./UI-REFINEMENT-WORKFLOW.md) | Workflow Frost-first: W1 páginas → W2 atomic → W3 tokens → W4 plano |
+| [TOKEN-AUDIT-LEDGER.md](./TOKEN-AUDIT-LEDGER.md) | Ledger de `--*` (oferta) — input da W3, não é W1 |
+| [COMPONENT-INVENTORY.md](./COMPONENT-INVENTORY.md) | Inventário de primitivos UI (Chip nome TBD, Link, …) — style guide in-repo |
+| [TOKEN-MAP.md](./TOKEN-MAP.md) | Taxonomia de tokens + Mermaid (Material / Vodafone-minded) |
+| [contracts/chip.contract.json](./contracts/chip.contract.json) | Draft contract do visual — sob C1 na revisão |
 | [DEV-SECRETS.md](./DEV-SECRETS.md) | Easter eggs (`__julia`, Konami) |
 | [`src/lib/redis.ts`](../src/lib/redis.ts) | Defaults de copy (`DEFAULT_SITE_CONFIG`) |
 
@@ -438,7 +444,7 @@ src/app/(blog)/page.tsx
 | Problema | Status |
 |----------|--------|
 | Build strict sem `WISP_BLOG_ID` | Decisão pendente — hoje degrada graciosamente |
-| Nav mobile | Pendente — [`CLEANUP-AUDIT.md`](./CLEANUP-AUDIT.md) **D1** |
+| Nav mobile | **D1 feito** — `SiteNav` menu/close ≤639px |
 | HANDOFF/README drift | **C0 feito** (set/2026) |
 
 ---
@@ -513,6 +519,7 @@ open http://localhost:3000/admin/theme # editor
 | `src/app/layout.tsx` | Root mínimo: fonts, color-mode script, `SiteChrome` condicional |
 | `src/middleware.ts` | Header `x-pathname` — omite chrome público em `/admin/*` |
 | `src/components/SiteChrome.tsx` | Header + main + footer (só rotas públicas) |
+| `src/components/SiteNav.tsx` | Nav desktop + menu mobile (menu/close) |
 | `src/app/admin/layout.tsx` | Wrapper `.admin-app` |
 | `src/lib/color-mode.ts` | Color mode público + init script (+ Fun path gate) |
 | `src/lib/fun-themes.ts` | Fun themes Core+Fun (ids, CSS vars, storage) |
@@ -548,7 +555,7 @@ open http://localhost:3000/admin/theme # editor
 
 ## Próximo passo recomendado
 
-**C0 feito.** Seguinte: [`docs/CLEANUP-AUDIT.md`](./CLEANUP-AUDIT.md) — **D1** nav mobile (ou **E2** stubs de DESIGN-SYSTEM/TESTING).
+**C0 feito.** **D1 nav mobile feito** (`SiteNav`). Seguinte: [`docs/CLEANUP-AUDIT.md`](./CLEANUP-AUDIT.md) — perf baseline ou docs de CSS architecture / style guide.
 
 Conteúdo real: [`docs/CONTENT-PLAYBOOK.md`](./CONTENT-PLAYBOOK.md).
 

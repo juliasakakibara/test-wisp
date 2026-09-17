@@ -1,0 +1,190 @@
+{
+  "$schema": "https://raw.githubusercontent.com/nvillapiano/component-contracts-figma/main/schema/schema.json",
+  "id": "chip",
+  "version": "0.1.0",
+  "displayName": "Chip",
+  "description": "Solid inverted label block for selected / pressed / focus affordances. Public surface only — not admin buttons. Fill and type swap with the active theme modes (Core, Fun, Redis) via --foreground / --background.",
+  "status": "draft",
+  "platforms": ["web"],
+  "tokens": {
+    "color": {
+      "background.solid": "foreground",
+      "background.solid.hover": "foreground",
+      "text.solid": "background",
+      "text.solid.hover": "background",
+      "background.on-inverted": "background",
+      "background.on-inverted.hover": "background",
+      "text.on-inverted": "foreground",
+      "text.on-inverted.hover": "foreground",
+      "focus.ring": "primary"
+    },
+    "typography": {
+      "label.size": "type.body",
+      "label.weight": "font.weight.body",
+      "label.weight.selected": "font.weight.semibold",
+      "label.transform": "lowercase"
+    },
+    "spacing": {
+      "padding.x": "space.chip.x",
+      "padding.y": "space.chip.y",
+      "minHeight": "space.touch.min"
+    },
+    "border": {
+      "radius": "radius",
+      "width": "0"
+    },
+    "motion": {
+      "transition": "duration.fast"
+    }
+  },
+  "props": {
+    "appearance": {
+      "type": "enum",
+      "description": "solid = fg fill / bg type on default surfaces. on-inverted = flip when parent surface is already inverted (e.g. open mobile nav panel).",
+      "values": ["solid", "on-inverted"],
+      "default": "solid",
+      "tokenMapped": true
+    },
+    "as": {
+      "type": "enum",
+      "description": "Rendered element. link for nav current; button for menu/close; span for decorative focus face.",
+      "values": ["button", "link", "span"],
+      "default": "button"
+    },
+    "label": {
+      "type": "string",
+      "description": "Visible chip text (menu, close, route name, theme value).",
+      "required": true
+    },
+    "selected": {
+      "type": "boolean",
+      "description": "Current-route / selected emphasis (slightly heavier weight).",
+      "default": false
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "href": {
+      "type": "string",
+      "description": "When as=link."
+    },
+    "onPress": {
+      "type": "function",
+      "description": "When as=button."
+    }
+  },
+  "states": ["default", "hover", "focus", "disabled"],
+  "variants": [
+    {
+      "id": "solid-default",
+      "displayName": "Solid",
+      "description": "Default chip on page chrome (nav current, menu closed, theme focus).",
+      "props": { "appearance": "solid", "label": "work" }
+    },
+    {
+      "id": "solid-selected",
+      "displayName": "Solid selected",
+      "props": { "appearance": "solid", "selected": true, "label": "work" }
+    },
+    {
+      "id": "on-inverted-default",
+      "displayName": "On inverted",
+      "description": "Inside .site-nav.is-open panel (fg surface).",
+      "props": { "appearance": "on-inverted", "label": "close" }
+    },
+    {
+      "id": "menu-toggle",
+      "displayName": "Menu toggle",
+      "props": { "appearance": "solid", "as": "button", "label": "menu" }
+    },
+    {
+      "id": "nav-current",
+      "displayName": "Nav current",
+      "props": { "appearance": "solid", "as": "link", "selected": true, "label": "about", "href": "/about" }
+    }
+  ],
+  "composition": {
+    "slots": {
+      "surface": {
+        "description": "Interactive or selected surface of the chip.",
+        "required": true,
+        "childOrder": ["label"],
+        "children": {
+          "label": {
+            "type": "text",
+            "figma": { "textProp": "label" }
+          }
+        }
+      }
+    },
+    "forbiddenParents": ["chip"]
+  },
+  "behavior": {
+    "focusable": true,
+    "pressable": true,
+    "keyboardShortcuts": [
+      { "key": "Enter", "action": "Activate when as=button or as=link" },
+      { "key": "Space", "action": "Activate when as=button" }
+    ],
+    "cssTargets": {
+      "base": ".chip",
+      "onInverted": ".chip--on-inverted",
+      "consumersToday": [
+        ".nav-item.is-current",
+        ".site-nav__toggle",
+        ".theme-switcher:has(.theme-switcher__select:focus-visible) .theme-switcher__face",
+        ".site-nav.is-open .site-nav__toggle",
+        ".site-nav.is-open .nav-item.is-current"
+      ]
+    },
+    "tokenMapCss": {
+      "foreground": "--foreground",
+      "background": "--background",
+      "primary": "--primary",
+      "type.body": "--type-body",
+      "font.weight.body": "--font-weight-body",
+      "font.weight.semibold": "600",
+      "radius": "--radius",
+      "duration.fast": "--duration-fast",
+      "space.chip.x": "~0.35em–0.5em (inline; normalize on extract)",
+      "space.chip.y": "~0.1em (block; normalize on extract)",
+      "space.touch.min": "44px (48px in open mobile panel)"
+    }
+  },
+  "accessibility": {
+    "role": "inherits from as (button | link | presentation)",
+    "labelSource": "prop",
+    "wcagLevel": "AA",
+    "notes": [
+      "Contrast comes from theme --foreground/--background pair; Fun themes must keep AA.",
+      "Focus ring uses --primary outline when the control itself is focused (toggle); ThemeSwitcher uses chip fill as focus indicator instead of outline on the face."
+    ]
+  },
+  "usage": {
+    "do": [
+      "Use for selected route, menu/close toggle, and theme-switcher focus face",
+      "Prefer appearance=on-inverted (or parent .site-nav.is-open flip) when the surrounding surface is already --foreground",
+      "Keep labels short and lowercase to match chrome voice"
+    ],
+    "dont": [
+      "Don't merge with .admin-button / --admin-accent",
+      "Don't hardcode hex — only semantic --foreground / --background",
+      "Don't nest chips",
+      "Don't use Chip as the only focus style for every control — FocusRing remains separate for most links"
+    ]
+  },
+  "platformNotes": {
+    "web": "First build target: CSS classes .chip / .chip--on-inverted, then plug SiteNav + ThemeSwitcher. Multi-brand = same contract; theme modes remap --foreground/--background. Figma generation via cc-figma-tokens + cc-figma-component is optional later."
+  },
+  "changelog": [
+    {
+      "version": "0.1.0",
+      "date": "2026-09-17",
+      "changes": [
+        "Draft from live CSS (nav current, menu toggle, theme focus) + COMPONENT-INVENTORY P0",
+        "Appearances solid | on-inverted; CSS token map to existing custom properties"
+      ]
+    }
+  ]
+}

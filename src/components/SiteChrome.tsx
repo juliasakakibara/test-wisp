@@ -1,7 +1,6 @@
-import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { FooterSocial } from "@/components/FooterSocial";
 import { SiteLogo } from "@/components/SiteLogo";
-import Link from "next/link";
+import { SiteNav } from "@/components/SiteNav";
 import type { SiteConfig } from "@/lib/redis";
 
 export function SiteChrome({
@@ -27,21 +26,7 @@ export function SiteChrome({
         </div>
         <div className="header-container">
           <SiteLogo siteName={config.siteName} />
-          <nav className="nav-list" aria-label="Main">
-            <Link href="/#work" className="nav-item">
-              work
-            </Link>
-            <Link href="/about" className="nav-item">
-              about
-            </Link>
-            <a href="/resume/julia-sakakibara-en.html" className="nav-item">
-              cv
-            </a>
-            <Link href="/styleguide" className="nav-item">
-              style guide
-            </Link>
-            <ThemeSwitcher />
-          </nav>
+          <SiteNav />
         </div>
       </header>
 

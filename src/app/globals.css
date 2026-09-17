@@ -430,8 +430,9 @@ html[data-env="admin"] .site-header {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   box-sizing: border-box;
+  position: relative;
 }
 
 @media (max-width: 639px) {
@@ -447,6 +448,8 @@ html[data-env="admin"] .site-header {
   gap: var(--space-1);
   text-decoration: none;
   color: inherit;
+  min-width: 0;
+  flex: 1 1 auto;
   border-radius: var(--radius);
   transition: color var(--duration-fast) ease;
 }
@@ -495,12 +498,218 @@ html[data-env="admin"] .site-header {
   gap: var(--space-3);
 }
 
+.site-nav {
+  display: flex;
+  align-items: center;
+  margin-inline-start: auto;
+}
+
+.site-nav__toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding-block: 0.1em;
+  padding-inline: 0.5em;
+  border: 0;
+  border-radius: var(--radius);
+  /* Same solid chip as theme-switcher focus */
+  background: var(--foreground);
+  color: var(--background);
+  font: inherit;
+  font-family: var(--font-body);
+  font-size: var(--type-body);
+  font-weight: var(--font-weight-body);
+  font-style: normal;
+  text-transform: lowercase;
+  line-height: 1.4;
+  cursor: pointer;
+  z-index: 60;
+  transition:
+    color var(--duration-fast) ease,
+    background-color var(--duration-fast) ease,
+    opacity var(--duration-fast) ease;
+}
+
+.site-nav__toggle:hover {
+  font-style: normal;
+  opacity: 0.85;
+}
+
+.site-nav__toggle:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.site-nav__backdrop {
+  display: none;
+}
+
+.site-nav__panel {
+  display: flex;
+  align-items: center;
+}
+
 .nav-list {
   display: flex;
   align-items: center;
   gap: var(--space-4);
   font-size: var(--type-body);
   font-weight: var(--font-weight-body);
+}
+
+@media (max-width: 639px) {
+  .site-nav__toggle {
+    display: inline-flex;
+  }
+
+  /* On inverted panel: flip chip so it stays high-contrast (same pattern as theme: value) */
+  .site-nav.is-open .site-nav__toggle {
+    background: var(--background);
+    color: var(--foreground);
+  }
+
+  .site-nav.is-open .site-nav__toggle:hover {
+    font-style: normal;
+    opacity: 0.85;
+  }
+
+  .site-nav__backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: color-mix(in srgb, var(--foreground) 35%, transparent);
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 280ms ease,
+      visibility 280ms ease;
+  }
+
+  .site-nav.is-open .site-nav__backdrop {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .site-nav__panel {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 58;
+    align-items: stretch;
+    padding: calc(var(--header-height) + var(--space-6)) var(--space-3) var(--space-8);
+    box-sizing: border-box;
+    overflow: auto;
+    background: var(--foreground);
+    color: var(--background);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate3d(0, -0.75rem, 0);
+    transition:
+      opacity 320ms ease,
+      transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 320ms ease;
+  }
+
+  .site-nav.is-open .site-nav__panel {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .site-nav .nav-list {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+    width: min(100%, 20rem);
+  }
+
+  .site-nav .nav-item {
+    width: 100%;
+    min-height: 48px;
+    padding-block: var(--space-3);
+    font-size: var(--type-lead, var(--type-body));
+    color: inherit;
+  }
+
+  .site-nav .nav-item:hover {
+    color: color-mix(in srgb, var(--background) 72%, transparent);
+  }
+
+  .site-nav .nav-item.is-current {
+    background: var(--background);
+    color: var(--foreground);
+  }
+
+  .site-nav .nav-item.is-current:hover {
+    color: var(--foreground);
+    opacity: 0.9;
+  }
+
+  .site-nav .theme-switcher {
+    margin-top: var(--space-4);
+    min-height: 48px;
+    color: inherit;
+  }
+
+  .site-nav .theme-switcher__prefix,
+  .site-nav .theme-switcher__value,
+  .site-nav .theme-switcher__chevron {
+    color: inherit;
+  }
+
+  .site-nav .theme-switcher:hover .theme-switcher__face {
+    color: color-mix(in srgb, var(--background) 72%, transparent);
+  }
+
+  /* Focus chip flips against inverted panel */
+  .site-nav .theme-switcher:has(.theme-switcher__select:focus-visible) .theme-switcher__face {
+    background: var(--background);
+    color: var(--foreground);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-nav__backdrop,
+  .site-nav__panel,
+  .site-nav__toggle {
+    transition: none;
+  }
+
+  .site-nav__panel {
+    transform: none;
+  }
+}
+
+@media (min-width: 640px) {
+  .site-nav__toggle,
+  .site-nav__backdrop {
+    display: none !important;
+  }
+
+  .site-nav__panel {
+    display: flex !important;
+    position: static;
+    inset: auto;
+    padding: 0;
+    background: transparent;
+    color: inherit;
+    overflow: visible;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: none !important;
+    transition: none;
+  }
 }
 
 .nav-separator {
@@ -514,12 +723,18 @@ html[data-env="admin"] .site-header {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  padding-block: var(--space-2);
+  padding-block: 0.1em;
+  padding-inline: 0.35em;
   color: var(--foreground);
   text-decoration: none;
   text-transform: lowercase;
   font-style: normal;
-  transition: color var(--duration-fast) ease;
+  line-height: 1.4;
+  border-radius: var(--radius);
+  transition:
+    color var(--duration-fast) ease,
+    background-color var(--duration-fast) ease,
+    opacity var(--duration-fast) ease;
   cursor: pointer;
 }
 
@@ -527,6 +742,20 @@ html[data-env="admin"] .site-header {
   color: var(--muted-foreground);
   font-style: italic;
   text-decoration: none;
+}
+
+/* Current route — same solid chip as theme / menu */
+.nav-item.is-current {
+  background: var(--foreground);
+  color: var(--background);
+  font-style: normal;
+  font-weight: 600;
+}
+
+.nav-item.is-current:hover {
+  color: var(--background);
+  font-style: normal;
+  opacity: 0.9;
 }
 
 .nav-item-muted {
@@ -2356,6 +2585,7 @@ html[data-env="admin"] body {
 }
 
 .nav-item:focus-visible,
+.site-nav__toggle:focus-visible,
 .hero-cta__link:focus-visible,
 .footer-social__link:focus-visible,
 .project-list-item__link:focus-visible,

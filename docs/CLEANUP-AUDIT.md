@@ -20,6 +20,7 @@ Fontes: [`REFERENCES.md`](./REFERENCES.md) · script atual `npm run a11y:audit` 
 | Hero 3D + whoami cursor | PNG com placa preta, hotspot alinhado |
 | Decisão About (C2-A) | `/about` página existe; docs sincronizados (C0) |
 | **C0 Docs = código** | HANDOFF + README alinhados ao ship atual |
+| **D1 Nav mobile** | `SiteNav` — menu/close + painel ≤639px |
 
 ### Parcial (Fase B / E)
 
@@ -34,7 +35,7 @@ Fontes: [`REFERENCES.md`](./REFERENCES.md) · script atual `npm run a11y:audit` 
 
 ### Não iniciado (pipeline formal + produto + docs restantes)
 
-Fase **0**, **A1–A8**, **C1**, **C3–C5**, **D1–D3**, **E2–E4**.
+Fase **0**, **A1–A8**, **C1**, **C3–C5**, **D2–D3**, **E2–E4**.
 
 ---
 
@@ -173,16 +174,18 @@ Não misturar B com delete de CSS até A4 rodar.
 
 Trabalho de produto **em paralelo** ao pipeline W3C — não precisa esperar A4.
 
-### D1 — Nav mobile · pendente · **prioridade alta**
+### D1 — Nav mobile · **feito (set 2026)**
 
-Hoje: `SiteChrome` renderiza `.nav-list` horizontal (work / about / cv / style guide + ThemeSwitcher) sem padrão mobile dedicado — em viewport estreita o header aperta / quebra.
+Padrão: botão texto `menu` / `close` (sem ícone hamburger) + painel full-screen empilhado; ThemeSwitcher dentro do painel; Escape + backdrop; `inert` quando fechado; fecha no navigate.
 
-| Passo | Ação |
-|-------|------|
-| D1.1 | Definir padrão: menu overlay / drawer / lista empilhada (craft Helen-like, sem hamburger genérico se der) |
-| D1.2 | Hit targets ≥ 44px; focus trap se drawer; `aria-expanded` / Escape |
-| D1.3 | ThemeSwitcher acessível no mobile (não esconder só o focus invertido) |
-| D1.4 | Testar ≤639px e landscape; axe no header |
+| Passo | Ação | Estado |
+|-------|------|--------|
+| D1.1 | Overlay empilhado Helen-like (texto menu/close) | ✓ |
+| D1.2 | Hit targets ≥ 44px; Escape; `aria-expanded` / `inert` | ✓ |
+| D1.3 | ThemeSwitcher no painel mobile | ✓ |
+| D1.4 | Breakpoint ≤639px (+ desktop inalterado ≥640) | ✓ |
+
+Arquivos: `SiteNav.tsx`, `SiteChrome.tsx`, `globals.css`.
 
 ### D2 — Idioma: EN first → PT · pendente
 
@@ -251,23 +254,29 @@ Hoje no GitHub: `README.md` (público) + `docs/*` (HANDOFF interno, playbook, dr
 | E1.3 | Badges/comandos mínimos: `npm run dev`, `a11y:audit`, `models:optimize` |
 | E1.4 | Separar “case study” (README) vs “continuidade agent” (HANDOFF) — sem duplicar parágrafos eternamente |
 
-### E2 — Docs de sistema (estilo W3C frontend) · pendente
+### E2 — Docs de CSS / style guide (não “DS”) · pendente
 
 | Passo | Ação |
 |-------|------|
-| E2.1 | `docs/DESIGN-SYSTEM.md` (ou seção README): camadas CSS, tokens, 3+1 theming (color-mode / Fun / preview / Redis) |
-| E2.2 | `docs/TESTING.md`: a11y (`a11y:audit`, axe A2), contraste, Text Spacing; **perf** (Lighthouse/Web Vitals — amarra D3); checklist manual |
-| E2.3 | `docs/I18N.md` stub → preenche com D2 (refs W3C i18n) |
-| E2.4 | Opcional: `CONTRIBUTING.md` curto (branch, PR, não commitar secrets) |
+| E2.1 | `docs/CSS-ARCHITECTURE.md` — camadas `globals.css`, theming Core/Fun/Redis |
+| E2.1b | **`docs/COMPONENT-INVENTORY.md`** — inventário (visual “Chip” TBD; Link, …) ✓ · extração CSS **pausada** → [`STYLE-GUIDE-REVIEW.md`](./STYLE-GUIDE-REVIEW.md) |
+| E2.1c | **`docs/STYLE-GUIDE-REVIEW.md`** + skill `style-guide-review` ✓ |
+| E2.1d | **`docs/UI-REFINEMENT-WORKFLOW.md`** — Frost-first: W1 páginas → W2 atomic → W3 tokens → W4 plano ✓ (ordem invertida set/2026) |
+| E2.1e | **`docs/TOKEN-AUDIT-LEDGER.md`** — ledger de tokens (oferta; ex-“W1 audit”) ✓ |
+| E2.2 | `docs/TESTING.md`: a11y, contraste, perf (amarra D3) |
+| E2.3 | `docs/I18N.md` stub → D2 |
+| E2.4 | Opcional: `CONTRIBUTING.md` curto |
 
 ### E3 — Tokens & schemas · pendente (depois ou junto de A4)
 
 | Passo | Ação |
 |-------|------|
+| E3.0 | **`docs/TOKEN-MAP.md`** — Mermaid taxonomia Primitive → Semantic → Component + modes ✓ set/2026 |
 | E3.1 | Inventário nomeado alinhado DTCG (core vs Fun vs admin) — tabela ou JSON leve |
 | E3.2 | Schema / convenções: o que pode existir no Redis theme vs o que é só CSS |
 | E3.3 | Ligar A4 (órfãos) ao inventário: report cita o schema, não lista solta |
 | E3.4 | Styleguide `/styleguide` = doc viva; markdown = espelho para GitHub |
+| E3.5 | Opcional: primitives de cor nomeadas + semantic só via alias (Material-like) |
 
 ### E4 — Perf & qualidade no docs · pendente (com D3)
 
@@ -284,19 +293,13 @@ Hoje no GitHub: `README.md` (público) + `docs/*` (HANDOFF interno, playbook, dr
 ## Ordem de execução sugerida (restante)
 
 ```
-D1        Nav mobile                         ← próximo produto
 D3.1+E4.1 Baseline perf (medir + anotar)
-E2        DESIGN-SYSTEM + TESTING stubs
-0         Spec pin (W3C API)                 → docs/spec-pins.json
+E2        CSS architecture / style guide docs (sem vender “DS”)
+0         Spec pin (W3C API)
 A1        Expandir a11y:audit
-A4 + E3   Token orphans + schema DTCG-minded
+A4 + E3   Token orphans + schema
 D2.1      Pass EN
-A2        axe (inclui nav mobile)
-B1        ThemeSwitcher a11y formal
-D3.2–D3.5 Otimizações guiadas pelo baseline
-C1        Deletes guiados
-D2.2–D2.5 Locale PT (+ E2.3 I18N.md)
-B3/B5 · A3/A5–A8 · C3–C5 · E2.4 CONTRIBUTING
+…
 ```
 
 ---
@@ -313,7 +316,7 @@ B3/B5 · A3/A5–A8 · C3–C5 · E2.4 CONTRIBUTING
 | Docs GitHub | README atualizado + mapa `docs/`; TESTING/PERF ainda E2/E4 | parcial |
 | ThemeSwitcher | focus invertido shipped; ARIA/audit B1; docs B2 | parcial |
 | W3C API | usada no pipeline de audit | ❌ |
-| Nav mobile | header usável ≤639px + a11y | ❌ |
+| Nav mobile | header usável ≤639px + a11y | ✓ D1 |
 | i18n | EN consistente; PT disponível | ❌ |
 | Perf | baseline documentado + LCP hero sob controle | ❌ |
 | CV authoring | MarkText → resume HTML | tooling |

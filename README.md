@@ -24,7 +24,9 @@ Live design system reference: [`/styleguide`](/styleguide) (`noindex`, linked in
 | [`README.md`](./README.md) | GitHub — case study (this file) |
 | [`docs/HANDOFF.md`](./docs/HANDOFF.md) | Continuity for agents / deep architecture |
 | [`docs/CLEANUP-AUDIT.md`](./docs/CLEANUP-AUDIT.md) | Backlog: audit, product (nav/i18n/perf), GitHub docs |
-| [`docs/REFERENCES.md`](./docs/REFERENCES.md) | External specs (DTCG, W3C, MarkText, …) |
+| [`docs/COMPONENT-INVENTORY.md`](./docs/COMPONENT-INVENTORY.md) | UI primitives inventory (Chip, Link, …) — in-repo style guide |
+| [`docs/TOKEN-MAP.md`](./docs/TOKEN-MAP.md) | Token taxonomy Mermaid (primitive → semantic → component) |
+| [`docs/REFERENCES.md`](./docs/REFERENCES.md) | External specs (DTCG, Material tokens, Vodafone Variables, W3C, …) |
 | [`docs/CONTENT-PLAYBOOK.md`](./docs/CONTENT-PLAYBOOK.md) | Shipping real copy / Wisp |
 
 ---
