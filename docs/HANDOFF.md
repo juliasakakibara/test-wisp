@@ -327,13 +327,13 @@ src/app/admin/(protected)/theme/ThemeEditor.tsx
 - `/` contém hero + work; `/about` é rota própria
 - Detalhe de projeto em `/projects/[slug]`
 
-#### Arquivos principais
+#### Arquivos principais (hoje)
 
 ```
-src/app/(blog)/page.tsx
-src/app/projects/[slug]/page.tsx      (mover de blog/)
-src/app/(blog)/about/page.tsx         (redirect ou remover)
-src/app/layout.tsx
+src/app/(site)/page.tsx
+src/app/(site)/about/page.tsx
+src/app/projects/[slug]/page.tsx
+src/components/SiteChrome.tsx
 ```
 
 ---
