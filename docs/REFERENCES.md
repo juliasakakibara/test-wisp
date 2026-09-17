@@ -1,7 +1,22 @@
 # Referências — tokens, specs e W3C
 
 Consulta permanente (não é backlog de feature).  
-Plano de audit/limpeza: [`CLEANUP-AUDIT.md`](./CLEANUP-AUDIT.md).
+Plano: [`CLEANUP-AUDIT.md`](./CLEANUP-AUDIT.md) — Fase **E** = docs GitHub + schemas + testes.
+
+## Como estas refs alimentam o repo
+
+| Tema | Refs abaixo | Entrega neste projeto |
+|------|-------------|------------------------|
+| Design system documentado | W3C DS, using-the-design-system | `docs/DESIGN-SYSTEM.md` + `/styleguide` + README (E1–E2) |
+| Tokens / schema | DTCG Format, Kelp theme builder | inventário + A4 orphans (E3) |
+| i18n | W3C frontend + templates i18n notes | `docs/I18N.md` + Fase D2 |
+| Specs versionadas | W3C API, browser-specs | `spec-pins.json` (Fase 0 / A8) |
+| Perf & qualidade | (Lighthouse/Vitals no plano D3/E4; FFO / font-style-matcher em tipografia) | `docs/TESTING.md` / `PERF.md` |
+| Cor / a11y craft | mrmrs/colors, randoma11y, components.ai | Fun themes + `a11y:audit` |
+
+Não publicar o site com ReSpec/Bikeshed — só consulta de *como* documentar specs.
+
+---
 
 ## Design tokens
 
@@ -61,3 +76,12 @@ Plano de audit/limpeza: [`CLEANUP-AUDIT.md`](./CLEANUP-AUDIT.md).
 | Helen V. Holmes — resume | https://www.helenvholmes.com/resume |
 | mrmrs | https://mrmrs.cc |
 | Pesticide (CSS debug) | https://github.com/mrmrs/pesticide |
+
+## Authoring (CV / markdown)
+
+| Recurso | URL | Nota |
+|---|---|---|
+| MarkText | https://github.com/marktext/marktext | Preferido — free, open source, live preview |
+| MarkText site | https://www.marktext.cc | Downloads |
+| Typora | https://typora.io | Ref de UX (pago; não é a ferramenta do projeto) |
+| markmap (opcional) | https://github.com/markmap/markmap | Mindmap a partir de markdown — só se CV explorar mapa |

@@ -14,8 +14,8 @@ Leia este arquivo inteiro antes de implementar qualquer task.
 | [CONTENT-PLAYBOOK.md](./CONTENT-PLAYBOOK.md) | Checklist fases 0–4, ordem Auway → … |
 | [CONTENT-STRATEGY.md](./CONTENT-STRATEGY.md) | Estratégia, tiers, tom de voz, SiteConfig §6 |
 | [WISP-POST-DRAFTS.md](./WISP-POST-DRAFTS.md) | Posts prontos para colar no Wisp |
-| [REFERENCES.md](./REFERENCES.md) | Tokens DTCG, ReSpec/Bikeshed, W3C design system, colors, components.ai |
-| [CLEANUP-AUDIT.md](./CLEANUP-AUDIT.md) | Plano limpeza + audit W3C-first (API, ThemeSwitcher) |
+| [REFERENCES.md](./REFERENCES.md) | Tokens DTCG, W3C DS/API, colors — mapa refs → entregas do repo |
+| [CLEANUP-AUDIT.md](./CLEANUP-AUDIT.md) | Plano limpeza + audit W3C-first + produto (D) + docs GitHub (E) |
 | [DEV-SECRETS.md](./DEV-SECRETS.md) | Easter eggs (`__julia`, Konami) |
 | [`src/lib/redis.ts`](../src/lib/redis.ts) | Defaults de copy (`DEFAULT_SITE_CONFIG`) |
 

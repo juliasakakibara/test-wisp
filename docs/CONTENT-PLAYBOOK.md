@@ -73,6 +73,13 @@ Para forçar copy nova: editar no `/admin/theme` **ou** apagar key `site_config`
 - [ ] `heroRole` line separada — opcional
 - [ ] Resume PDF link
 
+### CV / resume — authoring
+
+- Tooling: **[MarkText](https://github.com/marktext/marktext)** (markdown live preview, free) — ver [`REFERENCES.md`](./REFERENCES.md)
+- Publicado no site: `public/resume/julia-sakakibara-en.html` (+ PT)
+- Fluxo: editar em MarkText → export/portar para HTML (ou PDF) → commit em `public/resume/`
+- Plano: [`CLEANUP-AUDIT.md`](./CLEANUP-AUDIT.md) **Fase D2** (EN first → PT) · MarkText em REFERENCES
+
 ---
 
 ## Fase 2 — Posts Wisp (case studies)
