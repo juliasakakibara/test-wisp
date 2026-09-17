@@ -2127,6 +2127,8 @@ html[data-env="admin"] body {
   display: inline-flex;
   align-items: baseline;
   gap: 0.2em;
+  padding-block: 0.1em;
+  padding-inline: 0.35em;
   pointer-events: none;
   white-space: nowrap;
 }
@@ -2187,9 +2189,16 @@ html[data-env="admin"] body {
   outline: none;
 }
 
-.theme-switcher:has(.theme-switcher__select:focus-visible) {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
+/* Focus = inverted solid block (foreground fill, background type) */
+.theme-switcher:has(.theme-switcher__select:focus-visible) .theme-switcher__face {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.theme-switcher:has(.theme-switcher__select:focus-visible) .theme-switcher__prefix,
+.theme-switcher:has(.theme-switcher__select:focus-visible) .theme-switcher__value,
+.theme-switcher:has(.theme-switcher__select:focus-visible) .theme-switcher__chevron {
+  color: inherit;
 }
 
 /* Lean styleguide — randoma11y / colorable scale */
