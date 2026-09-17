@@ -221,6 +221,8 @@ NEXT_PUBLIC_SITE_URL=https://your-domain.com
 | `docs/HANDOFF.md` | Full architecture, history & checklist |
 | `docs/CONTENT-PLAYBOOK.md` | **Checklist conteúdo real** (copy, Wisp, mídia) |
 | `docs/WISP-POST-DRAFTS.md` | Rascunhos dos case studies para o CMS |
+| `docs/REFERENCES.md` | Design tokens, spec tooling, W3C, colors, components.ai |
+| `docs/CLEANUP-AUDIT.md` | Plano limpeza + audit (W3C API, ThemeSwitcher) |
 
 ---
 

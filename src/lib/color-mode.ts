@@ -1,3 +1,4 @@
+import { FUN_THEME_STORAGE_KEY, FUN_THEME_IDS } from "@/lib/fun-themes";
 import { NEUTRAL_DARK, NEUTRAL_LIGHT } from "@/lib/theme-presets";
 
 /** Resolved appearance */
@@ -69,9 +70,10 @@ function inlineVarsJs(): string {
   return JSON.stringify([...THEME_INLINE_VARS]);
 }
 
-/** Runs before first paint — color mode on public only when visitor opted in */
+/** Runs before first paint — color mode + home/styleguide Fun themes from localStorage */
 export function getColorModeInitScript(): string {
-  return `(function(){try{var html=document.documentElement;var vars=${inlineVarsJs()};vars.forEach(function(v){html.style.removeProperty(v);});var inIframe=false;try{inIframe=window.self!==window.top;}catch(e){inIframe=true;}if(inIframe){html.setAttribute("data-env","admin");return;}var legacy=${JSON.stringify(LEGACY_THEME_STORAGE_KEY)};if(localStorage.getItem(legacy))localStorage.removeItem(legacy);var k=${JSON.stringify(COLOR_MODE_STORAGE_KEY)};var s=localStorage.getItem(k);if(s!=="light"&&s!=="dark"&&s!=="system")return;var m=s==="light"?"light":s==="dark"?"dark":matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";html.setAttribute("data-color-mode",m);}catch(e){}})();`;
+  const funIds = JSON.stringify(FUN_THEME_IDS);
+  return `(function(){try{var html=document.documentElement;var vars=${inlineVarsJs()};vars.forEach(function(v){html.style.removeProperty(v);});var inIframe=false;try{inIframe=window.self!==window.top;}catch(e){inIframe=true;}if(inIframe){html.setAttribute("data-env","admin");return;}var legacy=${JSON.stringify(LEGACY_THEME_STORAGE_KEY)};if(localStorage.getItem(legacy))localStorage.removeItem(legacy);var k=${JSON.stringify(COLOR_MODE_STORAGE_KEY)};var s=localStorage.getItem(k);if(s==="light"||s==="dark"||s==="system"){var m=s==="light"?"light":s==="dark"?"dark":matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";html.setAttribute("data-color-mode",m);}var path=location.pathname||"/";var allowFun=path==="/"||path==="/styleguide"||path.indexOf("/styleguide/")===0;var funKey=${JSON.stringify(FUN_THEME_STORAGE_KEY)};var funIds=${funIds};var fun=localStorage.getItem(funKey);if(allowFun&&funIds.indexOf(fun)!==-1){html.setAttribute("data-fun-theme",fun);}else{html.removeAttribute("data-fun-theme");}}catch(e){}})();`;
 }
 
 export function preferenceLabel(preference: ColorModePreference): string {

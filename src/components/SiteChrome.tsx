@@ -37,6 +37,10 @@ export function SiteChrome({
             <a href="/resume/julia-sakakibara-en.html" className="nav-item">
               cv
             </a>
+            <Link href="/styleguide" className="nav-item">
+              styleguide
+            </Link>
+            <ThemeSwitcher />
           </nav>
         </div>
       </header>
@@ -52,7 +56,6 @@ export function SiteChrome({
           </p>
           <div className="footer-end">
             <FooterSocial githubUrl={config.githubUrl} linkedinUrl={config.linkedinUrl} />
-            <ThemeSwitcher />
           </div>
         </div>
       </footer>

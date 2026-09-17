@@ -2,7 +2,8 @@ import { ThemeConfig } from "./redis";
 import { deriveAccessibleTokens, resolveFontFamily } from "./theme-presets";
 
 const ADMIN_PREVIEW_SCOPE = 'html[data-env="admin"][data-theme-preview="true"]';
-const PUBLIC_SITE_SCOPE = ':root:not([data-env="admin"])';
+/** Redis theme yields to Fun themes (`data-fun-theme`) on home/styleguide. */
+const PUBLIC_SITE_SCOPE = ':root:not([data-env="admin"]):not([data-fun-theme])';
 
 function themeVarBlock(theme: ThemeConfig, selector: string, withPaint = false): string {
   const accessibleTokens = deriveAccessibleTokens(theme);

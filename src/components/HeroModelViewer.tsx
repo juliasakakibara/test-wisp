@@ -45,6 +45,16 @@ const LIGHTING = {
 } as const;
 
 function getDocumentColorMode(): "light" | "dark" {
+  const fun = document.documentElement.getAttribute("data-fun-theme");
+  if (fun === "matrix" || fun === "virtualboy") return "dark";
+  if (
+    fun === "nier" ||
+    fun === "rebeccapurple" ||
+    fun === "sunset" ||
+    fun === "zengarden"
+  ) {
+    return "light";
+  }
   const mode = document.documentElement.getAttribute("data-color-mode");
   return mode === "dark" ? "dark" : "light";
 }
@@ -119,7 +129,7 @@ export function HeroModelViewer() {
     const observer = new MutationObserver(syncLighting);
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["data-color-mode"],
+      attributeFilter: ["data-color-mode", "data-fun-theme"],
     });
 
     return () => observer.disconnect();

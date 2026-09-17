@@ -106,8 +106,9 @@
   --header-tint: color-mix(in srgb, var(--background) 72%, transparent);
 }
 
-/* Neutral color modes — public only (admin iframe uses theme preview) */
-:root:not([data-env="admin"])[data-color-mode="light"] {
+/* Neutral color modes — public only (admin iframe uses theme preview).
+   Fun themes (`data-fun-theme`) take over on home/styleguide. */
+:root:not([data-env="admin"]):not([data-fun-theme])[data-color-mode="light"] {
   color-scheme: light;
   --primary: #000000;
   --background: #ffffff;
@@ -118,7 +119,7 @@
   --muted: rgba(0, 0, 0, 0.04);
 }
 
-:root:not([data-env="admin"])[data-color-mode="dark"] {
+:root:not([data-env="admin"]):not([data-fun-theme])[data-color-mode="dark"] {
   color-scheme: dark;
   --primary: #ffffff;
   --background: #000000;
@@ -129,13 +130,80 @@
   --muted: rgba(255, 255, 255, 0.06);
 }
 
+/* Fun themes — designtokens.org-inspired; home + styleguide via localStorage */
+:root:not([data-env="admin"])[data-fun-theme="matrix"] {
+  color-scheme: dark;
+  --primary: #00a544;
+  --background: #000600;
+  --foreground: #00c758;
+  --primary-foreground: #000600;
+  --muted-foreground: #008138;
+  --border: rgba(13, 84, 43, 0.55);
+  --muted: rgba(0, 197, 88, 0.08);
+}
+
+:root:not([data-env="admin"])[data-fun-theme="nier"] {
+  color-scheme: light;
+  --primary: #525051;
+  --background: #ccc8b2;
+  --foreground: #525051;
+  --primary-foreground: #ccc8b2;
+  --muted-foreground: #646363;
+  --border: rgba(82, 80, 81, 0.35);
+  --muted: rgba(82, 80, 81, 0.08);
+}
+
+:root:not([data-env="admin"])[data-fun-theme="rebeccapurple"] {
+  color-scheme: light;
+  --primary: #663399;
+  --background: #e5d7fa;
+  --foreground: #21003b;
+  --primary-foreground: #e5d7fa;
+  --muted-foreground: #56337c;
+  --border: rgba(102, 51, 153, 0.35);
+  --muted: rgba(102, 51, 153, 0.08);
+}
+
+:root:not([data-env="admin"])[data-fun-theme="sunset"] {
+  color-scheme: light;
+  --primary: #c53c00;
+  --background: #ffedd5;
+  --foreground: #861043;
+  --primary-foreground: #ffedd5;
+  --muted-foreground: #b75000;
+  --border: rgba(197, 60, 0, 0.3);
+  --muted: rgba(197, 60, 0, 0.08);
+}
+
+:root:not([data-env="admin"])[data-fun-theme="virtualboy"] {
+  color-scheme: dark;
+  --primary: #bf000f;
+  --background: #0f0000;
+  --foreground: #e40014;
+  --primary-foreground: #0f0000;
+  --muted-foreground: #bf000f;
+  --border: rgba(130, 24, 26, 0.55);
+  --muted: rgba(228, 0, 20, 0.1);
+}
+
+:root:not([data-env="admin"])[data-fun-theme="zengarden"] {
+  color-scheme: light;
+  --primary: #49968e;
+  --background: #fcfcfc;
+  --foreground: #335050;
+  --primary-foreground: #ffffff;
+  --muted-foreground: #4f6969;
+  --border: rgba(73, 150, 142, 0.3);
+  --muted: rgba(73, 150, 142, 0.08);
+}
+
 /* Admin iframe — preview injection owns tokens (see theme-utils.ts) */
 html[data-env="admin"] {
   color-scheme: light dark;
 }
 
-/* Default public tokens — never applied inside admin iframe */
-:root:not([data-env="admin"]) {
+/* Default public tokens — never applied inside admin iframe or Fun themes */
+:root:not([data-env="admin"]):not([data-fun-theme]) {
   color-scheme: light dark;
   --primary: #000000;
   --background: #ffffff;
@@ -2012,7 +2080,7 @@ html[data-env="admin"] body {
   max-width: none;
 }
 
-/* Theme switcher — public demo via localStorage */
+/* Theme switcher — header nav; Core + Fun (DTCG-style) on home/styleguide */
 .theme-switcher {
   position: relative;
 }
@@ -2020,6 +2088,7 @@ html[data-env="admin"] body {
 .theme-switcher__toggle {
   display: inline-flex;
   align-items: center;
+  gap: var(--space-2);
   min-height: 44px;
   padding: var(--space-2) 0;
   border-radius: 0;
@@ -2029,21 +2098,48 @@ html[data-env="admin"] body {
   background: transparent;
   color: var(--muted-foreground);
   cursor: pointer;
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--foreground) 20%, transparent);
-  text-underline-offset: 0.2em;
-  transition: color 160ms ease, text-decoration-color 160ms ease;
+  text-decoration: none;
+  transition: color 160ms ease;
 }
 
 .theme-switcher__toggle:hover {
   color: var(--foreground);
-  text-decoration-color: var(--foreground);
   background: transparent;
+}
+
+.theme-switcher__toggle-icon {
+  display: inline-flex;
+  opacity: 0.85;
 }
 
 .theme-switcher__toggle-label {
   font-size: var(--type-meta);
   font-weight: var(--font-weight-body);
+  text-transform: lowercase;
+}
+
+.theme-switcher__group-label {
+  margin: var(--space-2) 0 var(--space-1);
+  padding-inline: var(--space-2);
+  font-size: var(--type-caption);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.theme-switcher__group-label:first-child {
+  margin-top: 0;
+}
+
+.theme-switcher__check {
+  display: inline-flex;
+  width: 1em;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.theme-switcher__check--empty {
+  visibility: hidden;
 }
 
 .theme-switcher__mode-icon {
@@ -2075,14 +2171,10 @@ html[data-env="admin"] body {
   border-radius: 0;
   box-shadow: none;
   padding: var(--space-2);
-  min-width: 10rem;
+  min-width: 12rem;
+  max-height: min(70vh, 28rem);
+  overflow-y: auto;
   z-index: 40;
-}
-
-.site-footer .theme-switcher__menu {
-  top: auto;
-  bottom: calc(100% + var(--space-2));
-  margin-top: 0;
 }
 
 .theme-switcher__list {
@@ -2096,7 +2188,7 @@ html[data-env="admin"] body {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  min-height: 44px;
+  min-height: 40px;
   padding: var(--space-2);
   border: none;
   border-radius: 0;
@@ -2119,9 +2211,102 @@ html[data-env="admin"] body {
 }
 
 .theme-switcher__swatch {
-  width: calc(var(--grid-unit) * 1.5);
-  height: calc(var(--grid-unit) * 1.5);
-  border-radius: calc(var(--radius) * 0.5);
+  width: calc(var(--grid-unit) * 1.25);
+  height: calc(var(--grid-unit) * 1.25);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* Styleguide theme board — randoma11y-inspired pair preview */
+.sg-theme-board {
+  margin-block: var(--space-8);
+  display: grid;
+  gap: var(--space-4);
+}
+
+.sg-theme-board__stage {
+  min-height: 14rem;
+  padding: var(--space-8) var(--space-6);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.sg-theme-board__eyebrow {
+  margin: 0;
+  font-size: var(--type-caption);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.sg-theme-board__title {
+  margin: 0;
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: var(--font-weight-display);
+  letter-spacing: -0.02em;
+}
+
+.sg-theme-board__ratio {
+  margin: 0;
+  font-size: var(--type-meta);
+  opacity: 0.85;
+}
+
+.sg-theme-board__sample {
+  margin: var(--space-2) 0 0;
+  max-width: 36rem;
+  line-height: 1.5;
+}
+
+.sg-theme-board__swatches {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--space-3);
+}
+
+.sg-theme-board__swatch-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.sg-theme-board__chip {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.sg-theme-board__swatch-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: var(--type-meta);
+}
+
+.sg-theme-board__swatch-meta code {
+  font-size: var(--type-caption);
+  word-break: break-all;
+}
+
+.sg-theme-board__note {
+  margin: 0;
+  font-size: var(--type-meta);
+  color: var(--muted-foreground);
+}
+
+.sg-theme-board--pending {
+  min-height: 6rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--border);
+  padding: var(--space-6);
 }
 
 /* Skip link + focus-visible (public UI) */

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { usePathname } from "next/navigation";
 import {
   applyColorModePreference,
   COLOR_MODE_STORAGE_KEY,
@@ -12,6 +13,15 @@ import {
   type ColorMode,
   type ColorModePreference,
 } from "@/lib/color-mode";
+import {
+  applyFunTheme,
+  FUN_THEMES,
+  notifyThemeChange,
+  pathAllowsFunThemes,
+  syncFunThemeForPath,
+  writeStoredFunTheme,
+  type FunThemeId,
+} from "@/lib/fun-themes";
 
 function useHydrated() {
   return useSyncExternalStore(
@@ -31,9 +41,12 @@ function isInAdminIframe(): boolean {
 }
 
 export function ThemeSwitcher() {
+  const pathname = usePathname() ?? "/";
+  const allowFun = pathAllowsFunThemes(pathname);
   const [isOpen, setIsOpen] = useState(false);
   const [preference, setPreference] = useState<ColorModePreference>("system");
   const [effectiveMode, setEffectiveMode] = useState<ColorMode>("light");
+  const [funTheme, setFunTheme] = useState<FunThemeId | null>(null);
   const [inAdminIframe, setInAdminIframe] = useState(false);
   const hydrated = useHydrated();
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -51,17 +64,19 @@ export function ThemeSwitcher() {
     if (storedRaw === null) {
       setPreference("system");
       setEffectiveMode(resolveEffectiveMode("system"));
-      return;
+    } else {
+      const stored = readStoredPreference();
+      const effective = applyColorModePreference(stored);
+      setPreference(stored);
+      setEffectiveMode(effective);
     }
 
-    const stored = readStoredPreference();
-    const effective = applyColorModePreference(stored);
-    setPreference(stored);
-    setEffectiveMode(effective);
-  }, [hydrated, inAdminIframe]);
+    const activeFun = syncFunThemeForPath(pathname);
+    setFunTheme(allowFun ? activeFun : null);
+  }, [hydrated, inAdminIframe, pathname, allowFun]);
 
   useEffect(() => {
-    if (!hydrated || inAdminIframe || preference !== "system") return;
+    if (!hydrated || inAdminIframe || preference !== "system" || funTheme) return;
 
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const sync = () => {
@@ -72,7 +87,7 @@ export function ThemeSwitcher() {
     sync();
     media.addEventListener("change", sync);
     return () => media.removeEventListener("change", sync);
-  }, [hydrated, inAdminIframe, preference]);
+  }, [hydrated, inAdminIframe, preference, funTheme]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -103,19 +118,34 @@ export function ThemeSwitcher() {
     };
   }, [isOpen]);
 
-  const handleSelect = (name: string) => {
+  const handleSelectCore = (name: string) => {
     const nextPreference = preferenceFromPresetName(name);
     localStorage.setItem(COLOR_MODE_STORAGE_KEY, nextPreference);
+    writeStoredFunTheme(null);
+    applyFunTheme(null);
     const effective = applyColorModePreference(nextPreference);
     setPreference(nextPreference);
     setEffectiveMode(effective);
+    setFunTheme(null);
     setIsOpen(false);
+    notifyThemeChange();
+    toggleRef.current?.focus();
+  };
+
+  const handleSelectFun = (id: FunThemeId) => {
+    writeStoredFunTheme(id);
+    applyFunTheme(id);
+    setFunTheme(id);
+    setIsOpen(false);
+    notifyThemeChange();
     toggleRef.current?.focus();
   };
 
   if (!hydrated || inAdminIframe) return null;
 
-  const activeLabel = preferenceLabel(preference);
+  const activeLabel = funTheme
+    ? FUN_THEMES.find((t) => t.id === funTheme)?.label ?? "Theme"
+    : preferenceLabel(preference);
 
   return (
     <div className="theme-switcher">
@@ -124,11 +154,17 @@ export function ThemeSwitcher() {
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="theme-switcher__toggle"
-        aria-label="Toggle color mode"
+        aria-label="Theme"
         aria-haspopup="menu"
         aria-expanded={isOpen}
         aria-controls="theme-switcher-menu"
       >
+        <span className="theme-switcher__toggle-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+            <rect x="2" y="3" width="20" height="14" rx="2" />
+            <path d="M8 21h8M12 17v4" />
+          </svg>
+        </span>
         <span className="theme-switcher__toggle-label">{activeLabel}</span>
       </button>
 
@@ -138,30 +174,31 @@ export function ThemeSwitcher() {
           id="theme-switcher-menu"
           className="theme-switcher__menu"
           role="menu"
-          aria-label="Color mode"
+          aria-label="Theme"
         >
-          <div className="theme-switcher__list">
+          <div className="theme-switcher__list" role="group" aria-label="Core">
+            <p className="theme-switcher__group-label">Core</p>
             {PUBLIC_COLOR_MODE_OPTIONS.map((option) => {
-              const isActive = preference === option.preference;
+              const isActive = !funTheme && preference === option.preference;
 
               return (
                 <button
                   key={option.name}
                   type="button"
-                  onClick={() => handleSelect(option.name)}
+                  onClick={() => handleSelectCore(option.name)}
                   className={`theme-switcher__option${isActive ? " theme-switcher__option--active" : ""}`}
-                  role="menuitem"
-                  aria-selected={isActive}
+                  role="menuitemradio"
+                  aria-checked={isActive}
                 >
-                  <span className="theme-switcher__mode-icon" aria-hidden="true">
-                    {option.preference === "dark"
-                      ? "●"
-                      : option.preference === "light"
-                        ? "○"
-                        : "◐"}
-                  </span>
+                  {isActive ? (
+                    <span className="theme-switcher__check" aria-hidden="true">
+                      ✓
+                    </span>
+                  ) : (
+                    <span className="theme-switcher__check theme-switcher__check--empty" aria-hidden="true" />
+                  )}
                   {option.name}
-                  {option.preference === "system" && (
+                  {option.preference === "system" && !funTheme && (
                     <span className="theme-switcher__option-hint">
                       ({effectiveMode === "dark" ? "dark" : "light"})
                     </span>
@@ -170,6 +207,45 @@ export function ThemeSwitcher() {
               );
             })}
           </div>
+
+          {allowFun ? (
+            <div className="theme-switcher__list" role="group" aria-label="Fun">
+              <p className="theme-switcher__group-label">Fun</p>
+              {FUN_THEMES.map((theme) => {
+                const isActive = funTheme === theme.id;
+
+                return (
+                  <button
+                    key={theme.id}
+                    type="button"
+                    onClick={() => handleSelectFun(theme.id)}
+                    className={`theme-switcher__option${isActive ? " theme-switcher__option--active" : ""}`}
+                    role="menuitemradio"
+                    aria-checked={isActive}
+                  >
+                    {isActive ? (
+                      <span className="theme-switcher__check" aria-hidden="true">
+                        ✓
+                      </span>
+                    ) : (
+                      <span className="theme-switcher__check theme-switcher__check--empty" aria-hidden="true" />
+                    )}
+                    <span
+                      className="theme-switcher__swatch"
+                      style={{ background: theme.background, boxShadow: `inset 0 0 0 1px ${theme.border}` }}
+                      aria-hidden="true"
+                    />
+                    <span
+                      className="theme-switcher__swatch"
+                      style={{ background: theme.foreground }}
+                      aria-hidden="true"
+                    />
+                    {theme.label}
+                  </button>
+                );
+              })}
+            </div>
+          ) : null}
         </div>
       )}
     </div>

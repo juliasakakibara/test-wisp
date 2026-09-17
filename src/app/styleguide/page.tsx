@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { StyleguideThemeBoard } from "@/components/StyleguideThemeBoard";
 
 export const metadata: Metadata = {
   title: "Julia Design System — Style Guide",
@@ -25,9 +26,12 @@ export default function StyleGuidePage() {
           Três camadas: visitante (color mode local) · preview no iframe (temporário) · admin Save
           (Redis). Escala compartilhada: <span className="sg-code-inline">--space-*</span>,{" "}
           <span className="sg-code-inline">--type-meta</span>,{" "}
-          <span className="sg-code-inline">--font-*</span>.
+          <span className="sg-code-inline">--font-*</span>. Fun themes (DTCG-style) só em home /
+          styleguide.
         </p>
       </header>
+
+      <StyleguideThemeBoard />
 
       <nav className="sg-toc" aria-label="Índice do style guide">
         <a href="#philosophy">Filosofia</a>
