@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   useCallback,
@@ -10,6 +9,7 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
+import { SiteLink } from "@/components/SiteLink";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 
 const DESKTOP_MQ = "(min-width: 640px)";
@@ -22,10 +22,6 @@ function currentNavKey(pathname: string): NavKey | null {
   if (pathname.startsWith("/resume")) return "cv";
   if (pathname === "/" || pathname.startsWith("/projects")) return "work";
   return null;
-}
-
-function navItemClass(active: boolean) {
-  return active ? "nav-item is-current" : "nav-item";
 }
 
 function subscribeDesktop(onChange: () => void) {
@@ -119,38 +115,40 @@ export function SiteNav() {
         inert={!expanded ? true : undefined}
       >
         <nav className="nav-list" aria-label="Main">
-          <Link
+          <SiteLink
             href="/#work"
-            className={navItemClass(current === "work")}
-            aria-current={current === "work" ? "page" : undefined}
+            className="nav-item"
+            current={current === "work"}
             onClick={close}
           >
             work
-          </Link>
-          <Link
+          </SiteLink>
+          <SiteLink
             href="/about"
-            className={navItemClass(current === "about")}
-            aria-current={current === "about" ? "page" : undefined}
+            className="nav-item"
+            current={current === "about"}
             onClick={close}
           >
             about
-          </Link>
+          </SiteLink>
           <a
             href="/resume/julia-sakakibara-en.html"
-            className={navItemClass(current === "cv")}
+            className={
+              current === "cv" ? "link nav-item is-current" : "link nav-item"
+            }
             aria-current={current === "cv" ? "page" : undefined}
             onClick={close}
           >
             cv
           </a>
-          <Link
+          <SiteLink
             href="/styleguide"
-            className={navItemClass(current === "styleguide")}
-            aria-current={current === "styleguide" ? "page" : undefined}
+            className="nav-item"
+            current={current === "styleguide"}
             onClick={close}
           >
             style guide
-          </Link>
+          </SiteLink>
           <ThemeSwitcher />
         </nav>
       </div>

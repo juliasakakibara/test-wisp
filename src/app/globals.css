@@ -104,6 +104,12 @@
   --header-blur-4: 8px;
   --header-blur-5: 16px;
   --header-tint: color-mix(in srgb, var(--background) 72%, transparent);
+
+  /* Link — discreet foreground @ ~0.62; hover/focus → full; nav current = underline */
+  --link-opacity: 0.62;
+  --link: color-mix(in srgb, var(--foreground) 62%, transparent);
+  --link-strong: var(--foreground);
+  --link-underline: var(--foreground);
 }
 
 /* Neutral color modes — public only (admin iframe uses theme preview).
@@ -633,26 +639,38 @@ html[data-env="admin"] .site-header {
     width: min(100%, 20rem);
   }
 
-  .site-nav .nav-item {
+  .site-nav .nav-item,
+  .site-nav .link.nav-item {
     width: 100%;
     min-height: 48px;
     padding-block: var(--space-3);
     font-size: var(--type-lead, var(--type-body));
-    color: inherit;
+    /* Inverted panel: discreet “link” uses background (light text) @ opacity */
+    --link: color-mix(in srgb, var(--background) 68%, transparent);
+    --link-strong: var(--background);
+    --link-underline: var(--background);
+    color: var(--link);
   }
 
-  .site-nav .nav-item:hover {
-    color: color-mix(in srgb, var(--background) 72%, transparent);
+  .site-nav .nav-item:hover,
+  .site-nav .link.nav-item:hover {
+    color: var(--link-strong);
   }
 
-  .site-nav .nav-item.is-current {
-    background: var(--background);
-    color: var(--foreground);
+  .site-nav .nav-item.is-current,
+  .site-nav .link.nav-item.is-current {
+    background: transparent;
+    color: var(--link-strong);
+    text-decoration: underline;
+    text-decoration-color: var(--link-underline);
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 0.08em;
   }
 
-  .site-nav .nav-item.is-current:hover {
-    color: var(--foreground);
-    opacity: 0.9;
+  .site-nav .nav-item.is-current:hover,
+  .site-nav .link.nav-item.is-current:hover {
+    color: var(--link-strong);
+    opacity: 1;
   }
 
   .site-nav .theme-switcher {
@@ -668,13 +686,16 @@ html[data-env="admin"] .site-header {
   }
 
   .site-nav .theme-switcher:hover .theme-switcher__face {
-    color: color-mix(in srgb, var(--background) 72%, transparent);
+    opacity: 0.75;
+    color: inherit;
   }
 
-  /* Focus chip flips against inverted panel */
+  /* Focus ring on inverted panel — control chrome, not link/chip */
   .site-nav .theme-switcher:has(.theme-switcher__select:focus-visible) .theme-switcher__face {
-    background: var(--background);
-    color: var(--foreground);
+    background: transparent;
+    color: inherit;
+    outline: 2px solid var(--background);
+    outline-offset: 2px;
   }
 }
 
@@ -719,51 +740,85 @@ html[data-env="admin"] .site-header {
   user-select: none;
 }
 
+/* Link primitive — italic + discreet --link; hover/focus strengthen */
+.link {
+  color: var(--link);
+  font-style: italic;
+  font-weight: var(--font-weight-body);
+  text-decoration: none;
+  text-underline-offset: 0.2em;
+  transition:
+    color var(--duration-fast) ease,
+    text-decoration-color var(--duration-fast) ease,
+    opacity var(--duration-fast) ease;
+  cursor: pointer;
+}
+
+.link:hover,
+.link:focus-visible {
+  color: var(--link-strong);
+  font-style: italic;
+  text-decoration: underline;
+  text-decoration-color: var(--link-underline);
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Nav current — italic + foreground underline (not inverted chip) */
+.link.is-current,
+.nav-item.is-current {
+  color: var(--link-strong);
+  font-style: italic;
+  font-weight: var(--font-weight-body);
+  background: transparent;
+  text-decoration: underline;
+  text-decoration-color: var(--link-underline);
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.2em;
+}
+
+.link.is-current:hover,
+.nav-item.is-current:hover {
+  color: var(--link-strong);
+  font-style: italic;
+  opacity: 1;
+}
+
 .nav-item {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
   padding-block: 0.1em;
   padding-inline: 0.35em;
-  color: var(--foreground);
+  color: var(--link);
   text-decoration: none;
   text-transform: lowercase;
-  font-style: normal;
+  font-style: italic;
   line-height: 1.4;
   border-radius: var(--radius);
   transition:
     color var(--duration-fast) ease,
-    background-color var(--duration-fast) ease,
+    text-decoration-color var(--duration-fast) ease,
     opacity var(--duration-fast) ease;
   cursor: pointer;
 }
 
 .nav-item:hover {
-  color: var(--muted-foreground);
+  color: var(--link-strong);
   font-style: italic;
-  text-decoration: none;
-}
-
-/* Current route — same solid chip as theme / menu */
-.nav-item.is-current {
-  background: var(--foreground);
-  color: var(--background);
-  font-style: normal;
-  font-weight: 600;
-}
-
-.nav-item.is-current:hover {
-  color: var(--background);
-  font-style: normal;
-  opacity: 0.9;
+  text-decoration: underline;
+  text-decoration-color: var(--link-underline);
 }
 
 .nav-item-muted {
-  color: var(--foreground);
+  color: var(--link);
 }
 
 .nav-item-muted:hover {
-  color: var(--foreground);
+  color: var(--link-strong);
 }
 
 .site-main {
@@ -835,16 +890,18 @@ html[data-env="admin"] .site-header {
   min-height: 44px;
   padding-block: var(--space-2);
   font-size: var(--type-meta);
-  font-weight: var(--font-weight-medium);
-  color: var(--muted-foreground);
+  font-weight: var(--font-weight-body);
+  font-style: italic;
+  color: var(--link);
   text-decoration: none;
-  transition: color 160ms ease;
+  transition: color 160ms ease, text-decoration-color 160ms ease;
 }
 
 .footer-social__link:hover {
-  color: var(--foreground);
+  color: var(--link-strong);
+  font-style: italic;
   text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--foreground) 30%, transparent);
+  text-decoration-color: var(--link-underline);
 }
 
 /* ============================================================
@@ -920,31 +977,49 @@ body {
 }
 
 a {
-  color: inherit;
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--foreground) 25%, transparent);
+  color: var(--link);
+  font-style: italic;
+  text-decoration: none;
   text-underline-offset: 0.2em;
   transition: color 160ms ease, text-decoration-color 160ms ease;
 }
 
 a:hover {
-  color: var(--foreground);
-  text-decoration-color: var(--foreground);
+  color: var(--link-strong);
+  text-decoration: underline;
+  text-decoration-color: var(--link-underline);
 }
 
-/* Chrome links — no underline, muted → foreground on hover */
-.site-chrome-link,
+/* Text links that share the Link skin */
 .hero-cta__link,
 .project-list-item__link,
 .footer-social__link,
-.site-logo-link,
-.project-nav__back {
+.project-nav__back,
+.about-resume__link {
+  color: var(--link);
+  font-style: italic;
   text-decoration: none;
-  color: var(--muted-foreground);
 }
 
-.nav-item,
-.hero-cta__link {
+.hero-cta__link:hover,
+.project-list-item__link:hover,
+.footer-social__link:hover,
+.project-nav__back:hover,
+.about-resume__link:hover {
+  color: var(--link-strong);
+  font-style: italic;
+  text-decoration: underline;
+  text-decoration-color: var(--link-underline);
+}
+
+/* Logo is branding, not Link-family text */
+.site-logo-link,
+.site-chrome-link,
+.project-card__link,
+.project-card__title-link,
+.skip-link {
+  font-style: normal;
+  text-decoration: none;
   color: var(--foreground);
 }
 
@@ -953,11 +1028,7 @@ a:hover {
   color: var(--foreground);
 }
 
-.hero-cta__link:hover,
-.project-list-item__link:hover,
-.footer-social__link:hover,
-.site-logo-link:hover .site-title,
-.project-nav__back:hover {
+.site-logo-link:hover .site-title {
   color: var(--foreground);
 }
 
@@ -1026,15 +1097,19 @@ a:hover {
 }
 
 .prose a {
-  color: inherit;
+  color: var(--link);
+  font-style: italic;
   font-weight: inherit;
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--foreground) 30%, transparent);
+  text-decoration: none;
   text-underline-offset: 0.2em;
 }
 
-.prose a:hover {
-  text-decoration-color: var(--foreground);
+.prose a:hover,
+.prose a:focus-visible {
+  color: var(--link-strong);
+  font-style: italic;
+  text-decoration: underline;
+  text-decoration-color: var(--link-underline);
 }
 
 .prose :where(ul, ol) {
@@ -1790,13 +1865,12 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
   text-transform: uppercase;
 }
 
+/* Hero emphasis — italic + heavier weight; NOT a link (no underline) */
 .hero-title__emphasis {
   font-style: italic;
-  font-weight: inherit;
-  text-decoration: underline;
-  text-decoration-thickness: 0.06em;
-  text-underline-offset: 0.12em;
-  text-decoration-skip-ink: none;
+  font-weight: var(--font-weight-display);
+  text-decoration: none;
+  color: inherit;
 }
 
 @media (min-width: 768px) {
@@ -2213,15 +2287,18 @@ html[data-env="admin"] .sg-editable-demo [data-editable] {
   align-items: center;
   min-height: 44px;
   padding-block: var(--space-2);
-  font-weight: var(--font-weight-medium);
-  color: var(--foreground);
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--foreground) 30%, transparent);
+  font-weight: var(--font-weight-body);
+  color: var(--link);
+  font-style: italic;
+  text-decoration: none;
   text-underline-offset: 0.2em;
 }
 
 .about-resume__link:hover {
-  text-decoration-color: var(--foreground);
+  color: var(--link-strong);
+  font-style: italic;
+  text-decoration: underline;
+  text-decoration-color: var(--link-underline);
 }
 
 /* Project detail page */
@@ -2339,7 +2416,7 @@ html[data-env="admin"] body {
   max-width: none;
 }
 
-/* Theme switcher — nav face `theme: value ▼` + native select overlay */
+/* Theme switcher — CONTROL (select), not Link family: roman, no italic-as-link */
 .theme-switcher {
   position: relative;
   display: inline-flex;
@@ -2347,9 +2424,11 @@ html[data-env="admin"] body {
   min-height: 44px;
   font-size: var(--type-body);
   font-weight: var(--font-weight-body);
+  font-style: normal;
   line-height: 1.4;
   text-transform: lowercase;
   color: var(--foreground);
+  cursor: default;
 }
 
 .theme-switcher__face {
@@ -2360,15 +2439,20 @@ html[data-env="admin"] body {
   padding-inline: 0.35em;
   pointer-events: none;
   white-space: nowrap;
+  font-style: normal;
+  border-radius: var(--radius);
+  transition: opacity var(--duration-fast) ease;
 }
 
 .theme-switcher__prefix {
   font-weight: var(--font-weight-body);
-  color: var(--foreground);
+  font-style: normal;
+  color: var(--muted-foreground);
 }
 
 .theme-switcher__value {
-  font-weight: 600;
+  font-weight: var(--font-weight-medium);
+  font-style: normal;
   color: var(--foreground);
 }
 
@@ -2376,7 +2460,7 @@ html[data-env="admin"] body {
   font-size: 0.55em;
   line-height: 1;
   transform: translateY(-0.05em);
-  color: var(--foreground);
+  color: var(--muted-foreground);
 }
 
 .theme-switcher__sr-only {
@@ -2404,30 +2488,34 @@ html[data-env="admin"] body {
 }
 
 .theme-switcher:hover .theme-switcher__face {
-  color: var(--muted-foreground);
-  font-style: italic;
+  opacity: 0.75;
+  font-style: normal;
 }
 
 .theme-switcher:hover .theme-switcher__prefix,
 .theme-switcher:hover .theme-switcher__value,
 .theme-switcher:hover .theme-switcher__chevron {
   color: inherit;
+  font-style: normal;
 }
 
 .theme-switcher__select:focus-visible {
   outline: none;
 }
 
-/* Focus = inverted solid block (foreground fill, background type) */
+/* Focus = outline ring (control), not inverted black chip / link skin */
 .theme-switcher:has(.theme-switcher__select:focus-visible) .theme-switcher__face {
-  background: var(--foreground);
-  color: var(--background);
+  background: transparent;
+  color: inherit;
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 .theme-switcher:has(.theme-switcher__select:focus-visible) .theme-switcher__prefix,
 .theme-switcher:has(.theme-switcher__select:focus-visible) .theme-switcher__value,
 .theme-switcher:has(.theme-switcher__select:focus-visible) .theme-switcher__chevron {
   color: inherit;
+  font-style: normal;
 }
 
 /* Lean styleguide — randoma11y / colorable scale */
@@ -2565,6 +2653,65 @@ html[data-env="admin"] body {
   }
 }
 
+/* Style guide — Link contract specimens */
+.sg-lean__links {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.sg-lean__links-title {
+  margin: 0;
+  font-size: var(--type-meta);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.sg-lean__link-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-4);
+  font-size: var(--type-body);
+}
+
+.sg-lean__link-note {
+  margin: 0;
+  font-size: var(--type-meta);
+  color: var(--muted-foreground);
+  max-width: 36rem;
+}
+
+.sg-lean__emphasis-demo {
+  margin: 0;
+  font-size: var(--type-heading);
+  font-weight: var(--font-weight-heading);
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.sg-lean__control-demo {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: 0.35em;
+  font-style: normal;
+  font-size: var(--type-body);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: transparent;
+  cursor: default;
+}
+
+.sg-lean__control-demo span {
+  color: var(--muted-foreground);
+}
+
 /* Skip link + focus-visible (public UI) */
 .skip-link {
   position: absolute;
@@ -2584,6 +2731,7 @@ html[data-env="admin"] body {
   top: var(--space-3);
 }
 
+.link:focus-visible,
 .nav-item:focus-visible,
 .site-nav__toggle:focus-visible,
 .hero-cta__link:focus-visible,
@@ -2593,6 +2741,7 @@ html[data-env="admin"] body {
 .project-card__title-link:focus-visible,
 .project-nav__back:focus-visible,
 .site-logo-link:focus-visible,
+.about-resume__link:focus-visible,
 .skip-link:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;

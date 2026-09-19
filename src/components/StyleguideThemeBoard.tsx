@@ -151,7 +151,33 @@ export function StyleguideThemeBoard() {
       <pre className="sg-lean__code">{`:root {
   --background: ${pair.background};
   --foreground: ${pair.foreground};
+  --link: color-mix(in srgb, var(--foreground) 62%, transparent);
+  --link-strong: var(--foreground);
+  --link-underline: var(--foreground);
 }`}</pre>
+
+      <div className="sg-lean__links" aria-label="Link contract">
+        <p className="sg-lean__links-title">Link</p>
+        <div className="sg-lean__link-row">
+          <a href="#main-content" className="link">
+            default
+          </a>
+          <a href="#main-content" className="link is-current">
+            nav active
+          </a>
+          <span className="sg-lean__control-demo" aria-hidden="true">
+            <span>theme:</span>&nbsp;system ▼
+          </span>
+        </div>
+        <p className="sg-lean__emphasis-demo">
+          DESIGN FOR <em className="hero-title__emphasis">UNUSUAL</em> PROBLEMS
+        </p>
+        <p className="sg-lean__link-note">
+          Default: italic + `--link` (~62% foreground). Hover/focus: full opacity +
+          underline. Nav active: italic + `--link-underline` (no fill chip). Theme:
+          control, not link. Hero emphasis: italic + heavier weight, no underline.
+        </p>
+      </div>
     </section>
   );
 }
