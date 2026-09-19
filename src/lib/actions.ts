@@ -1,39 +1,26 @@
 "use server";
 
-import { redis, THEME_KEY, DEFAULT_THEME, ThemeConfig, CONFIG_KEY, DEFAULT_SITE_CONFIG, SiteConfig, normalizeSiteConfig } from "@/lib/redis";
-import { revalidatePath } from "next/cache";
+import { redis, THEME_KEY, ThemeConfig, CONFIG_KEY, SiteConfig } from "@/lib/redis";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
-
-export async function getTheme(): Promise<ThemeConfig> {
-  try {
-    const theme = await redis.get<ThemeConfig>(THEME_KEY);
-    return theme ?? DEFAULT_THEME;
-  } catch {
-    return DEFAULT_THEME;
-  }
-}
 
 export async function saveTheme(theme: ThemeConfig) {
   await redis.set(THEME_KEY, theme);
+  revalidateTag("site-theme", "max");
   revalidatePath("/", "layout");
-}
-
-export async function getConfig(): Promise<SiteConfig> {
-  try {
-    const config = await redis.get<SiteConfig>(CONFIG_KEY);
-    return normalizeSiteConfig(config);
-  } catch {
-    return normalizeSiteConfig(null);
-  }
 }
 
 export async function saveConfig(config: SiteConfig) {
   await redis.set(CONFIG_KEY, config);
+  revalidateTag("site-config", "max");
   revalidatePath("/", "layout");
 }
 
 /** Manual cache bust — Wisp has no webhooks yet. We pretend that's fine. */
 export async function republishSite() {
+  revalidateTag("site-theme", "max");
+  revalidateTag("site-config", "max");
+  revalidateTag("wisp-projects", "max");
   revalidatePath("/", "layout");
   revalidatePath("/");
 }

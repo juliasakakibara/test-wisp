@@ -4,6 +4,8 @@ import { Redis } from "@upstash/redis";
 export const redis = new Redis({
   url: process.env.KV_REST_API_URL!,
   token: process.env.KV_REST_API_TOKEN!,
+  // One retry max — unreachable Upstash was stacking ~4s timeouts into home TTFB.
+  retry: { retries: 1, backoff: (n) => Math.min(200 * n, 400) },
 });
 
 export interface ThemeConfig {

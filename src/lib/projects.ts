@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import type { GetPostResult, GetPostsResult } from "@wisp-cms/client";
 import { wisp } from "./wisp";
 
@@ -14,19 +15,26 @@ export type GetProjectsResult =
 
 export const getProject = cache((slug: string) => wisp.getPost(slug));
 
-export async function getProjects(): Promise<GetProjectsResult> {
-  try {
-    const result = await wisp.getPosts({ limit: PROJECTS_LIMIT });
-    return { ok: true, posts: result.posts ?? [] };
-  } catch (error) {
-    console.error("[wisp] Failed to fetch projects:", error);
-    return {
-      ok: false,
-      posts: [],
-      error: error instanceof Error ? error.message : "Unknown error",
-    };
-  }
-}
+const loadProjects = unstable_cache(
+  async (): Promise<GetProjectsResult> => {
+    try {
+      const result = await wisp.getPosts({ limit: PROJECTS_LIMIT });
+      return { ok: true, posts: result.posts ?? [] };
+    } catch (error) {
+      console.error("[wisp] Failed to fetch projects:", error);
+      return {
+        ok: false,
+        posts: [],
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+    }
+  },
+  ["wisp-projects"],
+  { revalidate: 60, tags: ["wisp-projects"] },
+);
+
+/** Cached home project list — matches page `revalidate = 60`. */
+export const getProjects = cache(() => loadProjects());
 
 export async function getProjectSlugs(): Promise<{ slug: string }[]> {
   try {

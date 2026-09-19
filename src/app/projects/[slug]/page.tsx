@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { WispContent } from "@/components/wisp-content-wrapper";
-import { getConfig } from "@/lib/actions";
+import { getConfig } from "@/lib/site-data";
 import { getProject, getProjectSlugs } from "@/lib/projects";
 import {
   buildCreativeWorkJsonLd,

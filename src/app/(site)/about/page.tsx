@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getConfig } from "@/lib/actions";
+import { getConfig } from "@/lib/site-data";
 import { createSiteMetadata } from "@/lib/metadata";
 
 export const revalidate = 60;

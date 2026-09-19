@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { getConfig, getTheme } from "@/lib/actions";
+import { getConfig, getTheme } from "@/lib/site-data";
 import { SiteChrome } from "@/components/SiteChrome";
 import { ThemePreviewListener } from "@/components/ThemePreviewListener";
 import { DevSecrets } from "@/components/DevSecrets";
@@ -51,9 +51,9 @@ export async function generateMetadata(): Promise<Metadata> {
  * Admin theme preview uses html[data-env="admin"] (iframe only).
  */
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const config = await getConfig();
-  const theme = await getTheme();
-  const pathname = (await headers()).get("x-pathname") ?? "";
+  // Parallel: Redis theme/config used to stack ~4s each when Upstash was slow/unreachable.
+  const [config, theme, headerStore] = await Promise.all([getConfig(), getTheme(), headers()]);
+  const pathname = headerStore.get("x-pathname") ?? "";
   const isAdminRoute = pathname.startsWith("/admin");
   const siteThemeCss = generateSiteThemeCss(theme);
 

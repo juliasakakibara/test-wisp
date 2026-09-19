@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getConfig } from "@/lib/actions";
+import { getConfig } from "@/lib/site-data";
 import { getProjects } from "@/lib/projects";
 import { createSiteMetadata } from "@/lib/metadata";
 import { ProjectCard } from "@/components/ProjectCard";
