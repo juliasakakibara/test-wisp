@@ -38,10 +38,10 @@ Responder no board ou no topo do artefato W1 (2–5 min):
 
 | # | Pergunta | Resposta (Julia) |
 |---|----------|------------------|
-| M1 | O style guide in-repo é **para quem**? (ex.: eu + recrutadores / só craft) | |
-| M2 | Sucesso desta revisão = o quê? (ex.: chrome consistente + tokens claros + specimen) | |
-| M3 | O que **não** é objetivo agora? (ex.: package npm, multi-produto, Once UI) | |
-| M4 | Público vs admin: kits **sempre** separados? (default: sim) | |
+| M1 | O style guide in-repo é **para quem**? (ex.: eu + recrutadores / só craft) | Para mim + portfólio. Quem aprofunda detalhes: designer / engenheiro (não recrutador genérico). |
+| M2 | Sucesso desta revisão = o quê? (ex.: chrome consistente + tokens claros + specimen) | Fazer funcionar o suficiente para **publicar**. |
+| M3 | O que **não** é objetivo agora? (ex.: package npm, multi-produto, Once UI) | Package npm **não** agora (provável semana que vem). Foco: refinar para **mostrar processo e lógica** — NDA impede falar dos trabalhos. |
+| M4 | Público vs admin: kits **sempre** separados? (default: sim) | **Não** como meta de produto: um sistema; mais adiante **isolar** scopes para CSS não vazar. Isolamento formal → semana que vem (sem tempo agora). |
 
 ### P0.2 Bootstrap do agente
 
@@ -242,7 +242,7 @@ Sem A2–A3, o item não conta como “adotado” no style guide in-repo.
 
 | Fase | Status | Artefato |
 |------|--------|----------|
-| P0 Meta + bootstrap | checklist pronto; M1–M4 a preencher | este doc + board |
+| P0 Meta + bootstrap | **M1–M4 preenchidos** (2026-09-17) | este doc + board |
 | **W1** Interface inventory | não iniciado | → `INTERFACE-INVENTORY-W1.md` |
 | **W2** Atomic + usage + prio + a11y | parcial (inventário velho) | `COMPONENT-INVENTORY.md` |
 | **W3** Tokens + Mermaid | ledger pronto | `TOKEN-AUDIT-LEDGER.md` · `TOKEN-MAP.md` |

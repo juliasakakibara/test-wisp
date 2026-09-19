@@ -26,7 +26,7 @@ Gates: fim de cada **W*** = aprovação antes da próxima.
 
 | Fase | Status | Nota |
 |------|--------|------|
-| P0 Meta + bootstrap | checklist no workflow; **M1–M4 a preencher** | [`UI-REFINEMENT-WORKFLOW.md`](./UI-REFINEMENT-WORKFLOW.md) |
+| P0 Meta + bootstrap | **M1–M4 feitos** | ver DECIDED P0 + [`UI-REFINEMENT-WORKFLOW.md`](./UI-REFINEMENT-WORKFLOW.md) |
 | **W1** Interface inventory | **não iniciado** | + checklist Frost |
 | **G1** Perguntas pós-inventário | pendente | Q1–Q5 no workflow |
 | **W2** Atomic + prio Curtis + a11y | parcial | inventário antigo |
@@ -40,9 +40,10 @@ Gates: fim de cada **W*** = aprovação antes da próxima.
 
 1. Visual (plaquinha) ≠ elemento (button / link / select).
 2. Nome Chip confundiu — V1 OPEN.
-3. Admin ≠ chrome público.
-4. Ordem Frost-first + enrichments (checklist, G1, Curtis, a11y, P0 meta, Adopt) **centralizados** no workflow.
+3. Público vs admin: **um sistema**; isolamento de CSS (sem vazamento) = semana que vem (M4). Hoje ainda `--admin-*` separado na prática.
+4. Ordem Frost-first + enrichments **centralizados** no workflow.
 5. Markup chrome já button≠link; cursor = V3.
+6. Meta P0: publicar + mostrar processo/lógica (NDA); audiência craft, não recrutador.
 
 ---
 
@@ -77,8 +78,9 @@ Gates: fim de cada **W*** = aprovação antes da próxima.
 |----|------|---------|
 | K1 | Once UI / Kelp dep | Só ref |
 | K2 | Figma CC | Após W3 + pedido |
-| K3 | Merge admin + public | Fora |
-| K4 | NN/G maturity enterprise | Solo: infra + governança do workflow |
+| K3 | Isolamento formal público/`--admin-*` (sem vazamento CSS) | Semana que vem — M4 |
+| K4 | Package npm / export DS | Provável semana que vem — M3 |
+| K5 | NN/G maturity enterprise | Solo: infra + governança do workflow |
 
 ## DECIDED
 
@@ -87,6 +89,7 @@ Gates: fim de cada **W*** = aprovação antes da próxima.
 | W0 | 2026-09-17 | Workflow P0→W1–W4; agente não decide sozinho |
 | W0b | 2026-09-17 | Frost-first: páginas → atomic → tokens → plano |
 | W0c | 2026-09-17 | Enrichments centralizados no workflow: checklist Frost, G1 Q1–Q5, Curtis must/nice/later, coluna a11y, P0 M1–M4, Adopt A1–A4 |
+| P0 | 2026-09-17 | M1 craft/portfolio (DE/eng); M2 publicar; M3 sem npm agora (foco processo/lógica + NDA); M4 um sistema + isolamento CSS depois |
 
 ## SPIKE
 
@@ -98,7 +101,7 @@ Gates: fim de cada **W*** = aprovação antes da próxima.
 
 ## Sessão atual
 
-**Fase:** —  
+**Fase:** P0 ✓  
 **Canônico:** [`UI-REFINEMENT-WORKFLOW.md`](./UI-REFINEMENT-WORKFLOW.md)  
-**Próximo:** P0 M1–M4 (se vazio) + **W1** inventory  
-**Pergunta:** preencher meta P0 e/ou `roda W1`?
+**Próximo:** **W1** interface inventory  
+**Pergunta:** `roda W1`?
