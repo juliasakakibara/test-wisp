@@ -28,11 +28,11 @@ export default async function PlaygroundPage() {
           Playground
         </h1>
         <p className="page-lead">Older projects and experiments: apps, 3D, hardware. Less polish, more play.</p>
-        <ul className="julia-grid project-grid">
+        <ul className="featured-grid">
           {posts.length > 0 ? (
             posts.map((post) => <ProjectCard key={post.id} post={post} />)
           ) : (
-            <li className="project-card project-card--empty">
+            <li className="featured-card featured-card--wide">
               <p className="work-empty">
                 {projects.ok ? "Nothing here yet." : "Projects are temporarily unavailable. Check back soon."}
               </p>
