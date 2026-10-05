@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { getConfig } from "@/lib/site-data";
-import { getProjects } from "@/lib/projects";
+import { getProjects, isPlayground } from "@/lib/projects";
 import { createSiteMetadata } from "@/lib/metadata";
-import { FEATURED_PROJECTS, FEATURED_SLUGS } from "@/lib/featured";
 import { FeaturedGrid } from "@/components/FeaturedGrid";
 import { HeroSection } from "@/components/HeroSection";
 
@@ -24,7 +23,8 @@ const HERO_TAGS = ["Freelancer", "UX engineer", "Design systems", "AI tooling"];
 export default async function HomePage() {
   const [projects, config] = await Promise.all([getProjects(), getConfig()]);
   const posts = projects.ok ? projects.posts : [];
-  const playgroundCount = posts.filter((post) => !FEATURED_SLUGS.has(post.slug)).length;
+  const homePosts = posts.filter((post) => !isPlayground(post));
+  const playgroundCount = posts.length - homePosts.length;
 
   return (
     <>
@@ -56,7 +56,7 @@ export default async function HomePage() {
         </section>
 
         <section id="work" className="work-section site-section" aria-label="Projects">
-          <FeaturedGrid projects={FEATURED_PROJECTS} posts={posts} playgroundCount={playgroundCount} />
+          <FeaturedGrid posts={homePosts} playgroundCount={playgroundCount} />
           {projects.ok ? null : (
             <p className="work-empty">Projects are temporarily unavailable. Check back soon.</p>
           )}

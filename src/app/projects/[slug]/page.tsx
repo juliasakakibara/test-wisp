@@ -116,8 +116,19 @@ export default async function ProjectPage({ params }: Params) {
 
       {/* Wisp HTML laid out by CSS (§13 case page): H2 wide on the left, text in the right column, images full width */}
       <div className="case-content">
-        <WispContent content={post.content || ""} />
+        <WispContent content={withoutCoverImage(post.content || "", post.image)} />
       </div>
     </article>
   );
+}
+
+/** Wisp often repeats the cover inside the body; drop that copy (and its empty wrapper) so it shows once. */
+function withoutCoverImage(content: string, cover?: string | null): string {
+  if (!cover) return content;
+  const src = cover.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const img = `<img[^>]*src="${src}"[^>]*>`;
+  return content
+    .replace(new RegExp(`<(p|figure)[^>]*>\\s*${img}\\s*(<br\\s*/?>\\s*)*(<figcaption>[\\s\\S]*?</figcaption>)?\\s*</\\1>`, "g"), "")
+    .replace(new RegExp(img, "g"), "")
+    .replace(/^(\s*<p>\s*<\/p>)+/, "");
 }

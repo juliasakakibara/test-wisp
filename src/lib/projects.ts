@@ -46,3 +46,15 @@ export async function getProjectSlugs(): Promise<{ slug: string }[]> {
     return [];
   }
 }
+
+/** Wisp tag that sends a post to /playground instead of the home grid. */
+export const PLAYGROUND_TAG = "playground";
+
+export function isPlayground(post: ProjectSummary): boolean {
+  return post.tags?.some((tag) => tag.name.toLowerCase() === PLAYGROUND_TAG) ?? false;
+}
+
+/** First tag that isn't the routing tag, shown as the card kicker. */
+export function projectCategory(post: ProjectSummary, fallback = "Case study"): string {
+  return post.tags?.find((tag) => tag.name.toLowerCase() !== PLAYGROUND_TAG)?.name ?? fallback;
+}
