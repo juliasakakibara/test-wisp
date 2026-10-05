@@ -5,7 +5,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { WispContent } from "@/components/wisp-content-wrapper";
 import { getConfig } from "@/lib/site-data";
-import { getProject, getProjectSlugs } from "@/lib/projects";
+import { getProject, getProjectSlugs, tagLabel, visibleTags } from "@/lib/projects";
 import {
   buildCreativeWorkJsonLd,
   createProjectMetadata,
@@ -50,7 +50,7 @@ export default async function ProjectPage({ params }: Params) {
   const year = post.publishedAt
     ? format(new Date(post.publishedAt), "yyyy")
     : null;
-  const disciplines = post.tags ?? [];
+  const disciplines = visibleTags(post.tags);
 
   return (
     <article className="project-page case-page">
@@ -91,7 +91,7 @@ export default async function ProjectPage({ params }: Params) {
                 <ul className="case-tags" aria-label="Disciplines">
                   {disciplines.map((tag) => (
                     <li key={tag.id} className="hero-tag">
-                      {tag.name}
+                      {tagLabel(tag.name)}
                     </li>
                   ))}
                 </ul>
@@ -116,15 +116,20 @@ export default async function ProjectPage({ params }: Params) {
 
       {/* Wisp HTML laid out by CSS (§13 case page): H2 wide on the left, text in the right column, images full width */}
       <div className="case-content">
-        <WispContent content={withoutCoverImage(post.content || "", post.image)} />
+        <WispContent content={cleanCaseContent(post.content || "", post.image)} />
       </div>
     </article>
   );
 }
 
-/** Wisp often repeats the cover inside the body; drop that copy (and its empty wrapper) so it shows once. */
-function withoutCoverImage(content: string, cover?: string | null): string {
-  if (!cover) return content;
+/**
+ * Tidy Wisp HTML for the case layout: the cover shows once (Wisp often repeats
+ * it in the body), the CMS attribution paragraph goes (the footer credits the
+ * site), and leading empty paragraphs are dropped.
+ */
+function cleanCaseContent(content: string, cover?: string | null): string {
+  content = content.replace(/<p[^>]*>\s*<small>\s*<a[^>]*synscribe\.com[^>]*>[\s\S]*?<\/a>\s*<\/small>\s*<\/p>/gi, "");
+  if (!cover) return content.replace(/^(\s*<p>\s*<\/p>)+/, "");
   const src = cover.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const img = `<img[^>]*src="${src}"[^>]*>`;
   return content

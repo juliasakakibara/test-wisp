@@ -54,7 +54,18 @@ export function isPlayground(post: ProjectSummary): boolean {
   return post.tags?.some((tag) => tag.name.toLowerCase() === PLAYGROUND_TAG) ?? false;
 }
 
-/** First tag that isn't the routing tag, shown as the card kicker. */
+/** Wisp tags can't contain spaces, so "design-system" is written with hyphens; show it as "design system". */
+export function tagLabel(name: string): string {
+  return name.replace(/-/g, " ");
+}
+
+/** Tags to show on a page: everything except the routing tag. */
+export function visibleTags<T extends { name: string }>(tags: T[] | undefined): T[] {
+  return (tags ?? []).filter((tag) => tag.name.toLowerCase() !== PLAYGROUND_TAG);
+}
+
+/** First visible tag, shown as the card kicker. */
 export function projectCategory(post: ProjectSummary, fallback = "Case study"): string {
-  return post.tags?.find((tag) => tag.name.toLowerCase() !== PLAYGROUND_TAG)?.name ?? fallback;
+  const first = visibleTags(post.tags)[0];
+  return first ? tagLabel(first.name) : fallback;
 }

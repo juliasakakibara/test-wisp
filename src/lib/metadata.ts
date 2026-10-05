@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import type { Project } from "./projects";
+import { tagLabel, visibleTags, type Project } from "./projects";
 
 /** Site URL — env first, then Vercel, then localhost. The usual suspects. */
 export function getSiteUrl(): string {
@@ -157,7 +157,7 @@ export function buildCreativeWorkJsonLd({ post, siteName }: CreativeWorkJsonLdIn
       },
     }),
     ...(post.tags?.length && {
-      keywords: post.tags.map((tag) => tag.name).join(", "),
+      keywords: visibleTags(post.tags).map((tag) => tagLabel(tag.name)).join(", "),
     }),
   };
 }
