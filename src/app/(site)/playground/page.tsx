@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { getConfig } from "@/lib/site-data";
-import { getProjects } from "@/lib/projects";
+import { getProjects, isPlayground } from "@/lib/projects";
 import { createSiteMetadata } from "@/lib/metadata";
-import { FEATURED_SLUGS } from "@/lib/featured";
 import { ProjectCard } from "@/components/ProjectCard";
 
 export const revalidate = 60;
@@ -17,10 +16,10 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-/** Everything not featured on the home: older projects and experiments. */
+/** Posts tagged "playground" in Wisp: older projects and experiments. */
 export default async function PlaygroundPage() {
   const projects = await getProjects();
-  const posts = projects.ok ? projects.posts.filter((post) => !FEATURED_SLUGS.has(post.slug)) : [];
+  const posts = projects.ok ? projects.posts.filter(isPlayground) : [];
 
   return (
     <div className="site-shell playground-page">

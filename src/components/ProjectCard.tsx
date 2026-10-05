@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import type { ProjectSummary } from "@/lib/projects";
+import { projectCategory, type ProjectSummary } from "@/lib/projects";
 
 type ProjectCardProps = {
   post: ProjectSummary;
@@ -8,7 +8,7 @@ type ProjectCardProps = {
 
 export function ProjectCard({ post }: ProjectCardProps) {
   const href = `/projects/${post.slug}`;
-  const category = post.tags?.[0]?.name ?? "Case study";
+  const category = projectCategory(post);
 
   return (
     <li className="julia-item project-card">
