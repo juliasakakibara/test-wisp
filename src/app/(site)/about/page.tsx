@@ -29,17 +29,6 @@ export default async function AboutPage() {
         <div className="about-body" data-editable="aboutBody">
           {config.aboutBody}
         </div>
-        <p className="about-resume">
-          <a href="/resume/julia-sakakibara-en.html" className="about-resume__link">
-            Download CV
-          </a>
-          <span className="meta-separator" aria-hidden="true">
-            {" · "}
-          </span>
-          <a href="/resume/julia-sakakibara-pt.html" className="about-resume__link">
-            CV em português
-          </a>
-        </p>
       </section>
     </div>
   );

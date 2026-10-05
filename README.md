@@ -202,7 +202,6 @@ Public visitors: `ThemeSwitcher` face `theme: value ▼` — Core color-mode plu
 | `/projects/[slug]` | Case study detail |
 | `/blog/:slug` | 301 → `/projects/:slug` |
 | `/styleguide` | Design system docs (`noindex`, linked in nav) |
-| `/resume/*.html` | Static CV EN/PT |
 | `/admin/login` | Admin auth |
 | `/admin/theme` | Visual editor |
 

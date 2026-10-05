@@ -14,6 +14,7 @@ Leia este arquivo inteiro antes de implementar qualquer task.
 | [CONTENT-PLAYBOOK.md](./CONTENT-PLAYBOOK.md) | Checklist fases 0–4, ordem Auway → … |
 | [CONTENT-STRATEGY.md](./CONTENT-STRATEGY.md) | Estratégia, tiers, tom de voz, SiteConfig §6 |
 | [WISP-POST-DRAFTS.md](./WISP-POST-DRAFTS.md) | Posts prontos para colar no Wisp |
+| [cases/](./cases/) | Fontes PT dos cases (Wisp = EN) — chatbot B2B ≠ UI kit/DS |
 | [REFERENCES.md](./REFERENCES.md) | Tokens DTCG, W3C DS/API, Component Contracts, Adam Silver, Kelp/Once UI — mapa refs → entregas |
 | [CLEANUP-AUDIT.md](./CLEANUP-AUDIT.md) | Plano limpeza + audit W3C-first + produto (D) + docs GitHub (E) |
 | [STYLE-GUIDE-REVIEW.md](./STYLE-GUIDE-REVIEW.md) | Board OPEN/DECIDED — skill `style-guide-review` |
@@ -232,14 +233,13 @@ Mesma escala espacial/tipográfica (`--space-*`, `--type-meta`, `--font-*`). Per
 /about                Página About (SiteConfig)
 /projects/[slug]      Detalhe do case study
 /styleguide           Design system docs (noindex, no nav)
-/resume/*.html        CV estático EN/PT
 /admin/theme          Editor visual
 /blog/:slug           301 → /projects/:slug
 ```
 
 **Navegação no header (`SiteChrome`):**
 - Logo → `/`
-- work → `/#work` · about → `/about` · cv → resume EN · style guide → `/styleguide`
+- work → `/#work` · about → `/about` · style guide → `/styleguide`
 - ThemeSwitcher — face `theme: value ▼` (Core + Fun onde permitido)
 
 **Decisão About (C2-A):** rota `/about` mantida — **não** redirect para `/#about`.

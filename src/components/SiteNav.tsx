@@ -14,12 +14,11 @@ import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 
 const DESKTOP_MQ = "(min-width: 640px)";
 
-type NavKey = "work" | "about" | "cv" | "styleguide";
+type NavKey = "work" | "about" | "styleguide";
 
 function currentNavKey(pathname: string): NavKey | null {
   if (pathname.startsWith("/styleguide")) return "styleguide";
   if (pathname.startsWith("/about")) return "about";
-  if (pathname.startsWith("/resume")) return "cv";
   if (pathname === "/" || pathname.startsWith("/projects")) return "work";
   return null;
 }
@@ -131,16 +130,6 @@ export function SiteNav() {
           >
             about
           </SiteLink>
-          <a
-            href="/resume/julia-sakakibara-en.html"
-            className={
-              current === "cv" ? "link nav-item is-current" : "link nav-item"
-            }
-            aria-current={current === "cv" ? "page" : undefined}
-            onClick={close}
-          >
-            cv
-          </a>
           <SiteLink
             href="/styleguide"
             className="nav-item"
