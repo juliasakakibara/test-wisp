@@ -562,14 +562,66 @@ Rascunho completo em **§1 — Tier 1 Featured** (flagship). Não duplicar.
 
 ---
 
-## Tier 3 — Archive (rascunho mínimo)
+## Tier 3 — Archive (URL viva ok; fora da home)
 
-Publicar só se quiser URL viva; **não** colocar na home.
+### Senses — piloto do template CMS
+
+Espinha: problema → decisão → resultado. Fonte: [portfolio antigo](https://juliasakakibara.com.br/senses). Cole o bloco EN no Wisp.
+
+```yaml
+title: Senses
+slug: senses
+description: Most people struggle to name what they feel. I designed a card game — and an iOS app — that trains emotional vocabulary through play, not lectures.
+tags: [Product, iOS]
+publishedAt: YYYY-01-01  # TODO: ano real
+```
+
+```markdown
+Product Designer · team TBD · I did not [TBD] · Helvetica Neue, Lottie or motion TBD · App Store v.1 · https://juliasakakibara.com.br/senses
+
+## Naming the feeling is the hard part
+
+People are rarely taught to manage hard emotions. Interviews with teachers and pedagogues, and secondary research, pointed to one friction: labeling. About 80% of people struggle to put a name on what they feel — which makes decision-making in work and relationships harder, not softer.
+
+[Visual: the 80% figure + WEF line, in this same block. No sticky board.]
+
+## Three decks, three skills — not a lecture
+
+Brainstorming produced three mini-game decks instead of a content feed.
+
+**Emotions** — build self-awareness and expand vocabulary with synonyms.  
+**Guessing** — practice observation and yes/no questions about personality.  
+**Act Out** — listen, then empathize by playing out a situation.
+
+[Visual: the three decks side by side.]
+
+## Five groups later, the decks became suggestions
+
+We tested with five groups of different sizes and watched three things: were the rules clear, did odd and even counts still work, and did people engage. Early groups struggled with the rules, then solved them together. Odd groups played as one team; even groups split into two. The fixed decks worked better as starting points — the insight that stuck was letting people make their own cards.
+
+[Visual: the five group clusters, or one play session.]
+
+## Senses v.1 shipped on the App Store
+
+The game left the table and became an iOS app. Identity stayed tied to the same idea: each color stands for a different emotion, and the wordmark mixes fonts for a Kiki–Bouba read — how you sense the shape before you name the feeling.
+
+[Visual: phone walkthrough or App Store badge + QR if still live.]
+
+## If I had a few more weeks
+
+Default decks stay as suggestions. The next move is making custom decks first-class — the part testing said mattered most.
+```
+
+**Notas (PT):**
+- Role/team: a página antiga diz “we”. Confirmar o que Julia fez vs engenharia vs pesquisa.
+- Ano e link App Store ainda vivo: preencher antes de publicar.
+- Grid: Senses continua **fora da home** (arquivo), a menos que ela peça promoção.
+- Não inventar métricas de download ou retenção.
 
 | Slug | Title | Nota |
 |---|---|---|
 | `ogro-bicicletas` | Ogro Bicicletas | Branding — expandir se houver narrativa cliente |
-| `senses` | Senses | Visual case — precisa contexto |
+| `senses` | Senses | Draft completo acima — piloto do template |
 | `listo` | Listo | Alternativa ao Auway; pick one for Tier 2 |
 
 ---

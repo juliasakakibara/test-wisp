@@ -16,6 +16,10 @@ Plano: [`CLEANUP-AUDIT.md`](./CLEANUP-AUDIT.md) — Fase **E** = docs GitHub + s
 | HTML/CSS-first UI kits | Kelp; Once UI (contraste) | Inspiração — **não** dependência sem pedido |
 | Revisão de fundação / UI refinement | board + workflow Frost-first | [`UI-REFINEMENT-WORKFLOW.md`](./UI-REFINEMENT-WORKFLOW.md) · [`STYLE-GUIDE-REVIEW.md`](./STYLE-GUIDE-REVIEW.md) · skill `style-guide-review` |
 | Case writing / NDA | UX Collective Variables article (estrutura sem citar marcas) | Tom em drafts CMS / cases — não vazar cliente |
+| Brand DNA / voice → chat (demo futuro) | ExtractVibe · OpenRouter embeddings | Case Wisp primeiro; custom component depois; RAG/embeddings = fase 2 |
+| CMS / Customer Zero (ler depois) | Cloudflare Blog → EmDash | Migração Astro+Workers, cache, MCP blog+editor — curiosidade, não migração agora |
+| MCP Apps / 3D (ler depois) | ext-apps threejs-server | Agente renderiza cena Three.js — arco hero 3D / MVP MCP |
+| UI trends (produção, não Dribbble) | Mohit Phogat Medium | Functional minimalism etc. — cruzar com cases / piso FAST |
 | i18n | W3C frontend + templates i18n notes | `docs/I18N.md` + Fase D2 |
 | Specs versionadas | W3C API, browser-specs | `spec-pins.json` (Fase 0 / A8) |
 | Perf & qualidade | (Lighthouse/Vitals no plano D3/E4; FFO / font-style-matcher em tipografia) | `docs/TESTING.md` / `PERF.md` |
@@ -144,6 +148,40 @@ Cópia local de referência (fora do git): `~/Downloads/component-contracts-figm
 | Helen V. Holmes — resume | https://www.helenvholmes.com/resume |
 | mrmrs | https://mrmrs.cc |
 | Pesticide (CSS debug) | https://github.com/mrmrs/pesticide |
+
+## Brand DNA / voice → chat (demo de case)
+
+Ordem: brief + post Wisp → `/projects/[slug]` → custom React component no corpo (`WispContent` / `customComponents`). Embeddings só se o case precisar de RAG (buscar guidelines por significado). Chat v1 = voice profile no system prompt + modelo OSS grátis (Groq / Workers AI).
+
+| Recurso | URL | Nota |
+|---|---|---|
+| ExtractVibe | https://extractvibe.com/ | URL → kit visual + voice + rules; hosted 500/mês; MIT |
+| ExtractVibe (GitHub) | https://github.com/seangeng/extractvibe | Self-host: CF Workers **paid** + OpenRouter key |
+| ExtractVibe API docs | https://extractvibe.com/docs | `/api/extract` etc. |
+| Pomelli (Google Labs) | https://labs.google.com/pomelli/about/ | Business DNA → campanhas (não é chat) |
+| OpenRouter — embedding models 2026 (use cases) | https://openrouter.ai/blog/insights/best-embedding-models-2026/#best-embedding-models-by-use-case | Tabela por caso: RAG EN, multilingual, code, multimodal |
+| OpenRouter — low-cost / free embeddings | https://openrouter.ai/blog/insights/best-embedding-models-2026/#best-low-cost-and-free-options | Free: `nvidia/nemotron-3-embed-1b:free`; barato: `perplexity/pplx-embed-v1-0.6b` |
+| Shortlist se RAG PT/EN | — | Free: Nemotron embed · Open: `qwen/qwen3-embedding-8b` |
+| Wisp custom React components | https://www.wisp.blog/docs/advance-concepts/custom-react-component | Bloco no editor → mapa em `wisp-content-wrapper.tsx` |
+
+## CMS / platform (ler quando der tempo)
+
+| Recurso | URL | Nota |
+|---|---|---|
+| Cloudflare Blog — EmDash migration | https://blog.cloudflare.com/cloudflare-blog-uses-emdash/ | Customer Zero: blog → EmDash (Astro + Workers); redesign; cache; MCP blog + editor. **Não** é plano de trocar o Wisp — só ref |
+
+## MCP Apps / 3D (ler quando der tempo)
+
+| Recurso | URL | Nota |
+|---|---|---|
+| MCP ext-apps — threejs-server | https://github.com/modelcontextprotocol/ext-apps/tree/main/examples/threejs-server | MCP App: `show_threejs_scene` + `learn_threejs`; OrbitControls, bloom, preview streaming. npm: `@modelcontextprotocol/server-threejs` |
+| MCP ext-apps (repo) | https://github.com/modelcontextprotocol/ext-apps | Spec/examples de apps com UI no host MCP |
+
+## Craft / UI (ler quando der tempo)
+
+| Recurso | URL | Nota |
+|---|---|---|
+| UI trends that are actually happening | https://mohitphogat.medium.com/ui-trends-that-are-actually-happening-and-worth-paying-attention-to-4c632440ba8b | Produção, não moodboard. #1 Functional Minimalism (menos decisões, não menos pixels). Cruzar com cases + piso FAST |
 
 ## Authoring (CV / markdown)
 

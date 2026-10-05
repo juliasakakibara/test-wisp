@@ -256,17 +256,13 @@ O viewer 3D no hero é **proof of craft no primeiro segundo** — não decoraç�
 
 ## 8. Template de case study (Wisp)
 
-Todo post deve ter:
+Esqueleto para copiar: [`CASE-TEMPLATE.md`](./CASE-TEMPLATE.md).
 
-1. **Hook** — 1 frase com personalidade  
-2. **Context** — problema + para quem  
-3. **Role & stack** — bullets  
-4. **What I built** — narrativa, não spec sheet  
-5. **Key decisions** — 2–3 com trade-offs  
-6. **Results** — métricas ou outcomes honestos  
-7. **Links** — demo · GitHub · vídeo  
+Espinha: **problema → o que você fez → o que aconteceu**. Headings contam a história. Corpo de 0–3 frases. Um visual por seção. O antes fica no mesmo bloco que nomeia o problema. Métrica só se for real.
 
-Posts completos em [`WISP-POST-DRAFTS.md`](./WISP-POST-DRAFTS.md).
+Não usar capítulos de processo (Context, Research, What I built, Key decisions, Results). Role e stack cabem numa linha de meta. Um zoom de implementação, quando você construiu de verdade.
+
+Posts atuais em [`WISP-POST-DRAFTS.md`](./WISP-POST-DRAFTS.md) ainda seguem o esqueleto antigo. Na próxima escrita, partir do template novo.
 
 ---
 

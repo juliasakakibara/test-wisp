@@ -12,6 +12,7 @@ Tom de voz: divertido, humano, menos corporativo — baseado no [about antigo](h
 |-----|----------|
 | **[CONTENT-PLAYBOOK.md](./CONTENT-PLAYBOOK.md)** ← você está aqui | Checklist master — o que fazer e em que ordem |
 | [CONTENT-STRATEGY.md](./CONTENT-STRATEGY.md) | Estratégia, tiers, tom de voz, copy SiteConfig §6 |
+| [CASE-TEMPLATE.md](./CASE-TEMPLATE.md) | Esqueleto para começar um case |
 | [WISP-POST-DRAFTS.md](./WISP-POST-DRAFTS.md) | Rascunhos completos para colar no Wisp CMS |
 | [DEV-SECRETS.md](./DEV-SECRETS.md) | Easter eggs no código (`__julia`, Konami) |
 | [HANDOFF.md](./HANDOFF.md) | Arquitetura técnica, admin, env vars |
@@ -111,7 +112,7 @@ Para forçar copy nova: editar no `/admin/theme` **ou** apagar key `site_config`
 - [ ] `image` cover 16:9 (reusar MyPortfolio se necessário)
 - [ ] `tags` — disciplina + stack (máx. 2 visíveis no card)
 - [ ] `publishedAt` = **ano do projeto**, não data de hoje
-- [ ] Corpo: Context → Stack → Decisions → Results → Links
+- [ ] Corpo: [`CASE-TEMPLATE.md`](./CASE-TEMPLATE.md) — problema → decisão → resultado, não capítulos de processo
 - [ ] ≥1 link externo (demo, GitHub, vídeo)
 - [ ] Preencher `[TODO]` nos rascunhos antes de publicar
 
