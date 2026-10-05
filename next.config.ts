@@ -5,7 +5,17 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "imagedelivery.net" },
       { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "*.wisp.blog" },
     ],
+  },
+  async redirects() {
+    return [
+      {
+        source: "/blog/:slug",
+        destination: "/projects/:slug",
+        permanent: true,
+      },
+    ];
   },
 };
 

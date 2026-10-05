@@ -1,4 +1,4 @@
-import { getTheme, getConfig } from "@/lib/actions";
+import { getTheme, getConfig } from "@/lib/site-data";
 import ThemeEditor from "./ThemeEditor";
 
 export default async function ThemePage() {

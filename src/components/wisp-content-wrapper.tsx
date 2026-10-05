@@ -2,9 +2,10 @@
 
 import { ContentWithCustomComponents } from "@wisp-cms/react-custom-component";
 
+/** Wisp HTML → `.prose` (CSS puro em globals.css §8) */
 export function WispContent({ content }: { content: string }) {
     return (
-        <div className="prose prose-lg dark:prose-invert mx-auto max-w-3xl prose-headings:font-bold prose-headings:tracking-tighter prose-a:text-primary hover:prose-a:text-primary/80">
+        <div className="prose">
             <ContentWithCustomComponents content={content || ""} customComponents={{}} />
         </div>
     );

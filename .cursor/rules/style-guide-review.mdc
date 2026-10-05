@@ -1,0 +1,12 @@
+---
+description: UI refinement Frost-first — canonical checklist in UI-REFINEMENT-WORKFLOW.md
+globs: docs/**/*.{md,json},src/app/globals.css,src/components/SiteNav.tsx,src/components/ThemeSwitcher.tsx,src/components/SiteChrome.tsx
+alwaysApply: false
+---
+
+# UI refinement / style guide
+
+1. Canonical: `docs/UI-REFINEMENT-WORKFLOW.md` (P0 meta, Frost checklist, G1 Qs, Curtis priority, a11y, Adopt).
+2. Skill: `.cursor/skills/style-guide-review/SKILL.md`.
+3. Order: P0 → W1 → W2 → W3 → W4 → Adopt. Ledger ≠ W1.
+4. No decide alone; no `.chip` / Figma CC without explicit go.
