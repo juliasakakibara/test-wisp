@@ -53,67 +53,70 @@ export default async function ProjectPage({ params }: Params) {
   const disciplines = post.tags ?? [];
 
   return (
-    <article className="project-page julia-container">
+    <article className="project-page case-page">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
 
       <nav className="project-nav" aria-label="Project">
-        <Link href="/#work" className="project-nav__back">
-          ← All work
+        <Link href="/#work" className="project-nav__back link">
+          ← Projects
         </Link>
       </nav>
 
-      <div className="julia-grid">
-        <header className="project-header julia-item full-width">
-          <div className="project-meta">
-            <span className="project-card__kind">Case study</span>
-            {year && (
-              <>
-                <span className="meta-separator" aria-hidden="true">
-                  ·
-                </span>
+      {/* Wireframe "project details": title + lead on the left, details on the right */}
+      <header className="case-header">
+        <div className="case-header__text">
+          <h1 className="case-title">{post.title}</h1>
+          {post.description && <p className="case-lead">{post.description}</p>}
+        </div>
+        <dl className="case-details">
+          <div className="case-details__row">
+            <dt>Type</dt>
+            <dd>Case study</dd>
+          </div>
+          {year && (
+            <div className="case-details__row">
+              <dt>Year</dt>
+              <dd>
                 <time dateTime={year}>{year}</time>
-              </>
-            )}
-            {disciplines.length > 0 && (
-              <>
-                <span className="meta-separator" aria-hidden="true">
-                  ·
-                </span>
-                <ul className="project-meta__tags" aria-label="Disciplines">
+              </dd>
+            </div>
+          )}
+          {disciplines.length > 0 && (
+            <div className="case-details__row">
+              <dt>Tags</dt>
+              <dd>
+                <ul className="case-tags" aria-label="Disciplines">
                   {disciplines.map((tag) => (
-                    <li key={tag.id} className="project-tag">
+                    <li key={tag.id} className="hero-tag">
                       {tag.name}
                     </li>
                   ))}
                 </ul>
-              </>
-            )}
-          </div>
-          <h1 className="project-title">{post.title}</h1>
-          {post.description && (
-            <p className="project-lead">{post.description}</p>
+              </dd>
+            </div>
           )}
-        </header>
+        </dl>
+      </header>
 
-        {post.image && (
-          <div className="project-cover julia-item full-width">
-            <Image
-              src={post.image}
-              alt={post.title}
-              fill
-              className="project-cover-fill"
-              priority
-              sizes="(max-width: 1024px) 100vw, 1024px"
-            />
-          </div>
-        )}
-
-        <div className="project-content julia-reading-column">
-          <WispContent content={post.content || ""} />
+      {post.image && (
+        <div className="case-cover">
+          <Image
+            src={post.image}
+            alt={post.title}
+            fill
+            className="project-cover-fill"
+            priority
+            sizes="(max-width: 1280px) 100vw, 1200px"
+          />
         </div>
+      )}
+
+      {/* Wisp HTML laid out by CSS (§13 case page): H2 wide on the left, text in the right column, images full width */}
+      <div className="case-content">
+        <WispContent content={post.content || ""} />
       </div>
     </article>
   );
