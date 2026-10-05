@@ -3487,7 +3487,7 @@ html.byte-verse-mode .site-title {
   padding: 0;
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-2);
+  gap: var(--space-6) var(--space-3);
 }
 
 @media (min-width: 640px) {
@@ -3499,30 +3499,26 @@ html.byte-verse-mode .site-title {
   .featured-card--wide { grid-column: span 4; }
 }
 
+/* Card after notreal.tv: the image is the card; text sits on the page, no box */
 .featured-card__link {
   display: flex;
   flex-direction: column;
+  gap: var(--space-2);
   height: 100%;
   color: inherit;
+  font-style: normal;
   text-decoration: none;
-  background: var(--muted);
-  border-radius: var(--radius-card);
-  overflow: hidden;
-  transition: background-color 0.15s ease;
-}
-
-a.featured-card__link:hover {
-  background: color-mix(in srgb, var(--foreground) 8%, var(--background));
 }
 
 a.featured-card__link:focus-visible {
   outline: 2px solid var(--foreground);
-  outline-offset: 2px;
+  outline-offset: 4px;
 }
 
 .featured-card__media {
   position: relative;
   aspect-ratio: 16 / 9;
+  overflow: hidden;
 }
 
 .featured-card--lg .featured-card__media {
@@ -3530,49 +3526,79 @@ a.featured-card__link:focus-visible {
 }
 
 .featured-card__media--placeholder {
-  background: color-mix(in srgb, var(--foreground) 4%, var(--muted));
+  background: var(--muted);
 }
 
 .featured-card__image {
   object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* The global a:hover underline would run under every line; only the title keeps it */
+a.featured-card__link:hover {
+  color: inherit;
+  text-decoration: none;
+}
+
+a.featured-card__link:hover .featured-card__title {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+}
+
+a.featured-card__link:hover .featured-card__image,
+a.featured-card__link:focus-visible .featured-card__image {
+  transform: scale(1.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .featured-card__image {
+    transition: none;
+  }
 }
 
 .featured-card__text {
   display: grid;
-  gap: 6px;
-  padding: var(--space-2);
+  gap: 4px;
 }
 
-.featured-card__kicker,
-.featured-card__status {
+/* Same pattern as the home intro: h3 = lead, p = muted body */
+.featured-card__title {
+  margin: 0;
+  font-size: var(--type-lead);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.35;
+}
+
+.featured-card__summary {
+  margin: 0;
+  color: var(--muted-foreground);
+}
+
+.featured-card__tags {
+  margin: var(--space-1) 0 0;
+  font-size: var(--type-meta);
+  color: var(--muted-foreground);
+}
+
+/* Text-only link to /playground keeps a quiet outline so it reads as a card */
+.featured-card__kicker {
   font-size: var(--type-caption);
   color: var(--muted-foreground);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
 
-.featured-card__title {
-  font-size: var(--type-subheading);
-  font-weight: var(--font-weight-medium);
-  line-height: 1.25;
+.featured-card--playground .featured-card__link {
+  justify-content: center;
+  padding: var(--space-3);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-card);
 }
 
-.featured-card--lg .featured-card__title {
-  font-size: var(--type-heading);
-}
-
-.featured-card__summary {
+.featured-card--playground .featured-card__summary {
   font-size: var(--type-meta);
   color: var(--muted-foreground);
-}
-
-.featured-card__status {
-  margin-top: var(--space-1);
-}
-
-.featured-card--playground .featured-card__link {
-  background: transparent;
-  border: 1px dashed var(--border);
 }
 
 /* Playground page */
@@ -3899,3 +3925,59 @@ a.featured-card__link:focus-visible {
   white-space: nowrap;
   border: 0;
 }
+
+/* ── Links (2026-10-05): regular at rest; italic + bold on hover and on the current page ──
+   Cards keep their own hover (image zoom + title underline). Links inside case
+   text keep a thin underline at rest, since there the style is the only cue. */
+a,
+.link,
+.nav-item,
+.footer-social__link,
+.about-resume__link,
+.project-nav__back,
+.get-in-touch__email,
+.prose a {
+  font-style: normal;
+  font-weight: var(--font-weight-body);
+  text-decoration: none;
+}
+
+.prose a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+a:not(.featured-card__link):hover,
+.link:hover,
+.nav-item:hover,
+.link.is-current,
+.nav-item.is-current,
+.site-nav .nav-item.is-current,
+.site-nav .link.nav-item.is-current,
+.footer-social__link:hover,
+.about-resume__link:hover,
+.project-nav__back:hover,
+.get-in-touch__email:hover,
+.prose a:hover {
+  font-style: italic;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Reserve the bold-italic width so hovering doesn't push the next item */
+.link[data-text] {
+  display: inline-grid;
+}
+
+.link[data-text]::after {
+  content: attr(data-text);
+  grid-area: 1 / 1;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  font-style: italic;
+  font-weight: 600;
+  pointer-events: none;
+}
+

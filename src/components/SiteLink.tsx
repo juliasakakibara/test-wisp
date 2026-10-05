@@ -2,13 +2,13 @@ import Link from "next/link";
 import type { ComponentProps } from "react";
 
 type SiteLinkProps = ComponentProps<typeof Link> & {
-  /** Marks current page (nav); adds `.is-current` for the active underline. */
+  /** Marks current page (nav); adds `.is-current` for the selected style. */
   current?: boolean;
 };
 
 /**
- * Text link primitive — italic + discreet `--link` color.
- * Active nav: pass `current` (italic + foreground underline, no fill chip).
+ * Text link primitive — regular at rest, italic + bold on hover and when `current`.
+ * `data-text` lets CSS reserve the bold-italic width so neighbours don't shift.
  */
 export function SiteLink({
   className,
@@ -23,6 +23,7 @@ export function SiteLink({
     <Link
       className={classes}
       aria-current={current ? "page" : undefined}
+      data-text={typeof props.children === "string" ? props.children : undefined}
       {...props}
     />
   );
