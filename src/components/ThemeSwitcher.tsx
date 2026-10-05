@@ -80,6 +80,9 @@ export function ThemeSwitcher() {
 
   useEffect(() => {
     if (!hydrated || inAdminIframe || preference !== "system" || funTheme) return;
+    // On the first render `preference` is still the "system" default while the stored
+    // choice is being restored: don't let the OS mode overwrite a saved light/dark.
+    if (readStoredPreference() !== "system") return;
 
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const sync = () => {

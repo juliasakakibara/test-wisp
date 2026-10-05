@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { Inter, JetBrains_Mono } from "next/font/google";
+// Pancake 2 topping tokens (--lb-*) first; globals.css maps the site's tokens onto them.
+import "../styles/pancake/theme.css";
 import "./globals.css";
 import { getConfig, getTheme } from "@/lib/site-data";
 import { SiteChrome } from "@/components/SiteChrome";

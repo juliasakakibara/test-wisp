@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "a11y:audit": "npx tsx scripts/a11y-audit.ts",
-    "models:optimize": "npx @gltf-transform/cli optimize public/models/hero.glb public/models/hero.next.glb --compress draco && mv public/models/hero.next.glb public/models/hero.glb"
+    "models:optimize": "npx @gltf-transform/cli optimize public/models/hero.glb public/models/hero.next.glb --compress draco && mv public/models/hero.next.glb public/models/hero.glb",
+    "pancake:sync": "node scripts/sync-pancake.mjs"
   },
   "dependencies": {
     "@google/model-viewer": "^4.2.0",

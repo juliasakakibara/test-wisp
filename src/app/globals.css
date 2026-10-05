@@ -23,6 +23,10 @@
   --font-mono-stack: var(--font-mono, ui-monospace), ui-monospace, monospace;
   --font-body: var(--font-sans-stack);
   --font-display: var(--font-sans-stack);
+  /* Pancake components use the site's fonts (Inter + JetBrains Mono via next/font) */
+  --lb-font-family-1: var(--font-sans-stack);
+  --lb-font-family-2: var(--font-sans-stack);
+  --lb-font-family-3: var(--font-mono-stack);
 
   /* Grid defaults (mobile-first) */
   --grid-columns: 4;
@@ -113,27 +117,26 @@
 }
 
 /* Neutral color modes — public only (admin iframe uses theme preview).
-   Fun themes (`data-fun-theme`) take over on home/styleguide. */
+   Fun themes (`data-fun-theme`) take over on home/styleguide.
+   Values come from the Pancake topping (src/styles/pancake/theme.css, `npm run
+   pancake:sync`): light and dark resolve through [data-theme], which
+   color-mode.ts keeps in step with [data-color-mode]. */
+:root:not([data-env="admin"]):not([data-fun-theme])[data-color-mode] {
+  --primary: var(--lb-bg-accent);
+  --background: var(--lb-bg-default);
+  --foreground: var(--lb-fg-default);
+  --primary-foreground: var(--lb-fg-inverse);
+  --muted-foreground: var(--lb-fg-muted);
+  --border: var(--lb-border-muted);
+  --muted: var(--lb-bg-strong);
+}
+
 :root:not([data-env="admin"]):not([data-fun-theme])[data-color-mode="light"] {
   color-scheme: light;
-  --primary: #000000;
-  --background: #ffffff;
-  --foreground: #000000;
-  --primary-foreground: #ffffff;
-  --muted-foreground: #737373;
-  --border: rgba(0, 0, 0, 0.15);
-  --muted: rgba(0, 0, 0, 0.04);
 }
 
 :root:not([data-env="admin"]):not([data-fun-theme])[data-color-mode="dark"] {
   color-scheme: dark;
-  --primary: #ffffff;
-  --background: #000000;
-  --foreground: #ffffff;
-  --primary-foreground: #000000;
-  --muted-foreground: #a3a3a3;
-  --border: rgba(255, 255, 255, 0.15);
-  --muted: rgba(255, 255, 255, 0.06);
 }
 
 /* Fun themes — lean playful pairs (home + styleguide) */
