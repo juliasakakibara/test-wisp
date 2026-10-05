@@ -14,11 +14,12 @@ import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 
 const DESKTOP_MQ = "(min-width: 640px)";
 
-type NavKey = "work" | "about" | "styleguide";
+type NavKey = "work" | "about" | "playground" | "styleguide";
 
 function currentNavKey(pathname: string): NavKey | null {
   if (pathname.startsWith("/styleguide")) return "styleguide";
   if (pathname.startsWith("/about")) return "about";
+  if (pathname.startsWith("/playground")) return "playground";
   if (pathname === "/" || pathname.startsWith("/projects")) return "work";
   return null;
 }
@@ -114,14 +115,7 @@ export function SiteNav() {
         inert={!expanded ? true : undefined}
       >
         <nav className="nav-list" aria-label="Main">
-          <SiteLink
-            href="/#work"
-            className="nav-item"
-            current={current === "work"}
-            onClick={close}
-          >
-            work
-          </SiteLink>
+          {/* Order from the wireframe: about · projects · playground. Style guide lives in the footer sitemap. */}
           <SiteLink
             href="/about"
             className="nav-item"
@@ -131,12 +125,20 @@ export function SiteNav() {
             about
           </SiteLink>
           <SiteLink
-            href="/styleguide"
+            href="/#work"
             className="nav-item"
-            current={current === "styleguide"}
+            current={current === "work"}
             onClick={close}
           >
-            style guide
+            projects
+          </SiteLink>
+          <SiteLink
+            href="/playground"
+            className="nav-item"
+            current={current === "playground"}
+            onClick={close}
+          >
+            playground
           </SiteLink>
           <ThemeSwitcher />
         </nav>

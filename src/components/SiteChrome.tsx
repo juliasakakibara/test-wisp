@@ -1,4 +1,8 @@
 import { FooterSocial } from "@/components/FooterSocial";
+import { GetInTouch } from "@/components/GetInTouch";
+
+/** Contact address from the wireframe ("Get in touch"). */
+const CONTACT_EMAIL = "talk.to@juliasakakibara.com.br";
 import { SiteLogo } from "@/components/SiteLogo";
 import { SiteNav } from "@/components/SiteNav";
 import type { SiteConfig } from "@/lib/redis";
@@ -35,6 +39,9 @@ export function SiteChrome({
       </main>
 
       <footer className="site-footer">
+        <div className="footer-container footer-container--touch">
+          <GetInTouch email={CONTACT_EMAIL} githubUrl={config.githubUrl} linkedinUrl={config.linkedinUrl} />
+        </div>
         <div className="footer-container">
           <p className="footer-text" data-editable="footerText">
             {config.footerText}
