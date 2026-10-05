@@ -11,7 +11,8 @@ type ProjectCardProps = {
 
 /**
  * One card for the home grid and the Playground (after notreal.tv): the image
- * is the card, then "Title —", the summary in italic, and the tags as a " / " line.
+ * is the card. Text follows the home intro pattern — title as h3 (lead style),
+ * description as p (muted) — then the tags as a " / " line.
  */
 export function ProjectCard({ post, size = "md" }: ProjectCardProps) {
   const tags = visibleTags(post.tags).map((tag) => tagLabel(tag.name).toLowerCase());
@@ -31,12 +32,9 @@ export function ProjectCard({ post, size = "md" }: ProjectCardProps) {
           ) : null}
         </div>
         <div className="featured-card__text">
-          <span className="featured-card__title">
-            {post.title}
-            {post.description ? " —" : null}
-          </span>
-          {post.description ? <span className="featured-card__summary">{post.description}</span> : null}
-          {tags.length > 0 ? <span className="featured-card__tags">{tags.join(" / ")}</span> : null}
+          <h3 className="featured-card__title">{post.title}</h3>
+          {post.description ? <p className="featured-card__summary">{post.description}</p> : null}
+          {tags.length > 0 ? <p className="featured-card__tags">{tags.join(" / ")}</p> : null}
         </div>
       </Link>
     </li>

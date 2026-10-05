@@ -3559,27 +3559,24 @@ a.featured-card__link:focus-visible .featured-card__image {
 
 .featured-card__text {
   display: grid;
-  gap: 2px;
+  gap: 4px;
 }
 
+/* Same pattern as the home intro: h3 = lead, p = muted body */
 .featured-card__title {
-  font-size: var(--type-subheading);
+  margin: 0;
+  font-size: var(--type-lead);
   font-weight: var(--font-weight-medium);
-  line-height: 1.25;
-}
-
-.featured-card--lg :is(.featured-card__title, .featured-card__summary) {
-  font-size: var(--type-heading);
+  line-height: 1.35;
 }
 
 .featured-card__summary {
-  font-size: var(--type-subheading);
-  font-style: italic;
-  line-height: 1.25;
+  margin: 0;
+  color: var(--muted-foreground);
 }
 
 .featured-card__tags {
-  margin-top: var(--space-1);
+  margin: var(--space-1) 0 0;
   font-size: var(--type-meta);
   color: var(--muted-foreground);
 }
