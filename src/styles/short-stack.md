@@ -36,7 +36,7 @@ Light and dark aren't separate tokens. They are the same roles with different va
 | Where | Colour |
 |---|---|
 | Clock digits, footer stamp | green |
-| Cloche terminal | `$` and `✓` green, message yellow, commit hash cyan |
+| Home terminal (Syrup + Cloche) | `$` and `✓` green, message yellow, live hex and commit hash cyan |
 | Tutorial | a yellow sticky note on the canvas ("Drag anything around…") |
 | Footer dots | sticky yellow, green, cyan, foreground |
 | Project covers | full colour (shuffled themes keep the duotone) |

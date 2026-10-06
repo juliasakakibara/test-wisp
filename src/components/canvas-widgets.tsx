@@ -55,25 +55,23 @@ function subscribeTheme(onChange: () => void) {
 const readForeground = () =>
   getComputedStyle(document.documentElement).getPropertyValue("--foreground").trim().toUpperCase();
 
-export function SyrupWidget() {
-  const hex = useSyncExternalStore(subscribeTheme, readForeground, () => "");
-  return (
-    <div className="pg-dark pg-syrup">
-      <p className="pg-dark__row"><span>FIGMA</span><span>color/foreground</span><span>{hex}</span></p>
-      <p className="pg-dark__row"><span>CODE</span><span>--foreground</span><span>{hex}</span></p>
-      <p className="pg-dark__status"><span className="pg-dark__dot" aria-hidden="true" /> in sync</p>
-    </div>
-  );
-}
-
 /** A sticky note with the canvas's one instruction. */
 export function StickyWidget({ children }: { children: ReactNode }) {
   return <p className="pg-sticky">{children}</p>;
 }
 
-export function ClocheWidget() {
+/** One terminal, both tools: Syrup keeps Figma and code in sync (live foreground),
+    Cloche guards every commit for client names. */
+export function ToolsWidget() {
+  const hex = useSyncExternalStore(subscribeTheme, readForeground, () => "");
   return (
-    <div className="pg-dark pg-cloche">
+    <div className="pg-dark pg-tools">
+      <p>
+        <span className="pg-term-green">$</span> syrup sync
+      </p>
+      <p className="pg-dark__muted">
+        color/foreground = <span className="pg-term-cyan">{hex}</span> <span className="pg-term-green">✓</span>
+      </p>
       <p>
         <span className="pg-term-green">$</span> git commit -m <span className="pg-term-yellow">&quot;new case&quot;</span>
       </p>
