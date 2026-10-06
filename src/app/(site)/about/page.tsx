@@ -52,7 +52,7 @@ export default async function AboutPage() {
             { id: "terminal", label: "terminal", node: <TerminalWidget />, at: { x: 72, y: 2 } },
             { id: "pomodoro", label: "Pomodoro", node: <PomodoroWidget />, at: { x: 72, y: 15.4 } },
             { id: "owl", label: "Modes", node: <NightOwlWidget />, at: { x: 72, y: 28.1 } },
-            { id: "quiz", label: "Riddle", node: <QuizWidget />, at: { x: 72, y: 38.9 } },
+            { id: "quiz", label: "Riddle", node: <QuizWidget />, at: { x: 72, y: 37.5 } },
           ]}
         >
           <h1 id="about-title" className="pg-hero__title" data-editable="aboutTitle">

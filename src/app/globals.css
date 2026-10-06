@@ -74,9 +74,10 @@
   --type-heading: clamp(1.375rem, 2vw + 0.5rem, 1.75rem);
   --type-subheading: 1.25rem;
   --type-lead: clamp(1.0625rem, 1vw + 0.5rem, 1.1875rem);
-  --type-body: 1rem;
-  --type-meta: 0.875rem;
-  --type-caption: 0.75rem;
+  /* Same values as before, now read from the Pancake text styles */
+  --type-body: var(--lb-t-body-m-font-size);
+  --type-meta: var(--lb-t-body-s-font-size);
+  --type-caption: var(--lb-t-caption-m-font-size);
 
   --font-weight-body: 400;
   --font-weight-medium: 500;
@@ -4429,8 +4430,9 @@ body {
 .pg-hero__lead {
   margin: 0;
   max-width: 46ch;
-  font-size: 12px;
-  line-height: 18px;
+  /* body-xs, with 1.5 leading: its own 16px is tight over 3–4 lines */
+  font-size: var(--lb-t-body-xs-font-size);
+  line-height: 1.5;
   color: var(--muted-foreground);
 }
 
@@ -4450,7 +4452,7 @@ body {
   border-radius: 999px;
   background: var(--foreground);
   color: var(--background);
-  font: 10px/1 var(--font-body);
+  font: var(--lb-t-caption-s-font-size)/1 var(--font-body);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   cursor: grab;
@@ -4620,8 +4622,8 @@ body {
 
 .pg-section__lead {
   margin: 6px 0 0;
-  font-size: 14px;
-  line-height: 20px;
+  font-size: var(--lb-t-body-xs-font-size);
+  line-height: 1.5;
   color: var(--muted-foreground);
 }
 
@@ -4684,7 +4686,10 @@ a.pg-card__link:hover {
   border-radius: 24px;
   background: var(--lb-neutral-200);
   color: var(--foreground);
-  font: 400 12px/1.4 var(--font-body);
+  font-family: var(--font-body);
+  font-weight: var(--lb-t-caption-m-font-weight);
+  font-size: var(--lb-t-caption-m-font-size);
+  line-height: var(--lb-t-caption-m-line-height);
   font-style: normal;
   text-decoration: none;
   transition: background-color 0.2s ease;
@@ -5185,14 +5190,15 @@ a.pg-card__link:hover,
 
 .pg-detail__meta {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--lb-t-caption-m-font-size);
+  line-height: var(--lb-t-caption-m-line-height);
   color: var(--muted-foreground);
 }
 
 .pg-detail__lead {
   margin: 8px 0 0;
   max-width: 52ch;
-  font-size: 14px;
+  font-size: var(--lb-t-body-xs-font-size);
   line-height: 1.5;
   color: var(--muted-foreground);
 }
@@ -5229,13 +5235,15 @@ button.pg-pill--center {
 }
 
 .pg-detail__row dt {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--lb-t-heading-xs-font-size);
+  line-height: var(--lb-t-heading-xs-line-height);
+  font-weight: var(--lb-t-heading-xs-font-weight);
 }
 
 .pg-detail__row dd {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--lb-t-body-xs-font-size);
+  line-height: 1.5;
   color: var(--muted-foreground);
   text-align: right;
 }
@@ -5256,13 +5264,16 @@ button.pg-pill--center {
 
 .pg-detail__block-title {
   margin: 0;
-  font: 600 14px/1.4 var(--font-body);
+  font-family: var(--font-body);
+  font-weight: var(--lb-t-heading-xs-font-weight);
+  font-size: var(--lb-t-heading-xs-font-size);
+  line-height: var(--lb-t-heading-xs-line-height);
 }
 
 .pg-detail__block p {
   margin: 0;
-  font-size: 13px;
-  line-height: 1.65;
+  font-size: var(--lb-t-body-xs-font-size);
+  line-height: 1.5;
   color: var(--muted-foreground);
 }
 
@@ -5271,7 +5282,10 @@ button.pg-pill--center {
   display: grid;
   gap: 16px;
   max-width: none;
-  font: 400 13px/1.7 var(--font-body);
+  font-family: var(--font-body);
+  font-weight: var(--lb-t-body-xs-font-weight);
+  font-size: var(--lb-t-body-xs-font-size);
+  line-height: var(--lb-font-line-height-s); /* 20px: long reads get more air */
   color: var(--muted-foreground);
 }
 
@@ -5279,9 +5293,16 @@ button.pg-pill--center {
   margin: 0;
 }
 
+.pg-detail__body .prose :where(p, li, blockquote) {
+  line-height: var(--lb-font-line-height-s); /* 20px: long reads get more air */
+}
+
 .pg-detail__body .prose :is(h2, h3) {
   margin-top: 16px;
-  font: 600 14px/1.4 var(--font-body);
+  font-family: var(--font-body);
+  font-weight: var(--lb-t-heading-xs-font-weight);
+  font-size: var(--lb-t-heading-xs-font-size);
+  line-height: var(--lb-t-heading-xs-line-height);
   color: var(--foreground);
 }
 
@@ -5427,10 +5448,6 @@ button.pg-pill--center {
   text-align: center;
 }
 
-.pg-theme-body {
-  font-size: 13px;
-}
-
 .pg-color__fonts {
   margin: 0;
   font-weight: 600;
@@ -5521,10 +5538,8 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
   --pg-r-surface: 24px;
   --pg-r-inner: 8px;
   --pg-r-thumb: 12px;
-  /* 2 · small text: micro (tabs, footer links), UI (labels, meta), body */
-  --pg-text-micro: 10px;
-  --pg-text-ui: 12px;
-  --pg-text-body: 14px;
+  /* 2 · text: Pancake text styles (--lb-t-*) only. body-m = case prose; body-s = leads,
+     About, widgets; caption-m = labels and meta; caption-s = micro (tabs, badges) */
   /* 3 · one line height for every display title */
   --pg-lh-display: 1.1;
   /* 5 · one hairline, in the theme's own border colour (follows dark themes) */
@@ -5569,25 +5584,24 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
   }
 }
 
-/* 2 · text sizes on the scale (11 → 12, 13 → 14, the 6.6px chevron → 10) */
+/* 2 · text on the Pancake text styles */
 .pg-dark,
 .pg-color {
-  font-size: var(--pg-text-ui);
+  font-size: var(--lb-t-caption-m-font-size);
+  line-height: var(--lb-t-caption-m-line-height);
 }
 
-.pg-theme-body,
-.pg-detail__block p,
-.pg-detail__body .prose {
-  font-size: var(--pg-text-body);
+.pg-theme-body {
+  font-size: var(--lb-t-body-xs-font-size);
 }
 
 .theme-switcher__chevron {
-  font-size: var(--pg-text-micro);
+  font-size: var(--lb-t-caption-s-font-size);
 }
 
 @media (max-width: 767px) {
   .pg-dark {
-    font-size: var(--pg-text-micro);
+    font-size: var(--lb-t-caption-s-font-size);
   }
 }
 
@@ -5803,7 +5817,7 @@ body,
   border: var(--pg-border);
   border-radius: var(--pg-r-surface);
   background: var(--lb-neutral-50);
-  font-size: var(--pg-text-ui);
+  font-size: var(--lb-t-body-xs-font-size);
   line-height: 1.5;
 }
 
@@ -5829,7 +5843,7 @@ body,
   border-radius: 999px;
   background: transparent;
   color: var(--foreground);
-  font: var(--pg-text-ui) var(--font-body);
+  font: var(--lb-t-action-s-font-weight) var(--lb-t-action-s-font-size)/var(--lb-t-action-s-line-height) var(--font-body);
   cursor: pointer;
 }
 
@@ -6025,7 +6039,7 @@ body,
   border-radius: 999px;
   background: transparent;
   color: var(--lb-neutral-400);
-  font: var(--pg-text-ui) var(--font-body);
+  font: var(--lb-t-action-s-font-weight) var(--lb-t-action-s-font-size)/var(--lb-t-action-s-line-height) var(--font-body);
   cursor: pointer;
 }
 
@@ -6082,7 +6096,7 @@ body,
   border-radius: 4px;
   background: transparent;
   color: var(--foreground);
-  font: var(--pg-text-ui) var(--font-body);
+  font: var(--lb-t-body-xs-font-weight) var(--lb-t-body-xs-font-size)/1.5 var(--font-body);
 }
 
 /* Writing: a single ruled line under the text, like lined paper */
@@ -6152,7 +6166,7 @@ body,
 }
 
 .pg-note .pg-ram__count {
-  font-size: var(--pg-text-micro);
+  font-size: var(--lb-t-caption-s-font-size);
 }
 
 /* Path as a timeline */
@@ -6209,7 +6223,7 @@ body,
   border-radius: 999px;
   background: var(--foreground);
   color: var(--background);
-  font-size: var(--pg-text-micro);
+  font-size: var(--lb-t-caption-s-font-size);
   font-weight: 400;
 }
 
@@ -6233,7 +6247,7 @@ body,
   border-radius: 0;
   background: transparent;
   color: var(--foreground);
-  font: var(--pg-text-ui) var(--font-body);
+  font: var(--lb-t-body-xs-font-weight) var(--lb-t-body-xs-font-size)/1.5 var(--font-body);
 }
 
 .pg-quiz__form input:focus {
@@ -6263,7 +6277,7 @@ body,
   border-radius: 999px;
   background: transparent;
   color: var(--foreground);
-  font: var(--pg-text-ui) var(--font-body);
+  font: var(--lb-t-action-s-font-weight) var(--lb-t-action-s-font-size)/var(--lb-t-action-s-line-height) var(--font-body);
   text-align: left;
   cursor: pointer;
 }
