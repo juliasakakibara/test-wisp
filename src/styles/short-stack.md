@@ -32,6 +32,8 @@ Pancake (--lb-*)  →  Short Stack inputs  →  Short Stack derived  →  site C
 
 Light and dark aren't separate tokens. They are the same roles with different values. A shuffled theme is one more set of values.
 
+**One widget grey (`--widget-surface`, = `--raised`).** Every widget card sits on it in both modes (#efefef light, #2d2d2d dark): notes, Theme, clock, Pomodoro, and terminals in light. Exceptions: the sticky note (yellow), terminals in dark (aubergine), and Modes at night (it goes dark by design).
+
 **Light vs dark is greys, not inversion (base themes).** In both modes a raised surface is a step from the page toward the text colour, so it is darker in light and lighter in dark. The Theme widget computes the base contrast from the painted colours (16.1:1 light, 15.2:1 dark).
 
 | | Light | Dark |
@@ -40,8 +42,8 @@ Light and dark aren't separate tokens. They are the same roles with different va
 | Raised: notes, Theme card, pills, arrows (`--raised`) | a step darker: foreground 4% into the page (#efefef) | a step lighter: foreground 8% into the page |
 | Cards, footer (`--surface`) | foreground 11% into the page | same formula, so lighter grey |
 | Dark widgets: Modes at night (`--inverse-surface` / `--inverse-ink`) | neutral-900 / white | neutral-800 / neutral-100; they stay dark |
-| Clock, Pomodoro | raised grey (#efefef), dark-green digits | neutral-800, bright-green digits |
-| Terminals | raised grey (#efefef, same as the clock), dark text, darker prompt colours | aubergine (#300a24) with white text, bright prompt colours |
+| Clock, Pomodoro | the widget grey, dark-green digits | the widget grey, bright-green digits |
+| Terminals | the widget grey, dark text, darker prompt colours | aubergine (#300a24) with white text, bright prompt colours |
 
 Inside dark widgets the theme pair is swapped for the inverse pair, so their prompt and clock colours use the bright steps in both modes. Shuffled themes fold all of this back (`--palette: 0`): raised = page, and dark widgets = foreground/background, as before.
 

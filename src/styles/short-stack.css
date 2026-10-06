@@ -34,13 +34,10 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
   --cyan-inverse: var(--lb-cyan-400);
   --sticky: var(--lb-yellow-300);
   --ink-blue: var(--lb-blue-600); /* Bic ballpoint, for handwriting */
-  /* Clock and terminals follow the greys too: in light both are the raised grey,
-     in dark the clock is dark grey and terminals the classic aubergine #300a24
+  /* Terminals: the widget grey in light; the classic aubergine #300a24 in dark
      (not a Pancake colour yet). */
-  --clock-surface: var(--raised);
-  --clock-ink: var(--lb-neutral-900);
-  --terminal: var(--raised); /* same grey as the clock */
-  --terminal-ink: var(--lb-neutral-900);
+  --terminal: var(--widget-surface); /* light: the widget grey */
+  --terminal-ink: var(--widget-ink);
   --code-green: var(--lb-green-700);
   --code-yellow: var(--lb-yellow-800);
   --code-cyan: var(--lb-cyan-700);
@@ -62,8 +59,6 @@ html:root[data-theme="dark"]:not([data-env="admin"]):not([data-fun-theme]) {
   --raise: 8%; /* raised surfaces a step lighter than the page */
   --inverse-surface-base: var(--lb-neutral-800); /* dark widgets stay dark */
   --inverse-ink-base: var(--lb-neutral-100);
-  --clock-surface: var(--lb-neutral-800);
-  --clock-ink: var(--lb-neutral-100);
   --terminal: #300a24;
   --terminal-ink: #ffffff;
   --code-green: var(--lb-green-400);
@@ -80,8 +75,6 @@ html:root[data-theme="dark"]:not([data-env="admin"]):not([data-fun-theme]) {
     --raise: 8%; /* raised surfaces a step lighter than the page */
     --inverse-surface-base: var(--lb-neutral-800); /* dark widgets stay dark */
     --inverse-ink-base: var(--lb-neutral-100);
-    --clock-surface: var(--lb-neutral-800);
-    --clock-ink: var(--lb-neutral-100);
     --terminal: #300a24;
     --terminal-ink: #ffffff;
     --code-green: var(--lb-green-400);
@@ -99,6 +92,11 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
   --inverse-ink: color-mix(in srgb, var(--inverse-ink-base) var(--palette-mix), var(--background));
   --inverse-muted: color-mix(in srgb, var(--inverse-ink) var(--inverse-muted-opacity), transparent);
   --raised: color-mix(in srgb, var(--foreground) calc(var(--raise) * var(--palette)), var(--background));
+  /* the one widget grey: every widget card (notes, Theme, clock, Pomodoro, terminals
+     in light) sits on it, in both modes. Exceptions: the sticky note (yellow) and
+     terminals in dark mode (aubergine). */
+  --widget-surface: var(--raised);
+  --widget-ink: var(--foreground);
   --border: color-mix(in srgb, var(--foreground) 10%, transparent);
   --surface: color-mix(in srgb, var(--foreground) 11%, var(--background));
   --surface-hover: color-mix(in srgb, var(--foreground) 21%, var(--background));

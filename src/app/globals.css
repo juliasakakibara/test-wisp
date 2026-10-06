@@ -4829,7 +4829,7 @@ a.pg-card__link:hover,
   padding: calc(var(--unit) * 3.5) calc(var(--unit) * 4);
   border: var(--border-width) solid var(--border);
   border-radius: var(--radius-surface);
-  background: var(--raised);
+  background: var(--widget-surface);
   font: 11px/1.5 var(--font-body);
 }
 
@@ -5755,7 +5755,7 @@ body,
   padding: calc(var(--unit) * 4);
   border: var(--border-width) solid var(--border);
   border-radius: var(--radius-surface);
-  background: var(--raised);
+  background: var(--widget-surface);
   font-size: var(--font-size);
   line-height: var(--line-height);
 }
@@ -6582,11 +6582,11 @@ body,
   --background: var(--inverse-ink);
 }
 
-/* the clock and Pomodoro follow the greys: raised and light in light mode, dark in dark mode */
+/* the clock and Pomodoro sit on the widget grey (base themes), like every other widget */
 .pg-widget--clock,
 .pg-widget--pomodoro {
-  --clock-bg: color-mix(in srgb, var(--clock-surface) var(--palette-mix), var(--foreground));
-  --clock-fg: color-mix(in srgb, var(--clock-ink) var(--palette-mix), var(--background));
+  --clock-bg: color-mix(in srgb, var(--widget-surface) var(--palette-mix), var(--foreground));
+  --clock-fg: color-mix(in srgb, var(--widget-ink) var(--palette-mix), var(--background));
 }
 
 .pg-widget .pg-clock,
