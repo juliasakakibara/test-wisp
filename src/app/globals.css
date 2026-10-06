@@ -6434,8 +6434,9 @@ body,
 }
 
 .pg-ram .pg-ram__text {
+  min-height: 28px; /* still ≥ 24px when the widget rests at 88% */
   color: color-mix(in srgb, var(--ink-blue) var(--palette-mix), var(--foreground));
-  font: 500 20px/24px var(--font-hand), "Segoe Print", cursive;
+  font: 500 20px/28px var(--font-hand), "Segoe Print", cursive;
 }
 
 .pg-ram .pg-ram__text::placeholder {
@@ -6453,50 +6454,93 @@ body,
   letter-spacing: 0.04em;
 }
 
-/* label inside the widget's own top row (Theme card) */
-.pg-widget--label-inside > .pg-widget__handle {
+/* The label lives inside each widget's top row, like a window title; widgets keep
+   that row free. Note titles become the labels, so the notes hide their own. */
+.pg-widget > .pg-widget__handle {
   position: absolute;
   top: calc(var(--unit) * 2.5);
   left: calc(var(--unit) * 4);
-  z-index: 1;
+  z-index: 2;
 }
 
-.pg-widget--label-inside .pg-card__top {
+.pg-widget__handle:focus-visible {
+  outline-color: currentColor;
+}
+
+.pg-widget .pg-note,
+.pg-widget .pg-dark,
+.pg-widget .pg-sticky {
+  padding-top: calc(var(--unit) * 9);
+}
+
+.pg-widget .pg-note__title {
+  display: none;
+}
+
+.pg-widget .pg-card__top {
   justify-content: flex-end;
   min-height: 16px;
 }
 
+.pg-widget .pg-covers {
+  margin-top: calc(var(--unit) * 9);
+}
+
+/* on dark widgets and the clock the label is light; on the sticky note, ink */
+.pg-widget:has(> .pg-dark, > .pg-clock) > .pg-widget__handle {
+  color: var(--background);
+}
+
+.pg-widget:has(> .pg-sticky) > .pg-widget__handle {
+  color: color-mix(in srgb, var(--on-sticky) var(--palette-mix), var(--foreground));
+}
+
+/* the clock: label centred at the top of the circle, time nudged down */
+.pg-widget--clock > .pg-widget__handle {
+  top: calc(var(--unit) * 5);
+  left: 50%;
+  translate: -50% 0;
+}
+
+.pg-widget .pg-clock {
+  padding-top: calc(var(--unit) * 6);
+  box-sizing: border-box;
+}
+
+/* About stacked (no canvas): no labels to drag, so notes show their titles again */
+@media (max-width: 1099px) {
+  .pg-frame--about .pg-note__title {
+    display: block;
+  }
+
+  .pg-frame--about .pg-widget .pg-note,
+  .pg-frame--about .pg-widget .pg-dark {
+    padding-top: calc(var(--unit) * 4);
+  }
+}
+
 /* Widgets rest a little smaller and come up to full size when you interact with
-   them (hover, keyboard focus, dragging). The content scales, the label stays put;
-   a label inside the widget scales with it. */
-.pg-widget > :not(.pg-widget__handle),
-.pg-widget--label-inside {
+   them (hover, keyboard focus, dragging); the label inside scales with them. */
+.pg-widget {
   scale: 0.88;
   transform-origin: top left;
   transition: scale var(--duration-slow) var(--ease);
 }
 
-.pg-widget--label-inside > * {
-  scale: 1;
-}
-
-.pg-widget:is(:hover, :focus-within) > :not(.pg-widget__handle),
-.pg-widget:has(.pg-widget__handle:active) > :not(.pg-widget__handle),
-.pg-widget--label-inside:is(:hover, :focus-within),
-.pg-widget--label-inside:has(.pg-widget__handle:active) {
+.pg-widget:is(:hover, :focus-within),
+.pg-widget:has(.pg-widget__handle:active) {
   scale: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pg-widget > :not(.pg-widget__handle),
-  .pg-widget--label-inside {
+  .pg-widget {
     transition: none;
   }
 }
 
 /* stacked (no canvas): full size, nothing to pick up */
 @media (max-width: 1099px) {
-  .pg-frame--about .pg-widget > :not(.pg-widget__handle) {
+  .pg-frame--about .pg-widget {
     scale: 1;
   }
 }

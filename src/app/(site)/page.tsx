@@ -58,7 +58,7 @@ export default async function HomePage() {
               atMobile: { x: 48, y: 67 },
             },
             { id: "tools", label: "Terminal", node: <ToolsWidget />, at: { x: 27, y: 9 } },
-            { id: "color", label: "Theme", labelInside: true, node: <ThemeShuffle />, at: { x: 77, y: 52 }, atMobile: { x: 7, y: 17.5 } },
+            { id: "color", label: "Theme", node: <ThemeShuffle />, at: { x: 77, y: 52 }, atMobile: { x: 7, y: 17.5 } },
             { id: "sticky", label: "Note", node: <StickyWidget>Drag anything around, then shuffle the theme.</StickyWidget>, at: { x: 8, y: 41 } },
           ]}
         >

@@ -14,10 +14,8 @@ type Point = { x: number; y: number };
 
 export type CanvasWidget = {
   id: string;
-  /** One word, shown as the widget's drag label. */
+  /** The widget's title, drawn inside its top row; it is also the drag handle. */
   label: string;
-  /** Put the label inside the widget's own top row (the widget leaves room for it). */
-  labelInside?: boolean;
   node: ReactNode;
   /** Top-left as a % of the frame on desktop. */
   at: Point;
@@ -129,7 +127,7 @@ export function CanvasFrame({ widgets, className, mobile = "canvas", children }:
             if (el) nodeRefs.current.set(w.id, el);
             else nodeRefs.current.delete(w.id);
           }}
-          className={`pg-widget pg-widget--${w.id}${w.labelInside ? " pg-widget--label-inside" : ""}${w.atMobile || mobile === "stack" ? "" : " pg-widget--desktop-only"}`}
+          className={`pg-widget pg-widget--${w.id}${w.atMobile || mobile === "stack" ? "" : " pg-widget--desktop-only"}`}
           style={
             {
               "--dx": `${layouts.desktop[w.id].x}%`,

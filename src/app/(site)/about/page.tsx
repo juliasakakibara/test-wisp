@@ -48,12 +48,12 @@ export default async function AboutPage() {
           widgets={[
             // Scattered but on the dot grid (CSS snaps to 16px); x stays inside the gutters down to 1100px
             { id: "figure", label: "3D", node: <HeroVisual model="dancing" />, at: { x: 1.5, y: 1 } },
-            { id: "timeline", label: "Path", node: <TimelineWidget />, at: { x: 4, y: 24 } },
-            { id: "lists", label: "List", node: <ListsWidget />, at: { x: 1.5, y: 47 } },
+            { id: "timeline", label: "Fields I bounced between", node: <TimelineWidget />, at: { x: 4, y: 24 } },
+            { id: "lists", label: "Limited RAM List", node: <ListsWidget />, at: { x: 1.5, y: 47 } },
             { id: "terminal", label: "Terminal", node: <TerminalWidget />, at: { x: 72.5, y: 6 } },
             { id: "pomodoro", label: "Pomodoro", node: <PomodoroWidget />, at: { x: 72, y: 22 } },
             { id: "owl", label: "Modes", node: <NightOwlWidget />, at: { x: 74, y: 38 } },
-            { id: "quiz", label: "Riddle", node: <QuizWidget />, at: { x: 72.5, y: 54 } },
+            { id: "quiz", label: "Riddle me this", node: <QuizWidget />, at: { x: 72.5, y: 54 } },
           ]}
         >
           <h1 id="about-title" className="pg-hero__title" data-editable="aboutTitle">
