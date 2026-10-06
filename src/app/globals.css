@@ -5594,3 +5594,48 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
   line-height: var(--pg-lh-display);
 }
 
+
+/* 4 · spacing on a 4px grid (6 → 8, 2 → 4, 10 → 12, 14 → 16) */
+.pg-widget,
+.pg-dark__status,
+.pg-color__pair,
+.pg-color__actions,
+.pg-swatches {
+  gap: 8px;
+}
+
+.pg-dark {
+  gap: 4px;
+}
+
+.pg-color {
+  gap: 12px;
+}
+
+.pg-dark,
+.pg-color {
+  padding: 16px;
+}
+
+.pg-detail__row {
+  padding-block: 16px;
+}
+
+.theme-switcher__face {
+  gap: 4px;
+}
+
+@media (max-width: 767px) {
+  .pg-dark {
+    padding: 12px;
+  }
+}
+
+.pg-arrow,
+.pg-color__button {
+  padding: 0 12px;
+}
+
+.theme-switcher__face {
+  padding: 0 4px;
+}
