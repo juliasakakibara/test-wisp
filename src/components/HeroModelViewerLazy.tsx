@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import type { HeroModel } from "@/components/HeroModelViewer";
 
 const HeroModelViewer = dynamic(
   () =>
@@ -15,6 +16,6 @@ const HeroModelViewer = dynamic(
   }
 );
 
-export function HeroModelViewerLazy() {
-  return <HeroModelViewer />;
+export function HeroModelViewerLazy({ model }: { model?: HeroModel }) {
+  return <HeroModelViewer model={model} />;
 }

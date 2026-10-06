@@ -54,7 +54,7 @@ export default async function AboutPage() {
           className="pg-frame--about"
           mobile="stack"
           widgets={[
-            { id: "figure", label: "3D", node: <HeroVisual />, at: { x: 2, y: 2 } },
+            { id: "figure", label: "3D", node: <HeroVisual model="dancing" />, at: { x: 2, y: 2 } },
             { id: "fields", label: "Path", node: <FieldsWidget />, at: { x: 2, y: 18.3 } },
             { id: "terminal", label: "whoami", node: <TerminalWidget />, at: { x: 72, y: 2 } },
             { id: "clock", label: "Porto Alegre", node: <ClockWidget />, at: { x: 80, y: 15.4 } },

@@ -1,13 +1,14 @@
 "use client";
 
 import { HeroModelViewerLazy } from "@/components/HeroModelViewerLazy";
+import type { HeroModel } from "@/components/HeroModelViewer";
 
 /** Hero 3D figure: load + idle bob; drag to orbit (model-viewer). Not a link (whoami → about removed). */
-export function HeroVisual() {
+export function HeroVisual({ model }: { model?: HeroModel }) {
   return (
-    <div id="hero-visual" className="hero-visual">
+    <div className={`hero-visual${model === "dancing" ? " hero-visual--dancing" : ""}`}>
       <div className="hero-visual__bob">
-        <HeroModelViewerLazy />
+        <HeroModelViewerLazy model={model} />
       </div>
     </div>
   );

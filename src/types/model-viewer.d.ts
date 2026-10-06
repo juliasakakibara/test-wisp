@@ -7,6 +7,8 @@ type ModelViewerAttributes = {
   loading?: "auto" | "lazy" | "eager";
   "camera-controls"?: boolean;
   "auto-rotate"?: boolean;
+  autoplay?: boolean;
+  "animation-name"?: string;
   "rotation-per-second"?: string;
   "field-of-view"?: string;
   "disable-zoom"?: boolean;

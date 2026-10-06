@@ -67,8 +67,8 @@ function prefersReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-function formatOrbit(theta: number, phi: number) {
-  return `${theta.toFixed(2)}deg ${phi.toFixed(2)}deg ${BASE_RADIUS}%`;
+function formatOrbit(theta: number, phi: number, radius = BASE_RADIUS) {
+  return `${theta.toFixed(2)}deg ${phi.toFixed(2)}deg ${radius}%`;
 }
 
 function parseOrbit(orbit: string): { theta: number; phi: number } | null {
@@ -80,7 +80,20 @@ function parseOrbit(orbit: string): { theta: number; phi: number } | null {
   return { theta, phi };
 }
 
-export function HeroModelViewer() {
+export type HeroModel = "hero" | "dancing";
+
+const MODELS: Record<HeroModel, { src: string; target: string; animated: boolean; radius: number; maxRadius: number }> = {
+  hero: { src: MODEL_SRC, target: "0m 0.85m 0m", animated: false, radius: BASE_RADIUS, maxRadius: 150 },
+  // Mixamo dance clip (18 s), compressed with gltf-transform: 19.7 MB → 1.5 MB.
+  // Pulled back so arms and head stay in frame through the whole dance.
+  dancing: { src: "/models/dancing.glb", target: "auto auto auto", animated: true, radius: 175, maxRadius: 220 },
+};
+
+export function HeroModelViewer({ model = "hero" }: { model?: HeroModel } = {}) {
+  const spec = MODELS[model];
+  const radiusRef = useRef(spec.radius);
+  // Client-only component (loaded with ssr: false), so window is safe here
+  const playMotion = spec.animated && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const viewerRef = useRef<ModelViewerElement>(null);
   const shellRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
@@ -135,7 +148,7 @@ export function HeroModelViewer() {
     const shell = shellRef.current;
     if (!viewer || !shell) return;
 
-    viewer.cameraOrbit = formatOrbit(BASE_THETA, BASE_PHI);
+    viewer.cameraOrbit = formatOrbit(BASE_THETA, BASE_PHI, radiusRef.current);
 
     if (prefersReducedMotion()) return;
 
@@ -173,7 +186,7 @@ export function HeroModelViewer() {
       current.theta = BASE_THETA;
       current.phi = BASE_PHI;
       try {
-        viewer.cameraOrbit = formatOrbit(BASE_THETA, BASE_PHI);
+        viewer.cameraOrbit = formatOrbit(BASE_THETA, BASE_PHI, radiusRef.current);
       } catch {
         /* viewer may be tearing down */
       }
@@ -205,7 +218,7 @@ export function HeroModelViewer() {
         current.phi += (targetPhi - current.phi) * LERP;
 
         try {
-          viewer.cameraOrbit = formatOrbit(current.theta, current.phi);
+          viewer.cameraOrbit = formatOrbit(current.theta, current.phi, radiusRef.current);
         } catch {
           active = false;
           return;
@@ -243,7 +256,8 @@ export function HeroModelViewer() {
       <model-viewer
         ref={viewerRef}
         className="hero-viewer__canvas"
-        src={MODEL_SRC}
+        src={spec.src}
+        autoplay={playMotion}
         alt="Interactive 3D portfolio model"
         loading="lazy"
         camera-controls
@@ -254,10 +268,10 @@ export function HeroModelViewer() {
         environment-image={LIGHTING.light.environmentImage}
         interaction-prompt="none"
         interpolation-decay="40"
-        camera-orbit={formatOrbit(BASE_THETA, BASE_PHI)}
+        camera-orbit={formatOrbit(BASE_THETA, BASE_PHI, spec.radius)}
         min-camera-orbit="auto 70deg 95%"
-        max-camera-orbit="auto 105deg 150%"
-        camera-target="0m 0.85m 0m"
+        max-camera-orbit={`auto 105deg ${spec.maxRadius}%`}
+        camera-target={spec.target}
         field-of-view="26deg"
       >
         <div

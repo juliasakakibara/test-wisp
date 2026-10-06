@@ -6081,3 +6081,8 @@ body,
   border-radius: 4px;
 }
 
+/* Dancing figure (About): no idle bob on top of the dance */
+.hero-visual--dancing .hero-visual__bob {
+  animation: none;
+}
+
