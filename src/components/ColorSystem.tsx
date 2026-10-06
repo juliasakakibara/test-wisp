@@ -84,8 +84,8 @@ export function ThemeShuffle() {
 
   return (
     <div className="pg-color">
+      {/* left of this row is the widget's drag label ("Theme"), placed by the canvas */}
       <span className="pg-card__top">
-        <span className="pg-card__title">{theme ? "Shuffled" : "Base"}</span>
         <span className="pg-card__count">[{p ? p.ratio : 15.1}:1]</span>
       </span>
       <span className="pg-card__preview pg-card__preview--topping pg-color__preview" style={p ? { background: p.bg } : undefined}>
@@ -102,7 +102,7 @@ export function ThemeShuffle() {
         </span>
       </span>
       <span className="pg-card__meta" aria-live="polite">
-        {p ? `${p.bg} / ${p.fg} · ${wcagLevel(p.ratio)}` : "Base theme · AAA"}
+        {p ? `Shuffled · ${p.bg} / ${p.fg} · ${wcagLevel(p.ratio)}` : "Base theme · AAA"}
       </span>
       <div className="pg-color__actions">
         <button type="button" className="pg-color__button pg-color__button--primary" onClick={() => applyTheme(randomTheme())}>

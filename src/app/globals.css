@@ -6442,39 +6442,54 @@ body,
   color: color-mix(in srgb, var(--ink-blue) calc(var(--palette) * 55%), var(--muted-foreground));
 }
 
-/* Widget tabs as plain labels (after Weavy's node labels): KIND in bold caps, the
-   name in spaced caps; small and dark, no background. The 24px row keeps the
-   target size (WCAG 2.5.8). */
+/* Widget labels as plain text (after Weavy's node labels): one word in bold caps,
+   small and dark, no background. The 24px row keeps the target size (WCAG 2.5.8). */
 .pg-widget__handle {
-  gap: calc(var(--unit) * 3);
   padding: 0;
   background: transparent;
   color: var(--foreground);
-  font: var(--font-weight) var(--font-size-small)/1 var(--font-body);
+  font: var(--font-weight-bold) var(--font-size-small)/1 var(--font-body);
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.04em;
 }
 
-.pg-widget__kind {
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 0.02em;
+/* label inside the widget's own top row (Theme card) */
+.pg-widget--label-inside > .pg-widget__handle {
+  position: absolute;
+  top: calc(var(--unit) * 2.5);
+  left: calc(var(--unit) * 4);
+  z-index: 1;
+}
+
+.pg-widget--label-inside .pg-card__top {
+  justify-content: flex-end;
+  min-height: 16px;
 }
 
 /* Widgets rest a little smaller and come up to full size when you interact with
-   them (hover, keyboard focus, dragging). Only the content scales; the label stays put. */
-.pg-widget > :not(.pg-widget__handle) {
+   them (hover, keyboard focus, dragging). The content scales, the label stays put;
+   a label inside the widget scales with it. */
+.pg-widget > :not(.pg-widget__handle),
+.pg-widget--label-inside {
   scale: 0.88;
   transform-origin: top left;
   transition: scale var(--duration-slow) var(--ease);
 }
 
+.pg-widget--label-inside > * {
+  scale: 1;
+}
+
 .pg-widget:is(:hover, :focus-within) > :not(.pg-widget__handle),
-.pg-widget:has(.pg-widget__handle:active) > :not(.pg-widget__handle) {
+.pg-widget:has(.pg-widget__handle:active) > :not(.pg-widget__handle),
+.pg-widget--label-inside:is(:hover, :focus-within),
+.pg-widget--label-inside:has(.pg-widget__handle:active) {
   scale: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pg-widget > :not(.pg-widget__handle) {
+  .pg-widget > :not(.pg-widget__handle),
+  .pg-widget--label-inside {
     transition: none;
   }
 }
