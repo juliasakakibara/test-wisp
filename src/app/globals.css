@@ -4422,8 +4422,8 @@ body {
 .pg-hero__lead {
   margin: 0;
   max-width: 46ch;
-  /* body-xs, with 1.5 leading: its own 16px is tight over 3–4 lines */
-  font-size: var(--font-size);
+  /* the hero lead reads one step up from running text (14, Pancake size s) */
+  font-size: var(--font-size-large);
   line-height: var(--line-height);
   color: var(--muted-foreground);
 }
