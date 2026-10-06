@@ -34,15 +34,22 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
   --cyan-inverse: var(--lb-cyan-400);
   --sticky: var(--lb-yellow-300);
   --ink-blue: var(--lb-blue-600); /* Bic ballpoint, for handwriting */
-  /* the classic terminal aubergine; dark in both modes. Not a Pancake colour yet */
-  --terminal: #300a24;
+  /* Clock and terminals follow the greys too: in light they are light (the clock a
+     raised grey, terminals an aubergine wash with aubergine text), in dark they are
+     dark. #300a24 is the classic terminal aubergine (not a Pancake colour yet). */
+  --clock-surface: var(--raised);
+  --clock-ink: var(--lb-neutral-900);
+  --terminal: color-mix(in srgb, #300a24 8%, var(--background));
+  --terminal-ink: #300a24;
+  --code-green: var(--lb-green-700);
+  --code-yellow: var(--lb-yellow-800);
+  --code-cyan: var(--lb-cyan-700);
   /* Greys, not inversion (base themes): raised surfaces step away from the page
      toward the text colour (darker in light, lighter in dark), and dark widgets
      stay dark in both modes. --raise is the size of that step. */
   --raise: 4%;
   --inverse-surface-base: var(--lb-neutral-900);
   --inverse-ink-base: var(--lb-neutral-50);
-  --terminal-ink: #ffffff;
   --on-sticky: var(--lb-neutral-900);
 }
 
@@ -55,6 +62,13 @@ html:root[data-theme="dark"]:not([data-env="admin"]):not([data-fun-theme]) {
   --raise: 8%; /* raised surfaces a step lighter than the page */
   --inverse-surface-base: var(--lb-neutral-800); /* dark widgets stay dark */
   --inverse-ink-base: var(--lb-neutral-100);
+  --clock-surface: var(--lb-neutral-800);
+  --clock-ink: var(--lb-neutral-100);
+  --terminal: #300a24;
+  --terminal-ink: #ffffff;
+  --code-green: var(--lb-green-400);
+  --code-yellow: var(--lb-yellow-400);
+  --code-cyan: var(--lb-cyan-400);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -66,6 +80,13 @@ html:root[data-theme="dark"]:not([data-env="admin"]):not([data-fun-theme]) {
     --raise: 8%; /* raised surfaces a step lighter than the page */
     --inverse-surface-base: var(--lb-neutral-800); /* dark widgets stay dark */
     --inverse-ink-base: var(--lb-neutral-100);
+    --clock-surface: var(--lb-neutral-800);
+    --clock-ink: var(--lb-neutral-100);
+    --terminal: #300a24;
+    --terminal-ink: #ffffff;
+    --code-green: var(--lb-green-400);
+    --code-yellow: var(--lb-yellow-400);
+    --code-cyan: var(--lb-cyan-400);
   }
 }
 
