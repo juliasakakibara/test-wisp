@@ -34,13 +34,13 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
   --cyan-inverse: var(--lb-cyan-400);
   --sticky: var(--lb-yellow-300);
   --ink-blue: var(--lb-blue-600); /* Bic ballpoint, for handwriting */
-  /* Clock and terminals follow the greys too: in light they are light (the clock a
-     raised grey, terminals an aubergine wash with aubergine text), in dark they are
-     dark. #300a24 is the classic terminal aubergine (not a Pancake colour yet). */
+  /* Clock and terminals follow the greys too: in light both are the raised grey,
+     in dark the clock is dark grey and terminals the classic aubergine #300a24
+     (not a Pancake colour yet). */
   --clock-surface: var(--raised);
   --clock-ink: var(--lb-neutral-900);
-  --terminal: color-mix(in srgb, #300a24 8%, var(--background));
-  --terminal-ink: #300a24;
+  --terminal: var(--raised); /* same grey as the clock */
+  --terminal-ink: var(--lb-neutral-900);
   --code-green: var(--lb-green-700);
   --code-yellow: var(--lb-yellow-800);
   --code-cyan: var(--lb-cyan-700);
