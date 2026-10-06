@@ -5529,6 +5529,10 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
   --pg-lh-display: 1.1;
   /* 5 · one hairline, in the theme's own border colour (follows dark themes) */
   --pg-border: 1px solid var(--lb-border-muted);
+  /* 7 · two speeds: fast for hover and colour, slow for movement and theme swaps */
+  --pg-dur-fast: 0.2s;
+  --pg-dur-slow: 0.45s;
+  --pg-ease: cubic-bezier(0.2, 0, 0, 1);
 }
 
 .pg-frame,
@@ -5663,3 +5667,46 @@ a.pg-pill:hover,
   min-height: 24px;
   padding: 0 10px;
 }
+
+/* 7 · two speeds. Hover/colour changes run fast everywhere; movement, image
+   fades and theme swaps run slow, and only when motion is welcome (the
+   reduced-motion rules above still switch them off). */
+a,
+.link,
+.nav-item,
+.pg-widget__handle,
+.pg-card__link,
+.pg-footer__top-link {
+  transition-duration: var(--pg-dur-fast);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pg-covers__card {
+    transition: transform var(--pg-dur-slow) var(--pg-ease);
+  }
+
+  .pg-card__image,
+  .pg-covers__image {
+    transition:
+      filter var(--pg-dur-slow) ease,
+      transform var(--pg-dur-slow) var(--pg-ease);
+  }
+
+  .pg-card__preview::before,
+  .pg-card__preview::after,
+  .pg-covers__card::before,
+  .pg-covers__card::after {
+    transition: opacity var(--pg-dur-slow) ease;
+  }
+
+  :root[data-topping-swapping] *,
+  :root[data-topping-swapping] *::before,
+  :root[data-topping-swapping] *::after {
+    transition:
+      background-color var(--pg-dur-slow) ease,
+      color var(--pg-dur-slow) ease,
+      border-color var(--pg-dur-slow) ease,
+      border-radius var(--pg-dur-slow) ease !important;
+  }
+}
+
