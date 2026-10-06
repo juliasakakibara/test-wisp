@@ -6519,8 +6519,8 @@ body,
   }
 }
 
-/* Widgets rest a little smaller and come up to full size when you interact with
-   them (hover, keyboard focus, dragging); the label inside scales with them. */
+/* Widgets rest a little smaller (88%) and grow a touch (94%) when you interact
+   with them (hover, keyboard focus, dragging); the label inside scales with them. */
 .pg-widget {
   scale: 0.88;
   transform-origin: top left;
@@ -6529,7 +6529,7 @@ body,
 
 .pg-widget:is(:hover, :focus-within),
 .pg-widget:has(.pg-widget__handle:active) {
-  scale: 1;
+  scale: 0.94;
 }
 
 @media (prefers-reduced-motion: reduce) {
