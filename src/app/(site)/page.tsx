@@ -43,10 +43,10 @@ export default async function HomePage() {
             { id: "clock", label: "Time", node: <ClockWidget />, at: { x: 82, y: 6 }, atMobile: { x: 8, y: 78 } },
             {
               id: "covers",
-              label: "Projects",
+              label: "Selected projects",
               node: (
                 <CoversWidget
-                  projects={work.slice(0, 3).map((post) => ({
+                  projects={work.filter((post) => post.image).slice(0, 3).map((post) => ({
                     slug: post.slug,
                     title: post.title,
                     label: projectCategory(post),

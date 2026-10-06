@@ -4533,17 +4533,18 @@ body {
   height: 152px;
   overflow: hidden;
   border: 3px solid var(--background);
-  border-radius: 1var(--radius-small);
+  border-radius: var(--radius-media);
   background: var(--surface);
   transition: transform var(--duration-slow) var(--ease);
 }
 
-.pg-covers__card--0 { transform: translateX(-28px) rotate(-10deg); }
-.pg-covers__card--1 { transform: rotate(0deg); z-index: 1; }
-.pg-covers__card--2 { transform: translateX(28px) rotate(10deg); }
-.pg-covers:hover .pg-covers__card--0 { transform: translateX(-56px) rotate(-14deg); }
-.pg-covers:hover .pg-covers__card--1 { transform: translateY(-10px); }
-.pg-covers:hover .pg-covers__card--2 { transform: translateX(56px) rotate(14deg); }
+/* a tight pile, like a macOS stack: the first project on top, the others peeking */
+.pg-covers__card--0 { transform: none; z-index: 3; }
+.pg-covers__card--1 { transform: translate(-10px, 4px) rotate(-8deg); z-index: 2; }
+.pg-covers__card--2 { transform: translate(10px, 3px) rotate(7deg); z-index: 1; }
+.pg-covers:hover .pg-covers__card--0 { transform: translateY(-6px); }
+.pg-covers:hover .pg-covers__card--1 { transform: translate(-22px, 2px) rotate(-10deg); }
+.pg-covers:hover .pg-covers__card--2 { transform: translate(22px, 2px) rotate(9deg); }
 
 .pg-covers__image {
   object-fit: cover;
@@ -6483,7 +6484,24 @@ body,
 }
 
 .pg-widget .pg-covers {
-  margin-top: calc(var(--unit) * 9);
+  margin-bottom: calc(var(--unit) * 7); /* room for the folder-style label below */
+}
+
+.pg-covers__card {
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--foreground) 16%, transparent);
+}
+
+/* Projects: labelled below the stack, centred, like a folder name */
+.pg-widget--covers > .pg-widget__handle {
+  top: auto;
+  bottom: 0;
+  left: 50%;
+  translate: -50% 0;
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size);
+  text-transform: none;
+  letter-spacing: 0;
+  white-space: nowrap;
 }
 
 /* on dark widgets and the clock the label is light; on the sticky note, ink */
