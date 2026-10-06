@@ -174,11 +174,18 @@ export function ThemeCards({ count = 4 }: { count?: number }) {
             <span className="pg-theme-card__specs">
               <span>
                 <b>Pair</b>
-                {t ? `${t.palette.bg} / ${t.palette.fg}` : "–"}
+                {t ? (
+                  <span className="pg-theme-card__pair" role="img" aria-label={`${t.palette.bg} and ${t.palette.fg}`}>
+                    <span style={{ background: t.palette.bg }} />
+                    <span style={{ background: t.palette.fg }} />
+                  </span>
+                ) : (
+                  "–"
+                )}
               </span>
               <span>
                 <b>Contrast</b>
-                {t ? `${t.palette.ratio}:1 ${wcagLevel(t.palette.ratio)}` : "–"}
+                {t ? `${t.palette.ratio}:1` : "–"}
               </span>
             </span>
           </button>

@@ -6900,3 +6900,36 @@ a.pg-theme-card:hover {
   aspect-ratio: 16 / 9;
   box-shadow: none;
 }
+
+/* Theme cards, reduced: the pair as two sample dots, the contrast as its value;
+   on hover the card grows a touch, like the canvas widgets (no ring). */
+.pg-theme-card__pair {
+  display: flex;
+  gap: calc(var(--unit) * 1);
+}
+
+.pg-theme-card__pair > span {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 var(--border-width) color-mix(in srgb, var(--card-fg, var(--foreground)) 35%, transparent);
+}
+
+.pg-theme-card {
+  transition: scale var(--duration-slow) var(--ease), box-shadow var(--duration-fast) var(--ease);
+}
+
+.pg-card__button.pg-theme-card:hover {
+  box-shadow: none;
+  scale: 1.04;
+}
+
+.pg-theme-card[aria-pressed="true"]:hover {
+  box-shadow: inset 0 0 0 var(--focus-width) var(--card-fg, var(--foreground));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pg-theme-card {
+    transition: none;
+  }
+}
