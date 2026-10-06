@@ -6950,3 +6950,46 @@ a.pg-theme-card:hover {
   font-size: var(--font-size-large);
   line-height: var(--line-height-tight);
 }
+
+/* Project and playground cards for floating covers (transparent PNGs, after
+   Nothing's playground): the cover sits straight on the card, uncropped, with a
+   shadow that follows its own shape; the card grows a touch on hover, like the
+   theme cards. Shuffled themes grey the cover (colour overlays would show as
+   boxes around a transparent image). */
+.pg-card__frame {
+  width: 80%;
+  height: 100%;
+  aspect-ratio: auto;
+  overflow: visible;
+  border-radius: 0;
+}
+
+.pg-card__frame .pg-card__image {
+  object-fit: contain;
+  filter: drop-shadow(0 calc(var(--unit) * 2) calc(var(--unit) * 3) color-mix(in srgb, var(--foreground) 18%, transparent))
+    grayscale(calc(1 - var(--palette)));
+}
+
+.pg-card__frame::before,
+.pg-card__frame::after {
+  display: none;
+}
+
+.pg-card__link:not(.pg-card__button) {
+  transition: scale var(--duration-slow) var(--ease), background-color var(--duration-fast) var(--ease);
+}
+
+a.pg-card__link:not(.pg-card__button):hover {
+  scale: 1.04;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pg-card__link:not(.pg-card__button) {
+    transition: none;
+  }
+}
+
+/* keep the floating shadow when hover brings the colour back */
+.pg-card__link:is(:hover, :focus-visible) .pg-card__frame .pg-card__image {
+  filter: drop-shadow(0 calc(var(--unit) * 2) calc(var(--unit) * 3) color-mix(in srgb, var(--foreground) 18%, transparent));
+}
