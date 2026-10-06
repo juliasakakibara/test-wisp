@@ -161,30 +161,28 @@ export function ThemeCards({ count = 4 }: { count?: number }) {
             disabled={!t}
             onClick={() => t && applyTheme(t)}
           >
+            {/* after Berd's agent cards: label + number, one visual, the name, a two-column spec row */}
             <span className="pg-card__top">
-              <span className="pg-card__title">Theme {String(i + 1).padStart(2, "0")}</span>
-              <span className="pg-card__count">{t ? `[${t.palette.ratio}:1]` : "[ ]"}</span>
+              <span className="pg-card__title">Theme</span>
+              <span className="pg-card__count">{same(t, active) ? "served" : String(i + 1).padStart(2, "0")}</span>
             </span>
             <span className="pg-card__preview pg-card__preview--topping" style={t ? { background: t.palette.bg } : undefined}>
               {t ? (
-                <>
-                  <span className="pg-theme-font" style={{ color: t.palette.fg, fontFamily: t.fonts.display.css }}>
-                    {t.fonts.display.name}
-                  </span>
-                  <span className="pg-theme-body" style={{ color: t.palette.muted, fontFamily: t.fonts.body.css }}>
-                    + {t.fonts.body.name}
-                  </span>
-                  <span className="pg-swatches" aria-hidden="true">
-                    {/* Keyed by role: two roles can share a colour (muted falls back to fg) */}
-                    {(["bg", "card", "muted", "fg"] as const).map((role) => (
-                      <span key={role} className="pg-swatch" style={{ background: t.palette[role] }} />
-                    ))}
-                  </span>
-                </>
+                <span className="pg-theme-font" style={{ color: t.palette.fg, fontFamily: t.fonts.display.css }}>
+                  {t.fonts.display.name}
+                </span>
               ) : null}
             </span>
-            <span className="pg-card__meta">
-              {t ? `${t.palette.bg} / ${t.palette.fg} · ${wcagLevel(t.palette.ratio)} · ${same(t, active) ? "served now" : "tap to serve"}` : "mixing…"}
+            <span className="pg-theme-card__name">{t ? `${t.fonts.display.name} + ${t.fonts.body.name}` : "mixing…"}</span>
+            <span className="pg-theme-card__specs">
+              <span>
+                <b>Pair</b>
+                {t ? `${t.palette.bg} / ${t.palette.fg}` : "–"}
+              </span>
+              <span>
+                <b>Contrast</b>
+                {t ? `${t.palette.ratio}:1 ${wcagLevel(t.palette.ratio)}` : "–"}
+              </span>
             </span>
           </button>
         </li>

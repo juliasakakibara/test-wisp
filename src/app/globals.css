@@ -6800,3 +6800,46 @@ a.pg-card__link:hover,
     animation: none;
   }
 }
+
+/* Theme cards after Berd's agent cards (in our own type and greys): THEME + number,
+   one visual (the display font in the theme's colours), the font pair, then a
+   two-column spec row with hairline rules. */
+.pg-card__button {
+  grid-template-rows: auto 1fr auto auto;
+  gap: calc(var(--unit) * 2);
+}
+
+.pg-card__button .pg-theme-font {
+  font-size: var(--font-size-display-2);
+  line-height: var(--line-height-display);
+}
+
+.pg-theme-card__name {
+  margin-top: calc(var(--unit) * 1);
+  font-size: var(--font-size-large);
+  line-height: var(--line-height-tight);
+}
+
+.pg-theme-card__specs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: calc(var(--unit) * 3);
+}
+
+.pg-theme-card__specs > span {
+  display: grid;
+  gap: calc(var(--unit) * 0.5);
+  padding-left: calc(var(--unit) * 2);
+  border-left: var(--border-width) solid color-mix(in srgb, var(--foreground) 30%, transparent);
+  color: var(--muted-foreground);
+}
+
+.pg-theme-card__specs b {
+  color: var(--foreground);
+  font-weight: var(--font-weight-bold);
+}
+
+.pg-card__button[aria-pressed="true"] .pg-card__count {
+  color: var(--foreground);
+  font-weight: var(--font-weight-bold);
+}
