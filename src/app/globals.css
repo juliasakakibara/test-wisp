@@ -7025,3 +7025,15 @@ a.pg-card__link:not(.pg-card__button):hover {
     opacity: 1;
   }
 }
+
+/* Case pages: the cover as wide as the text column, at the covers' 16:9 */
+.pg-detail__preview {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: var(--radius-surface);
+}
+
+.pg-detail__image {
+  object-fit: cover;
+}

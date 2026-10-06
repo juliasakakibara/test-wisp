@@ -1,10 +1,9 @@
 import Image from "next/image";
-import { format } from "date-fns";
 import { Metadata } from "next";
+import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import { WispContent } from "@/components/wisp-content-wrapper";
 import { DetailLayout } from "@/components/DetailLayout";
-import { ShareButton } from "@/components/ShareButton";
 import { getConfig } from "@/lib/site-data";
 import { getProject, getProjectSlugs, tagLabel, visibleTags } from "@/lib/projects";
 import {
@@ -48,10 +47,9 @@ export default async function ProjectPage({ params }: Params) {
 
   const post = result.post;
   const jsonLd = buildCreativeWorkJsonLd({ post, siteName: config.siteName });
-  const year = post.publishedAt
-    ? format(new Date(post.publishedAt), "yyyy")
-    : null;
   const disciplines = visibleTags(post.tags);
+  // The case's facts line ("> Role: … · Duration: …") becomes the rows
+  const { facts, content } = takeFacts(cleanCaseContent(post.content || "", post.image));
 
   const category = disciplines[0] ? tagLabel(disciplines[0].name) : "Case study";
 
@@ -71,26 +69,11 @@ export default async function ProjectPage({ params }: Params) {
           ) : null
         }
         title={post.title}
-        meta={year ?? undefined}
         lead={post.description ?? undefined}
-        actions={
-          <>
-            <a href="mailto:talk.to@juliasakakibara.com.br" className="pg-pill pg-pill--signal pg-pill--center">
-              <span>Get in touch</span>
-            </a>
-            <ShareButton title={post.title} />
-          </>
-        }
-        rows={[
-          { label: "Category", value: category },
-          ...(year ? [{ label: "Year", value: <time dateTime={year}>{year}</time> }] : []),
-          ...(disciplines.length > 1
-            ? [{ label: "Tags", value: disciplines.map((tag) => tagLabel(tag.name).toLowerCase()).join(" / ") }]
-            : []),
-        ]}
+        rows={[{ label: "Category", value: category }, ...facts]}
       >
         <div className="pg-detail__body">
-          <WispContent content={cleanCaseContent(post.content || "", post.image)} />
+          <WispContent content={content} />
         </div>
       </DetailLayout>
     </>
@@ -111,4 +94,44 @@ function cleanCaseContent(content: string, cover?: string | null): string {
     .replace(new RegExp(`<(p|figure)[^>]*>\\s*${img}\\s*(<br\\s*/?>\\s*)*(<figcaption>[\\s\\S]*?</figcaption>)?\\s*</\\1>`, "g"), "")
     .replace(new RegExp(img, "g"), "")
     .replace(/^(\s*<p>\s*<\/p>)+/, "");
+}
+
+/**
+ * Cases open with a facts line in Wisp ("> Role: design and build · Duration: one
+ * afternoon · Used in 3 repos"). Lift it into label/value rows and drop it from the
+ * text; an "Overview" heading left with nothing under it goes too.
+ */
+function takeFacts(content: string): { facts: { label: string; value: ReactNode }[]; content: string } {
+  // only the facts line, which starts with "Role:" (other "> …" lines are editing notes)
+  const match = content.match(/<p>\s*(?:&gt;|>)\s*(Role:[\s\S]*?)<\/p>/);
+  if (!match) return { facts: [], content };
+  const text = match[1]
+    .replace(/<[^>]+>/g, "")
+    .replace(/&#x27;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, "&");
+  const facts = text
+    .split(/\s+·\s+/)
+    .map((part) => {
+      const piece = part.trim();
+      // "[Repo](https://…)" → a link row
+      const link = piece.match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/);
+      if (link) {
+        return {
+          label: link[1],
+          value: (
+            <a href={link[2]} target="_blank" rel="noopener noreferrer">
+              {link[2].replace(/^https?:\/\//, "")} ↗
+            </a>
+          ),
+        };
+      }
+      const at = piece.indexOf(":");
+      return at > 0 ? { label: piece.slice(0, at).trim(), value: piece.slice(at + 1).trim() } : { label: "Notes", value: piece };
+    })
+    .filter((row) => row.value);
+  const rest = content
+    .replace(match[0], "")
+    .replace(/<h2>(?:<strong>)?\s*Overview\s*(?:<\/strong>)?<\/h2>\s*(?=<h[1-6]|$)/i, "");
+  return { facts, content: rest };
 }
