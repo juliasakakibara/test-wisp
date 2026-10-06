@@ -6003,13 +6003,7 @@ body,
   pointer-events: auto;
 }
 
-.pg-about__text .pg-detail__col {
-  box-sizing: border-box;
-  padding: 24px;
-  border: var(--pg-border);
-  border-radius: var(--pg-r-surface);
-  background: var(--background);
-}
+
 
 
 /* About needs wide side gutters for its widgets; below 1300px it stacks them under the text */
