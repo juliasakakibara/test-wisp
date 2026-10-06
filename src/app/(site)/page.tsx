@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { getConfig } from "@/lib/site-data";
 import { getProjects, isPlayground, projectCategory } from "@/lib/projects";
 import { createSiteMetadata } from "@/lib/metadata";
-import { HeroCanvas } from "@/components/HeroCanvas";
+import { CanvasFrame } from "@/components/CanvasFrame";
+import { ClocheWidget, ClockWidget, CoversWidget, SyrupWidget } from "@/components/canvas-widgets";
+import { HeroVisual } from "@/components/HeroVisual";
+import { ThemeShuffle } from "@/components/ColorSystem";
 import { PlaygroundCard, PlaygroundSection } from "@/components/PlaygroundSection";
 import { ShuffleThemesButton, ThemeCards } from "@/components/ColorSystem";
 
@@ -32,13 +35,32 @@ export default async function HomePage() {
   return (
     <div className="pg-page">
       <section className="pg-hero" aria-labelledby="hero-title">
-        <HeroCanvas
-          projects={work.slice(0, 3).map((post) => ({
-            slug: post.slug,
-            title: post.title,
-            label: projectCategory(post),
-            image: post.image ?? null,
-          }))}
+        {/* Phones: Syrup and Cloche stay on desktop only (no atMobile) to keep the frame calm */}
+        <CanvasFrame
+          className="pg-frame--home"
+          widgets={[
+            { id: "figure", label: "3D", node: <HeroVisual />, at: { x: 5, y: 4 }, atMobile: { x: 4, y: 2 } },
+            { id: "syrup", label: "Syrup", node: <SyrupWidget />, at: { x: 27, y: 10 } },
+            { id: "clock", label: "Porto Alegre", node: <ClockWidget />, at: { x: 82, y: 6 }, atMobile: { x: 8, y: 78 } },
+            {
+              id: "covers",
+              label: "Projects",
+              node: (
+                <CoversWidget
+                  projects={work.slice(0, 3).map((post) => ({
+                    slug: post.slug,
+                    title: post.title,
+                    label: projectCategory(post),
+                    image: post.image ?? null,
+                  }))}
+                />
+              ),
+              at: { x: 5, y: 64 },
+              atMobile: { x: 48, y: 67 },
+            },
+            { id: "cloche", label: "Cloche", node: <ClocheWidget />, at: { x: 50, y: 70 } },
+            { id: "color", label: "Theme", node: <ThemeShuffle />, at: { x: 72, y: 74 }, atMobile: { x: 7, y: 17.5 } },
+          ]}
         >
           <h1 id="hero-title" className="pg-hero__title" data-editable="heroTitle">
             {config.heroTitle}
@@ -46,7 +68,7 @@ export default async function HomePage() {
           <p className="pg-hero__lead">
             A freelance UX engineer who designs and builds. Drag anything around, then shuffle the theme.
           </p>
-        </HeroCanvas>
+        </CanvasFrame>
       </section>
 
       <PlaygroundSection
