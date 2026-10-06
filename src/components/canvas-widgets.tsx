@@ -577,8 +577,14 @@ export function TerminalWidget() {
     <div className="pg-dark pg-term">
       <div ref={logRef} className="pg-term__log" aria-live="polite">
         {lines.map((l, i) => (
-          <p key={i} className={l.kind === "out" ? "pg-dark__muted" : undefined}>
-            {l.kind === "in" ? `$ ${l.text}` : l.text}
+          <p key={i} className={l.kind === "out" ? (l.text.startsWith("command not found") ? "pg-term-yellow" : "pg-dark__muted") : undefined}>
+            {l.kind === "in" ? (
+              <>
+                <span className="pg-term-green">$</span> {l.text}
+              </>
+            ) : (
+              l.text
+            )}
           </p>
         ))}
       </div>
@@ -590,7 +596,7 @@ export function TerminalWidget() {
           setValue("");
         }}
       >
-        <label htmlFor="pg-term-input" aria-hidden="true">$</label>
+        <label htmlFor="pg-term-input" className="pg-term-green" aria-hidden="true">$</label>
         <input
           id="pg-term-input"
           aria-label="Terminal command (try whoami or help)"

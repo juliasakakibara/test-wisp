@@ -32,6 +32,7 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
   --cyan: var(--lb-cyan-500);
   --cyan-inverse: var(--lb-cyan-400);
   --sticky: var(--lb-yellow-300);
+  --ink-blue: var(--lb-blue-600); /* Bic ballpoint, for handwriting */
   --on-sticky: var(--lb-neutral-900);
 }
 
@@ -43,6 +44,7 @@ html:root[data-theme="dark"]:not([data-env="admin"]):not([data-fun-theme]) {
   --green-inverse: var(--lb-green-700);
   --yellow-inverse: var(--lb-yellow-800);
   --cyan-inverse: var(--lb-cyan-700);
+  --ink-blue: var(--lb-blue-400);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -53,6 +55,7 @@ html:root[data-theme="dark"]:not([data-env="admin"]):not([data-fun-theme]) {
     --green-inverse: var(--lb-green-700);
     --yellow-inverse: var(--lb-yellow-800);
     --cyan-inverse: var(--lb-cyan-700);
+    --ink-blue: var(--lb-blue-400);
   }
 }
 

@@ -27,6 +27,7 @@ Pancake (--lb-*)  →  Short Stack inputs  →  Short Stack derived  →  site C
 | `--yellow-inverse`, `--cyan-inverse` | yellow-400, cyan-400 | yellow-800, cyan-700 | (folded) |
 | `--cyan` | cyan-500 | same | (folded) |
 | `--sticky` / `--on-sticky` | yellow-300 / neutral-900 | same | (folded) |
+| `--ink-blue` | blue-600 | blue-400 | (folded) |
 
 Light and dark aren't separate tokens. They are the same roles with different values. A shuffled theme is one more set of values.
 
@@ -39,6 +40,9 @@ Light and dark aren't separate tokens. They are the same roles with different va
 | Tutorial | a yellow sticky note on the canvas ("Drag anything around…") |
 | Footer dots | sticky yellow, green, cyan, foreground |
 | Project covers | full colour (shuffled themes keep the duotone) |
+| About: terminal | `$` green, "command not found" yellow |
+| About: Pomodoro time | green |
+| About: Limited RAM List | handwritten (Caveat) in blue Bic ink (`--ink-blue`) |
 
 - **"-inverse"** means the colour sits on a foreground-coloured widget (clock, terminals), so it flips steps between light and dark.
 - **Mechanism:** every use is `color-mix(in srgb, var(--colour) var(--palette-mix), var(--stand-in))`, where the stand-in is the colour the element would have without the detail. With `--palette: 0`, a shuffled theme gets exactly its own colours back. The duotone uses `--palette` as a number: `grayscale(calc(1 - var(--palette)))`.
@@ -94,6 +98,8 @@ There's no loop, because Short Stack's inputs come from Pancake **primitives** (
 - inverse muted text passes AA on the foreground.
 
 **Why the muted opacity is computed per theme and not fixed:** a fixed 70% rejected every pair below about 11.7:1, and random themes collapsed toward black-on-white (median contrast went from 8.9 to 15.3, dark themes from 43% to 20%). With a per-theme opacity, the median is 10.4 and 41% of themes are dark.
+
+**Testing gotcha:** don't measure the site inside an iframe. The site treats being framed as the admin preview, so Short Stack's public tokens don't apply there (spacing falls back to `normal`, colours to fallbacks). Resize the real window instead.
 
 **Checked:** axe-core (WCAG 2.2 AA), 0 violations on Home, About and a case page in light and dark, plus 20 shuffled themes.
 

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { DM_Sans, Doto, Fraunces, Geist, Geist_Mono, Instrument_Serif, Inter, JetBrains_Mono, Newsreader, Space_Grotesk } from "next/font/google";
+import { Caveat, DM_Sans, Doto, Fraunces, Geist, Geist_Mono, Instrument_Serif, Inter, JetBrains_Mono, Newsreader, Space_Grotesk } from "next/font/google";
 // Pancake 2 topping tokens (--lb-*) first; globals.css maps the site's tokens onto them.
 import "../styles/pancake/theme.css";
 import "../styles/short-stack.css";
@@ -19,6 +19,8 @@ const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 const newsreader = Newsreader({ variable: "--font-newsreader", subsets: ["latin"], weight: ["300", "400"], style: ["normal", "italic"] });
 const doto = Doto({ variable: "--font-doto", subsets: ["latin"], weight: ["700"] });
+// Handwriting for the About list (blue Bic ink); only that widget uses it
+const caveat = Caveat({ variable: "--font-hand", subsets: ["latin"], weight: ["500"], preload: false });
 // Theme font pairs (src/lib/themes.ts): not preloaded, downloaded only when a theme uses them.
 const fraunces = Fraunces({ variable: "--font-fraunces", subsets: ["latin"], preload: false });
 const dmSans = DM_Sans({ variable: "--font-dm-sans", subsets: ["latin"], preload: false });
@@ -73,7 +75,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${jetbrainsMono.variable} ${geistMono.variable} ${newsreader.variable} ${doto.variable} ${fraunces.variable} ${dmSans.variable} ${instrumentSerif.variable} ${spaceGrotesk.variable} ${geist.variable}`}
+      className={`${inter.variable} ${jetbrainsMono.variable} ${geistMono.variable} ${newsreader.variable} ${doto.variable} ${caveat.variable} ${fraunces.variable} ${dmSans.variable} ${instrumentSerif.variable} ${spaceGrotesk.variable} ${geist.variable}`}
       suppressHydrationWarning
     >
       <head>

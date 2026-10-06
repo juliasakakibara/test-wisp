@@ -4433,6 +4433,9 @@ body {
   position: absolute;
   left: var(--dx);
   top: var(--dy);
+  /* snap to the 16px dot grid */
+  left: round(nearest, var(--dx), 16px);
+  top: round(nearest, var(--dy), 16px);
   display: grid;
   justify-items: start;
   gap: calc(var(--unit) * 1.5);
@@ -4450,13 +4453,6 @@ body {
   cursor: grab;
   touch-action: none;
   user-select: none;
-  opacity: 0;
-  transition: opacity var(--duration-fast) var(--ease);
-}
-
-.pg-widget:hover .pg-widget__handle,
-.pg-widget__handle:focus-visible {
-  opacity: 1;
 }
 
 .pg-widget__handle:active {
@@ -5798,7 +5794,7 @@ body,
 }
 
 .pg-note--wide {
-  width: 360px;
+  width: 280px;
 }
 
 .pg-note p {
@@ -5853,7 +5849,8 @@ body,
 
 .pg-about__text {
   justify-self: center;
-  width: min(100%, 578px);
+  /* shrinks with the frame so the widget gutters (~292px each) survive down to 1100px */
+  width: min(100%, 578px, 41vw - 13px);
   margin-top: calc(var(--unit) * 6);
   text-align: left;
   pointer-events: auto;
@@ -5862,8 +5859,8 @@ body,
 
 
 
-/* About needs wide side gutters for its widgets; below 1300px it stacks them under the text */
-@media (max-width: 1299px) {
+/* About needs side gutters for its widgets; below 1100px it stacks them under the text */
+@media (max-width: 1099px) {
   .pg-frame--about {
     height: auto;
     display: grid;
@@ -5971,7 +5968,7 @@ body,
 /* Pomodoro: settings above, the time, controls below — one left edge for all.
    Three groups, 16px apart; the time sits tight between settings and controls. */
 .pg-pomo {
-  width: 320px;
+  width: 280px;
   gap: calc(var(--unit) * 3);
 }
 
@@ -6462,4 +6459,18 @@ body,
 
 .pg-color .pg-card__meta {
   color: var(--muted-foreground);
+}
+
+/* About: pomodoro time in green, the list handwritten in blue Bic ink */
+.pg-pomo__time {
+  color: color-mix(in srgb, var(--green-inverse) var(--palette-mix), var(--background));
+}
+
+.pg-ram .pg-ram__text {
+  color: color-mix(in srgb, var(--ink-blue) var(--palette-mix), var(--foreground));
+  font: 500 20px/24px var(--font-hand), "Segoe Print", cursive;
+}
+
+.pg-ram .pg-ram__text::placeholder {
+  color: color-mix(in srgb, var(--ink-blue) calc(var(--palette) * 55%), var(--muted-foreground));
 }
