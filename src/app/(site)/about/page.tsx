@@ -12,7 +12,7 @@ import {
   TimelineWidget,
 } from "@/components/canvas-widgets";
 import { HeroVisual } from "@/components/HeroVisual";
-import { ABOUT_CONNECTIONS, ABOUT_DETAILS, ABOUT_TEXT, ABOUT_THINGS, ABOUT_TOOLS } from "@/lib/about";
+import { ABOUT_CONNECTIONS, ABOUT_DETAILS, ABOUT_TEXT, ABOUT_TOOLS } from "@/lib/about";
 
 export const revalidate = 60;
 
@@ -47,13 +47,13 @@ export default async function AboutPage() {
           mobile="stack"
           widgets={[
             // Scattered but on the dot grid (CSS snaps to 16px); x stays inside the gutters down to 1100px
-            { id: "figure", label: "dancing.glb", node: <HeroVisual model="dancing" />, at: { x: 1.5, y: 1 } },
-            { id: "timeline", label: "Fields I bounced between", node: <TimelineWidget />, at: { x: 4, y: 24 } },
-            { id: "lists", label: "Limited RAM List", node: <ListsWidget />, at: { x: 1.5, y: 47 } },
-            { id: "terminal", label: "Terminal", node: <TerminalWidget />, at: { x: 72.5, y: 6 } },
-            { id: "pomodoro", label: "Pomodoro", node: <PomodoroWidget />, at: { x: 72, y: 22 } },
-            { id: "owl", label: "Modes", node: <NightOwlWidget />, at: { x: 74, y: 38 } },
-            { id: "quiz", label: "Riddle me this", node: <QuizWidget />, at: { x: 72.5, y: 54 } },
+            { id: "figure", label: "dancing.glb", node: <HeroVisual model="dancing" />, at: { x: 1.5, y: 1.4 } },
+            { id: "timeline", label: "Fields I bounced between", node: <TimelineWidget />, at: { x: 4, y: 33.8 } },
+            { id: "lists", label: "Limited RAM List", node: <ListsWidget />, at: { x: 1.5, y: 59.5 } },
+            { id: "terminal", label: "Terminal", node: <TerminalWidget />, at: { x: 72.5, y: 8.1 } },
+            { id: "pomodoro", label: "Pomodoro", node: <PomodoroWidget />, at: { x: 72, y: 31.1 } },
+            { id: "owl", label: "Modes", node: <NightOwlWidget />, at: { x: 74, y: 52.7 } },
+            { id: "quiz", label: "Riddle me this", node: <QuizWidget />, at: { x: 72.5, y: 73 } },
           ]}
         >
           <h1 id="about-title" className="pg-hero__title" data-editable="aboutTitle">
@@ -83,23 +83,6 @@ export default async function AboutPage() {
                   </div>
                 ))}
               </dl>
-
-              <DetailBlock title={ABOUT_TEXT.heading}>
-                {ABOUT_TEXT.body.map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
-                ))}
-              </DetailBlock>
-
-              <DetailBlock title={ABOUT_THINGS.heading}>
-                <dl className="pg-detail__rows pg-detail__rows--stacked">
-                  {ABOUT_THINGS.items.map((item) => (
-                    <div key={item.title} className="pg-detail__row">
-                      <dt>{item.title}</dt>
-                      <dd>{item.text}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </DetailBlock>
 
               <DetailBlock title={ABOUT_CONNECTIONS.heading}>
                 <p>{ABOUT_CONNECTIONS.lead}</p>

@@ -10,27 +10,16 @@ export const ABOUT_DETAILS = [
   { label: "Focus", value: "Design systems · AI tooling" },
 ];
 
+// The intro's second line (shorter page: its old block and "3 things about me" were cut;
+// the lists live on as the Limited RAM List widget)
 export const ABOUT_TEXT = {
   heading: "Design sits between understanding people and building things that actually work.",
-  body: [
-    "That's what keeps me here — stealing ideas from different disciplines to solve weird, real problems.",
-    "Out of office (but still at home): devoted cat person, 3D printer enthusiast, night owl testing AI tools when the world gets quiet.",
-  ],
-};
-
-export const ABOUT_THINGS = {
-  heading: "3 things about me",
-  items: [
-    { title: "Limited RAM", text: "My brain has limited RAM — hence the lists. So many lists." },
-    { title: "Patterns everywhere", text: "I see patterns in places that probably don't need patterns. They make sense, I promise." },
-    { title: "Ambidextrous by accident", text: "Broke my right arm three times; adaptation was mandatory." },
-  ],
 };
 
 export const ABOUT_CONNECTIONS = {
   heading: "Lately, those connections look like breakfast.",
   lead: "A design system called Pancake, a sync widget called Syrup, and a cloche that keeps client secrets covered.",
-  body: "The thread goes back further: undergrad research in agentic accessibility, then the Apple Developer Academy (Auway, Hairy, Byte Verse). This site is the web side of the same brain.",
+  body: "Before that: research in agentic accessibility and the Apple Developer Academy.",
 };
 
 export const ABOUT_TOOLS = {

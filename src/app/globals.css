@@ -4421,7 +4421,7 @@ body {
 
 .pg-hero__lead {
   margin: 0;
-  max-width: 46ch;
+  max-width: calc(var(--unit) * 98); /* 392px, shared with the About text column */
   /* the hero lead reads one step up from running text (14, Pancake size s) */
   font-size: var(--font-size-large);
   line-height: var(--line-height);
@@ -5812,13 +5812,13 @@ body,
 
 /* The About text lives in the canvas, under the buttons; widgets sit in the side gutters */
 .pg-frame--about {
-  height: 1760px;
+  height: calc(var(--unit) * 296); /* 1184px: the shorter About */
 }
 
 .pg-about__text {
   justify-self: center;
-  /* shrinks with the frame so the widget gutters (~292px each) survive down to 1100px */
-  width: min(100%, 578px, 41vw - 13px);
+  /* one column width for the whole About text: the intro's (392px) */
+  width: min(100%, calc(var(--unit) * 98));
   margin-top: calc(var(--unit) * 6);
   text-align: left;
   pointer-events: auto;
