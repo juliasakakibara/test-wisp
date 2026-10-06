@@ -5436,3 +5436,80 @@ button.pg-pill--center {
   font-weight: 600;
 }
 
+/* Project images rest as a duotone in the current theme (shadows → the theme's
+   dark colour, highlights → its light one), so many colourful covers read as one
+   palette; hover or keyboard focus brings the real colours back. Touch screens
+   have no hover, so they keep the colour. */
+html:root:not([data-env="admin"]):not([data-fun-theme]) {
+  --duo-ink: var(--lb-fg-default);
+  --duo-paper: var(--lb-bg-default);
+}
+
+html:root[data-theme="dark"]:not([data-env="admin"]):not([data-fun-theme]) {
+  --duo-ink: var(--lb-bg-default);
+  --duo-paper: var(--lb-fg-default);
+}
+
+@media (hover: hover) {
+  .pg-card__preview,
+  .pg-covers__card {
+    isolation: isolate;
+  }
+
+  .pg-card__image,
+  .pg-covers__image {
+    filter: grayscale(1) contrast(1.05);
+    transition:
+      filter 0.35s ease,
+      transform 0.5s cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  /* multiply: white → paper; screen: black → ink */
+  .pg-card__preview:not(.pg-card__preview--topping)::before,
+  .pg-card__preview:not(.pg-card__preview--topping)::after,
+  .pg-covers__card::before,
+  .pg-covers__card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+
+  .pg-card__preview:not(.pg-card__preview--topping)::before,
+  .pg-covers__card::before {
+    background: var(--duo-paper);
+    mix-blend-mode: multiply;
+  }
+
+  .pg-card__preview:not(.pg-card__preview--topping)::after,
+  .pg-covers__card::after {
+    background: var(--duo-ink);
+    mix-blend-mode: screen;
+  }
+
+  .pg-card__link:is(:hover, :focus-visible) .pg-card__image,
+  .pg-covers:is(:hover, :focus-visible) .pg-covers__image {
+    filter: none;
+  }
+
+  .pg-card__link:is(:hover, :focus-visible) .pg-card__preview::before,
+  .pg-card__link:is(:hover, :focus-visible) .pg-card__preview::after,
+  .pg-covers:is(:hover, :focus-visible) .pg-covers__card::before,
+  .pg-covers:is(:hover, :focus-visible) .pg-covers__card::after {
+    opacity: 0;
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: reduce) {
+  .pg-card__image,
+  .pg-covers__image,
+  .pg-card__preview::before,
+  .pg-card__preview::after,
+  .pg-covers__card::before,
+  .pg-covers__card::after {
+    transition: none;
+  }
+}
+

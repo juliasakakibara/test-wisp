@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { DM_Sans, Doto, Fraunces, Geist_Mono, Instrument_Serif, Inter, JetBrains_Mono, Newsreader, Space_Grotesk } from "next/font/google";
+import { DM_Sans, Doto, Fraunces, Geist, Geist_Mono, Instrument_Serif, Inter, JetBrains_Mono, Newsreader, Space_Grotesk } from "next/font/google";
 // Pancake 2 topping tokens (--lb-*) first; globals.css maps the site's tokens onto them.
 import "../styles/pancake/theme.css";
 import "./globals.css";
@@ -23,6 +23,7 @@ const fraunces = Fraunces({ variable: "--font-fraunces", subsets: ["latin"], pre
 const dmSans = DM_Sans({ variable: "--font-dm-sans", subsets: ["latin"], preload: false });
 const instrumentSerif = Instrument_Serif({ variable: "--font-instrument-serif", subsets: ["latin"], weight: "400", preload: false });
 const spaceGrotesk = Space_Grotesk({ variable: "--font-space-grotesk", subsets: ["latin"], preload: false });
+const geist = Geist({ variable: "--font-geist", subsets: ["latin"], preload: false });
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getConfig();
@@ -71,7 +72,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${jetbrainsMono.variable} ${geistMono.variable} ${newsreader.variable} ${doto.variable} ${fraunces.variable} ${dmSans.variable} ${instrumentSerif.variable} ${spaceGrotesk.variable}`}
+      className={`${inter.variable} ${jetbrainsMono.variable} ${geistMono.variable} ${newsreader.variable} ${doto.variable} ${fraunces.variable} ${dmSans.variable} ${instrumentSerif.variable} ${spaceGrotesk.variable} ${geist.variable}`}
       suppressHydrationWarning
     >
       <head>

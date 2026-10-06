@@ -17,6 +17,8 @@ export const FONT_PAIRS: FontPair[] = [
   { display: { name: "Space Grotesk", css: "var(--font-space-grotesk), system-ui, sans-serif" }, body: { name: "JetBrains Mono", css: "var(--font-mono), ui-monospace, monospace" } },
   { display: { name: "Inter", css: "var(--font-inter), system-ui, sans-serif" }, body: { name: "Geist Mono", css: "var(--font-geist-mono), ui-monospace, monospace" } },
   { display: { name: "Newsreader", css: "var(--font-newsreader), Georgia, serif" }, body: { name: "DM Sans", css: "var(--font-dm-sans), system-ui, sans-serif" } },
+  { display: { name: "Geist", css: "var(--font-geist), system-ui, sans-serif" }, body: { name: "Geist Mono", css: "var(--font-geist-mono), ui-monospace, monospace" } },
+  { display: { name: "Instrument Serif", css: "var(--font-instrument-serif), Georgia, serif" }, body: { name: "Geist", css: "var(--font-geist), system-ui, sans-serif" } },
 ];
 
 /** A theme = one random AA palette + one font pair. */

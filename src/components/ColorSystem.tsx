@@ -31,6 +31,9 @@ const VARS = ({ palette: p, fonts }: Theme): Record<string, string> => ({
   "--lb-neutral-900": p.fg,
   "--lb-yellow-400": p.fg,
   "--pg-signal-ink": p.bg,
+  // Duotone for project images: shadows take the darker colour, highlights the lighter
+  "--duo-ink": p.scheme === "light" ? p.fg : p.bg,
+  "--duo-paper": p.scheme === "light" ? p.bg : p.fg,
   "--lb-font-family-1": fonts.display.css,
   "--lb-font-family-2": fonts.body.css,
   "--font-display": fonts.display.css,
