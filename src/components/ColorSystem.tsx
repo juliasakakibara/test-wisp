@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore, type CSSProperties } from "react";
 import { contrast, wcagLevel } from "@/lib/random-palette";
 import { randomTheme, type Theme } from "@/lib/themes";
 
@@ -109,18 +109,17 @@ export function ThemeShuffle() {
       <span className="pg-card__top">
         <span className="pg-card__count">[{p ? p.ratio : baseRatio}:1]</span>
       </span>
-      <span className="pg-card__preview pg-card__preview--topping pg-color__preview" style={p ? { background: p.bg } : undefined}>
-        <span className="pg-theme-font" style={{ color: p?.fg, fontFamily: display.css }}>
-          {display.name}
-        </span>
-        <span className="pg-theme-body" style={{ color: p?.muted, fontFamily: body.css }}>
-          + {body.name}
-        </span>
-        <span className="pg-swatches" aria-hidden="true">
-          {swatches.map((c, i) => (
-            <span key={i} className="pg-swatch" style={{ background: c }} />
-          ))}
-        </span>
+      {/* no inner preview box: the page is already in this theme */}
+      <span className="pg-theme-font" style={{ fontFamily: display.css }}>
+        {display.name}
+      </span>
+      <span className="pg-theme-body" style={{ fontFamily: body.css }}>
+        + {body.name}
+      </span>
+      <span className="pg-swatches" aria-hidden="true">
+        {swatches.map((c, i) => (
+          <span key={i} className="pg-swatch" style={{ background: c }} />
+        ))}
       </span>
       <span className="pg-card__meta" aria-live="polite">
         {p ? `Shuffled · ${p.bg} / ${p.fg} · ${wcagLevel(p.ratio)}` : "Base theme · AAA"}
@@ -156,22 +155,20 @@ export function ThemeCards({ count = 4 }: { count?: number }) {
         <li key={t ? `${i}-${t.palette.bg}${t.palette.fg}` : i} className="pg-card">
           <button
             type="button"
-            className="pg-card__link pg-card__button"
+            className="pg-card__link pg-card__button pg-theme-card"
+            style={t ? ({ "--card-bg": t.palette.bg, "--card-fg": t.palette.fg, "--card-muted": t.palette.muted } as CSSProperties) : undefined}
             aria-pressed={same(t, active)}
             disabled={!t}
             onClick={() => t && applyTheme(t)}
           >
-            {/* after Berd's agent cards: label + number, one visual, the name, a two-column spec row */}
+            {/* after Berd's agent cards, flat: the card is the theme (its colours), with a
+                label + number, one visual, the name and a two-column spec row */}
             <span className="pg-card__top">
               <span className="pg-card__title">Theme</span>
               <span className="pg-card__count">{same(t, active) ? "served" : String(i + 1).padStart(2, "0")}</span>
             </span>
-            <span className="pg-card__preview pg-card__preview--topping" style={t ? { background: t.palette.bg } : undefined}>
-              {t ? (
-                <span className="pg-theme-font" style={{ color: t.palette.fg, fontFamily: t.fonts.display.css }}>
-                  {t.fonts.display.name}
-                </span>
-              ) : null}
+            <span className="pg-theme-font" style={t ? { fontFamily: t.fonts.display.css } : undefined}>
+              {t ? t.fonts.display.name : ""}
             </span>
             <span className="pg-theme-card__name">{t ? `${t.fonts.display.name} + ${t.fonts.body.name}` : "mixing…"}</span>
             <span className="pg-theme-card__specs">

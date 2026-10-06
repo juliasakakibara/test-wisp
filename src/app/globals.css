@@ -6843,3 +6843,60 @@ a.pg-card__link:hover,
   color: var(--foreground);
   font-weight: var(--font-weight-bold);
 }
+
+/* Fewer boxes (after Berd): the theme card IS the theme, no preview box inside. */
+.pg-theme-card,
+a.pg-theme-card:hover {
+  background: var(--card-bg, var(--widget-surface));
+  color: var(--card-fg, var(--foreground));
+}
+
+.pg-theme-card .pg-card__title,
+.pg-theme-card .pg-card__count,
+.pg-theme-card .pg-theme-card__specs > span {
+  color: var(--card-muted, var(--muted-foreground));
+}
+
+.pg-theme-card .pg-theme-card__specs b,
+.pg-theme-card[aria-pressed="true"] .pg-card__count {
+  color: var(--card-fg, var(--foreground));
+}
+
+.pg-theme-card .pg-theme-card__specs > span {
+  border-left-color: color-mix(in srgb, var(--card-fg, var(--foreground)) 30%, transparent);
+}
+
+.pg-theme-card .pg-theme-font {
+  align-self: center;
+  justify-self: start;
+  max-width: 100%;
+  text-align: left;
+}
+
+/* hover and the served theme: a ring in the card's own ink, not a new fill */
+.pg-card__button.pg-theme-card:hover {
+  background: var(--card-bg, var(--widget-surface));
+  box-shadow: inset 0 0 0 var(--border-width) color-mix(in srgb, var(--card-fg, var(--foreground)) 35%, transparent);
+}
+
+.pg-theme-card[aria-pressed="true"] {
+  box-shadow: inset 0 0 0 var(--focus-width) var(--card-fg, var(--foreground));
+}
+
+/* hero Theme widget: font name, pair and swatches sit straight on the card */
+.pg-color .pg-theme-font {
+  margin-top: calc(var(--unit) * 2);
+  text-align: left;
+}
+
+.pg-color .pg-theme-body {
+  color: var(--muted-foreground);
+}
+
+/* project covers: the image is the only thing inside the card, at the covers' own
+   16:9 so the text covers aren't cropped (square photos crop gracefully) */
+.pg-card__frame {
+  width: 70%;
+  aspect-ratio: 16 / 9;
+  box-shadow: none;
+}
