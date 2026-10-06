@@ -5521,6 +5521,10 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
   --pg-r-surface: 24px;
   --pg-r-inner: 8px;
   --pg-r-thumb: 12px;
+  /* 2 · small text: micro (tabs, footer links), UI (labels, meta), body */
+  --pg-text-micro: 10px;
+  --pg-text-ui: 12px;
+  --pg-text-body: 14px;
 }
 
 .pg-frame,
@@ -5556,3 +5560,26 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
     border-radius: var(--pg-r-surface);
   }
 }
+
+/* 2 · text sizes on the scale (11 → 12, 13 → 14, the 6.6px chevron → 10) */
+.pg-dark,
+.pg-color {
+  font-size: var(--pg-text-ui);
+}
+
+.pg-theme-body,
+.pg-detail__block p,
+.pg-detail__body .prose {
+  font-size: var(--pg-text-body);
+}
+
+.theme-switcher__chevron {
+  font-size: var(--pg-text-micro);
+}
+
+@media (max-width: 767px) {
+  .pg-dark {
+    font-size: var(--pg-text-micro);
+  }
+}
+
