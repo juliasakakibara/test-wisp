@@ -19,38 +19,11 @@ Pancake (--lb-*)  →  Short Stack inputs  →  Short Stack derived  →  site C
 | `--foreground` | `--lb-neutral-900` | `--lb-neutral-100` | random, AA against the background |
 | `--accent` | `--lb-yellow-400` | same | = foreground |
 | `--on-accent` | `--lb-neutral-900` | same | = background |
-| `--accent-edge` | = foreground | same | = foreground |
-| `--palette` | 100% | 100% | 0% |
-| `--palette-{green,pink,orange,blue,lilac}` | 400 steps | same | (folded by `--palette`) |
-| `--palette-*-wash` | 200 steps | 800 steps | (folded) |
-| `--palette-on` | `--lb-neutral-900` | `--lb-neutral-950` | (folded) |
 | `--muted-opacity` | 70% | 70% | computed: the faintest that passes AA |
-| `--inverse-muted-opacity` | 80% | 80% | computed |
+| `--inverse-muted-opacity` | 60% | 60% | computed |
 | `--font-body`, `--font-display` | Pancake families | same | a random pair |
 
 Light and dark aren't separate tokens. They are the same roles with different values. A shuffled theme is one more set of values.
-
-**Palette (base themes only).** After GSAP, each widget and home section owns one colour family from Pancake's ramps: green, pink (red), orange, blue (cyan) and lilac (violet). A family is a strong colour (light mode: the 400 step) and a wash (200; 800 in dark mode).
-- Widget tabs use the strong colour.
-- Light widget cards (notes, Theme) use the wash.
-- Dark widgets take the strong colour with dark text.
-- Home section cards use the wash on hover.
-
-`--palette` sets how much shows: 100% in base themes, 0% when shuffled. Every family is mixed with the colour it stands in for, so shuffled themes fold back to their own two colours. The assignments by widget id are in `globals.css` ("Palette").
-
-| Family | Widgets / sections |
-|---|---|
-| green | figure, Theme, Riddle, Projects |
-| blue | Syrup, terminal |
-| orange | clock, Path, Playground |
-| pink | covers, Limited RAM List, Pomodoro |
-| lilac | Cloche, Modes, Themes |
-
-Muted text inside the strong colours uses `--inverse-muted-opacity` 80% in base themes (dark text needs more ink there). `--live` (the status dot) is green, folded the same way.
-
-**The yellow pill:** a bright yellow fill can't reach 3:1 against a light page. The yellows that do are mustard/ochre (#b88100), so the pill keeps the bright yellow and gets a foreground edge (`--accent-edge`). Its dark label is 10.9:1.
-
-**Tried and dropped (2026-10-06):** a Caldera-style version (warm neutrals, a violet dot grid). It felt too quiet, so the palette above replaced it.
 
 ## 2 · Derived: never set directly
 
@@ -62,7 +35,7 @@ Muted text inside the strong colours uses `--inverse-muted-opacity` 80% in base 
 | `--surface` | foreground 11% mixed into the background, **opaque** | cards, footer, hover fills |
 | `--surface-hover` | foreground 21%, **opaque** | hover on a card |
 | `--dots` | foreground 16%, alpha | canvas dot grid |
-| `--live` | palette green, folded by `--palette` | status dot |
+| `--success` | `--lb-bg-success` | live dot |
 
 **Why two kinds of derivation:**
 - **Text and lines use alpha** (Raster's idea). They sit on many different surfaces and should adapt to whatever is under them.

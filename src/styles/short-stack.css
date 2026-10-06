@@ -17,52 +17,22 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
   --background: var(--lb-neutral-50);
   --foreground: var(--lb-neutral-900);
   --accent: var(--lb-yellow-400);
-  --on-accent: var(--lb-neutral-900); /* dark label on yellow, in both modes */
-  /* the yellow fill can't reach 3:1 on a light page, so the pill carries a dark edge */
-  --accent-edge: var(--foreground);
-  /* Palette: playful colour families (after GSAP: one family per widget/section),
-     base themes only. --palette is how much of it shows: 100% here, 0% when shuffled,
-     so every family folds back into the theme's own colours (see "Palette" in 2). */
-  --palette: 100%;
-  --palette-green: var(--lb-green-400);
-  --palette-green-wash: var(--lb-green-200);
-  --palette-pink: var(--lb-red-400);
-  --palette-pink-wash: var(--lb-red-200);
-  --palette-orange: var(--lb-orange-400);
-  --palette-orange-wash: var(--lb-orange-200);
-  --palette-blue: var(--lb-cyan-400);
-  --palette-blue-wash: var(--lb-cyan-200);
-  --palette-lilac: var(--lb-violet-400);
-  --palette-lilac-wash: var(--lb-violet-200);
-  --palette-on: var(--lb-neutral-900); /* text on a family's strong colour */
-  /* muted text on the strong colours needs more ink than on a dark widget */
-  --inverse-muted-opacity: 80%;
+  --on-accent: var(--lb-neutral-900);
   /* how strong muted text is: foreground over background, and background over foreground */
   --muted-opacity: 70%;
+  --inverse-muted-opacity: 60%;
 }
 
 /* 1 · Inputs: dark (same roles, other values) */
 html:root[data-theme="dark"]:not([data-env="admin"]):not([data-fun-theme]) {
   --background: var(--lb-neutral-950);
   --foreground: var(--lb-neutral-100);
-  --palette-green-wash: var(--lb-green-800);
-  --palette-pink-wash: var(--lb-red-800);
-  --palette-orange-wash: var(--lb-orange-800);
-  --palette-blue-wash: var(--lb-cyan-800);
-  --palette-lilac-wash: var(--lb-violet-800);
-  --palette-on: var(--lb-neutral-950);
 }
 
 @media (prefers-color-scheme: dark) {
   html:root:not([data-theme="light"]):not([data-env="admin"]):not([data-fun-theme]) {
     --background: var(--lb-neutral-950);
     --foreground: var(--lb-neutral-100);
-    --palette-green-wash: var(--lb-green-800);
-    --palette-pink-wash: var(--lb-red-800);
-    --palette-orange-wash: var(--lb-orange-800);
-    --palette-blue-wash: var(--lb-cyan-800);
-    --palette-lilac-wash: var(--lb-violet-800);
-    --palette-on: var(--lb-neutral-950);
   }
 }
 
@@ -76,8 +46,7 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
   --surface: color-mix(in srgb, var(--foreground) 11%, var(--background));
   --surface-hover: color-mix(in srgb, var(--foreground) 21%, var(--background));
   --dots: color-mix(in srgb, var(--foreground) 16%, transparent);
-  /* Palette: a family at --palette strength, else the theme colour it stands in for */
-  --live: color-mix(in srgb, var(--palette-green) var(--palette), var(--background));
+  --success: var(--lb-bg-success);
   /* older site names, same meaning */
   --muted: var(--surface);
   --primary: var(--foreground);
