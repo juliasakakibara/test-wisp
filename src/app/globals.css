@@ -6086,3 +6086,9 @@ body,
   animation: none;
 }
 
+/* The dance swings arms and steps sideways: give it a wider stage than the seated figure */
+.pg-widget--figure .hero-visual--dancing {
+  width: 260px;
+  height: 280px;
+}
+

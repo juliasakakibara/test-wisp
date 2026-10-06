@@ -85,8 +85,9 @@ export type HeroModel = "hero" | "dancing";
 const MODELS: Record<HeroModel, { src: string; target: string; animated: boolean; radius: number; maxRadius: number }> = {
   hero: { src: MODEL_SRC, target: "0m 0.85m 0m", animated: false, radius: BASE_RADIUS, maxRadius: 150 },
   // Mixamo dance clip (18 s), compressed with gltf-transform: 19.7 MB → 1.5 MB.
-  // Pulled back so arms and head stay in frame through the whole dance.
-  dancing: { src: "/models/dancing.glb", target: "auto auto auto", animated: true, radius: 175, maxRadius: 220 },
+  // The clip lifts and shifts the body away from its rest bounds, so the target is
+  // set from the dance itself (frames measured): whole figure in frame throughout.
+  dancing: { src: "/models/dancing.glb", target: "-0.43m 0.8m 0m", animated: true, radius: 135, maxRadius: 260 },
 };
 
 export function HeroModelViewer({ model = "hero" }: { model?: HeroModel } = {}) {
