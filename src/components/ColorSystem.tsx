@@ -7,29 +7,13 @@ import { randomTheme, type Theme } from "@/lib/themes";
 const CHANGE_EVENT = "themechange";
 const SHUFFLE_EVENT = "themeshuffle";
 
-/** Site tokens a theme drives; set inline on <html>, so they beat the base topping and survive navigation. */
+/** A theme sets only its primaries (and fonts); globals.css derives every other colour from ink and paper. */
 const VARS = ({ palette: p, fonts }: Theme): Record<string, string> => ({
-  "--background": p.bg,
-  "--foreground": p.fg,
-  "--muted-foreground": p.muted,
-  "--primary": p.fg,
-  "--primary-foreground": p.bg,
-  "--link": p.fg,
-  "--link-strong": p.fg,
-  "--link-underline": p.fg,
-  "--border": p.line,
-  "--muted": p.card,
-  "--lb-bg-default": p.bg,
-  "--lb-fg-default": p.fg,
-  "--lb-fg-muted": p.muted,
-  "--lb-border-muted": p.line,
-  "--lb-neutral-50": p.bg,
-  "--lb-neutral-100": p.bg,
-  "--lb-neutral-200": p.card,
-  "--lb-neutral-300": p.cardHover,
-  "--lb-neutral-400": p.invertedMuted,
-  "--lb-neutral-900": p.fg,
-  "--lb-yellow-400": p.fg,
+  "--pg-ink": p.fg,
+  "--pg-paper": p.bg,
+  "--pg-muted-alpha": `${Math.round(p.mutedAlpha * 100)}%`,
+  "--pg-inverse-muted-alpha": `${Math.round(p.invertedMutedAlpha * 100)}%`,
+  "--pg-signal": p.fg,
   "--pg-signal-ink": p.bg,
   // Duotone for project images: shadows take the darker colour, highlights the lighter
   "--duo-ink": p.scheme === "light" ? p.fg : p.bg,

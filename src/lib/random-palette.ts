@@ -1,14 +1,19 @@
 /**
- * Random accessible colour systems (after randoma11y): a random background, a
- * text colour searched until it passes WCAG AA (4.5:1), then every other role
- * derived from that pair and checked again.
+ * Random accessible colour systems (after randoma11y). A theme is two primaries,
+ * paper (bg) and ink (fg); globals.css derives every other colour from them with
+ * the alphas below (after Raster). The surface alphas are fixed; the two muted
+ * text alphas are found per theme (the faintest that still passes AA on the
+ * hardest surface) and written as numbers, so any AA pair keeps its character.
  */
 
 export type Palette = {
   bg: string;
   fg: string;
-  /** Muted text: as faint as it can be while still 4.5:1 on the card fill. */
+  /** Muted text as it lands on the card fill (for display). */
   muted: string;
+  /** Share of ink for muted text, and of paper for muted text on ink widgets. */
+  mutedAlpha: number;
+  invertedMutedAlpha: number;
   card: string;
   cardHover: string;
   line: string;
@@ -23,6 +28,26 @@ type Rgb = [number, number, number];
 const AA = 4.5;
 /** Derived colours aim a little above AA so rounding never lands them at 4.49. */
 const TARGET = 4.6;
+
+/** Mirrors the derived tokens in globals.css (share of ink, or of paper for inverse). */
+export const ALPHA = {
+  page: 0.05, // --lb-bg-default
+  card: 0.11, // --lb-bg-strong
+  cardHover: 0.21, // --lb-bg-bolder
+  line: 0.1, // --lb-border-muted
+  /** Base-theme defaults for the muted alphas; random themes compute their own. */
+  muted: 0.7, // --pg-muted-alpha → --lb-fg-muted
+  invertedMuted: 0.6, // --pg-inverse-muted-alpha → --lb-fg-inverse-muted (paper over ink)
+} as const;
+
+/** The faintest share of `ink` over `on` that still reads at AA on `on` (null if none). */
+function faintestAlpha(ink: Rgb, on: Rgb, from: number): number | null {
+  for (let a = from; a <= 1.0001; a += 0.02) {
+    if (contrast(mix(on, ink, a), on) >= TARGET) return Math.round(a * 100) / 100;
+  }
+  return null;
+}
+
 
 function hslToRgb(h: number, s: number, l: number): Rgb {
   const k = (n: number) => (n + h / 30) % 12;
@@ -48,14 +73,6 @@ export function contrast(a: Rgb, b: Rgb): number {
 
 const mix = (a: Rgb, b: Rgb, t: number): Rgb => [0, 1, 2].map((i) => a[i] + (b[i] - a[i]) * t) as Rgb;
 
-/** The faintest mix of `from` toward `to` that still reads at 4.5:1 on `on`. */
-function faintest(from: Rgb, to: Rgb, on: Rgb): Rgb {
-  for (let t = 0.6; t < 1; t += 0.04) {
-    const c = mix(from, to, t);
-    if (contrast(c, on) >= TARGET) return c;
-  }
-  return to;
-}
 
 export function randomPalette(random: () => number = Math.random): Palette {
   for (let attempt = 0; attempt < 400; attempt++) {
@@ -66,25 +83,30 @@ export function randomPalette(random: () => number = Math.random): Palette {
     const ratio = contrast(bg, fg);
     if (ratio < AA) continue;
 
-    const card = mix(bg, fg, 0.08);
-    const muted = faintest(bg, fg, card);
-    // The card is the hardest surface for muted text; bail out if even full fg fails there.
-    if (contrast(muted, card) < AA || contrast(fg, card) < AA) continue;
+    // Composite the alphas the way the browser will, then test the hardest pairs:
+    // muted text on the card hover, and muted paper text on ink widgets.
+    const card = mix(bg, fg, ALPHA.card);
+    const cardHover = mix(bg, fg, ALPHA.cardHover);
+    const mutedAlpha = faintestAlpha(fg, cardHover, ALPHA.muted);
+    const invertedMutedAlpha = faintestAlpha(bg, fg, ALPHA.invertedMuted);
+    if (mutedAlpha === null || invertedMutedAlpha === null) continue;
 
     return {
       bg: hex(bg),
       fg: hex(fg),
-      muted: hex(muted),
+      muted: hex(mix(card, fg, mutedAlpha)),
+      mutedAlpha,
+      invertedMutedAlpha,
       card: hex(card),
-      cardHover: hex(mix(bg, fg, 0.14)),
-      line: hex(mix(bg, fg, 0.2)),
-      invertedMuted: hex(faintest(fg, bg, fg)),
+      cardHover: hex(cardHover),
+      line: hex(mix(bg, fg, ALPHA.line)),
+      invertedMuted: hex(mix(fg, bg, invertedMutedAlpha)),
       ratio: Math.round(ratio * 10) / 10,
       scheme: bgIsLight ? "light" : "dark",
     };
   }
   // Practically unreachable; a safe pair rather than a failing one.
-  return { bg: "#f2f2f2", fg: "#1c1c1c", muted: "#606060", card: "#e3e3e3", cardHover: "#d6d6d6", line: "#cacaca", invertedMuted: "#a0a0a0", ratio: 15.1, scheme: "light" };
+  return { bg: "#ffffff", fg: "#1c1c1c", muted: "#606060", mutedAlpha: ALPHA.muted, invertedMutedAlpha: ALPHA.invertedMuted, card: "#e3e3e3", cardHover: "#d6d6d6", line: "#cacaca", invertedMuted: "#a0a0a0", ratio: 15.1, scheme: "light" };
 }
 
 export const wcagLevel = (ratio: number) => (ratio >= 7 ? "AAA" : "AA");
