@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /* Live widgets for the canvas frames (home hero and About). Words come from the
    site's own copy (lib/about.ts); playful lines are marked as placeholders. */
@@ -252,5 +252,81 @@ export function BreakfastWidget() {
         <li><Link href="/#projects">Cloche</Link></li>
       </ul>
     </Note>
+  );
+}
+
+/* ── whoami terminal (About) ───────────────────────────────────────────── */
+
+type Line = { kind: "in" | "out"; text: string };
+
+const COMMANDS: Record<string, string[]> = {
+  whoami: ["julia sakakibara — freelance ux engineer"],
+  pwd: ["/porto-alegre/brazil"],
+  "cat focus.txt": ["design systems · ai tooling"],
+  ls: ["pancake/  syrup/  cloche/  playground/"],
+  contact: ["talk.to@juliasakakibara.com.br"],
+  help: ["whoami · pwd · cat focus.txt · ls · contact · clear"],
+};
+
+const BOOT: Line[] = [
+  { kind: "in", text: "whoami" },
+  { kind: "out", text: COMMANDS.whoami[0] },
+  { kind: "in", text: "cat focus.txt" },
+  { kind: "out", text: COMMANDS["cat focus.txt"][0] },
+];
+
+/** About ≈ `whoami`: a tiny terminal that answers a few commands (type "help"). */
+export function TerminalWidget() {
+  const [lines, setLines] = useState<Line[]>(BOOT);
+  const [value, setValue] = useState("");
+  const logRef = useRef<HTMLDivElement>(null);
+
+  // Fixed-height log: keep the newest line in view
+  useEffect(() => {
+    const log = logRef.current;
+    if (log) log.scrollTop = log.scrollHeight;
+  }, [lines]);
+
+  function run(raw: string) {
+    const cmd = raw.trim().toLowerCase();
+    if (!cmd) return;
+    if (cmd === "clear") {
+      setLines([]);
+      return;
+    }
+    const out = COMMANDS[cmd] ?? [`command not found: ${cmd} — try "help"`];
+    // keep the last few lines so the widget stays small
+    setLines((prev) => [...prev, { kind: "in" as const, text: raw.trim() }, ...out.map((text) => ({ kind: "out" as const, text }))].slice(-8));
+  }
+
+  return (
+    <div className="pg-dark pg-term">
+      <div ref={logRef} className="pg-term__log" aria-live="polite">
+        {lines.map((l, i) => (
+          <p key={i} className={l.kind === "out" ? "pg-dark__muted" : undefined}>
+            {l.kind === "in" ? `$ ${l.text}` : l.text}
+          </p>
+        ))}
+      </div>
+      <form
+        className="pg-term__prompt"
+        onSubmit={(event) => {
+          event.preventDefault();
+          run(value);
+          setValue("");
+        }}
+      >
+        <label htmlFor="pg-term-input" aria-hidden="true">$</label>
+        <input
+          id="pg-term-input"
+          aria-label="Terminal command (try whoami or help)"
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
+          placeholder="help"
+          autoComplete="off"
+          spellCheck={false}
+        />
+      </form>
+    </div>
   );
 }

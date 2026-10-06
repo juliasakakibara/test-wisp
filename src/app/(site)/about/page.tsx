@@ -16,6 +16,7 @@ import {
   PatternsWidget,
   PrinterWidget,
   ResearchWidget,
+  TerminalWidget,
   ToolsWidget,
 } from "@/components/canvas-widgets";
 import { HeroVisual } from "@/components/HeroVisual";
@@ -37,6 +38,12 @@ export async function generateMetadata(): Promise<Metadata> {
  * Experiment (playground): About as a big canvas — the intro in the middle and
  * widgets from the About copy spread around it (lib/about.ts). Phones stack them.
  */
+/** The admin value may read "/about"; show it as a heading ("About"). */
+function aboutHeading(title: string): string {
+  const clean = title.replace(/^\/+/, "").trim() || "About";
+  return clean.charAt(0).toUpperCase() + clean.slice(1);
+}
+
 export default async function AboutPage() {
   const config = await getConfig();
 
@@ -48,23 +55,24 @@ export default async function AboutPage() {
           mobile="stack"
           widgets={[
             { id: "figure", label: "3D", node: <HeroVisual />, at: { x: 2, y: 2 } },
-            { id: "fields", label: "Path", node: <FieldsWidget />, at: { x: 2, y: 18 } },
-            { id: "clock", label: "Porto Alegre", node: <ClockWidget />, at: { x: 80, y: 2 } },
-            { id: "cat", label: "Cat", node: <CatWidget />, at: { x: 2, y: 39 } },
-            { id: "owl", label: "Night owl", node: <NightOwlWidget />, at: { x: 74, y: 13 } },
-            { id: "printer", label: "3D printer", node: <PrinterWidget />, at: { x: 74, y: 23 } },
-            { id: "lists", label: "Lists", node: <ListsWidget />, at: { x: 2, y: 28 } },
-            { id: "patterns", label: "Patterns", node: <PatternsWidget />, at: { x: 74, y: 32 } },
-            { id: "hands", label: "Hands", node: <HandsWidget />, at: { x: 2, y: 50 } },
-            { id: "research", label: "Research", node: <ResearchWidget />, at: { x: 74, y: 47 } },
-            { id: "academy", label: "Academy", node: <AcademyWidget />, at: { x: 2, y: 76 } },
-            { id: "tools", label: "Tools", node: <ToolsWidget columns={ABOUT_TOOLS.columns} />, at: { x: 2, y: 61 } },
-            { id: "breakfast", label: "Breakfast", node: <BreakfastWidget />, at: { x: 74, y: 66 } },
-            { id: "theme", label: "Theme", node: <ThemeShuffle />, at: { x: 74, y: 54.5 } },
+            { id: "fields", label: "Path", node: <FieldsWidget />, at: { x: 2, y: 18.3 } },
+            { id: "terminal", label: "whoami", node: <TerminalWidget />, at: { x: 72, y: 2 } },
+            { id: "clock", label: "Porto Alegre", node: <ClockWidget />, at: { x: 80, y: 15.4 } },
+            { id: "cat", label: "Cat", node: <CatWidget />, at: { x: 2, y: 39.6 } },
+            { id: "owl", label: "Night owl", node: <NightOwlWidget />, at: { x: 74, y: 26.8 } },
+            { id: "printer", label: "3D printer", node: <PrinterWidget />, at: { x: 74, y: 37.1 } },
+            { id: "lists", label: "Lists", node: <ListsWidget />, at: { x: 2, y: 28.5 } },
+            { id: "patterns", label: "Patterns", node: <PatternsWidget />, at: { x: 74, y: 46.2 } },
+            { id: "hands", label: "Hands", node: <HandsWidget />, at: { x: 2, y: 50.4 } },
+            { id: "research", label: "Research", node: <ResearchWidget />, at: { x: 74, y: 60.7 } },
+            { id: "academy", label: "Academy", node: <AcademyWidget />, at: { x: 2, y: 78 } },
+            { id: "tools", label: "Tools", node: <ToolsWidget columns={ABOUT_TOOLS.columns} />, at: { x: 2, y: 61.9 } },
+            { id: "breakfast", label: "Breakfast", node: <BreakfastWidget />, at: { x: 74, y: 78.7 } },
+            { id: "theme", label: "Theme", node: <ThemeShuffle />, at: { x: 74, y: 68.3 } },
           ]}
         >
           <h1 id="about-title" className="pg-hero__title" data-editable="aboutTitle">
-            {config.aboutTitle}
+            {aboutHeading(config.aboutTitle)}
           </h1>
           <p className="pg-hero__lead" data-editable="aboutIntro">
             {config.aboutIntro}
