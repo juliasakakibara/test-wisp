@@ -82,12 +82,12 @@ function parseOrbit(orbit: string): { theta: number; phi: number } | null {
 
 export type HeroModel = "hero" | "dancing";
 
-const MODELS: Record<HeroModel, { src: string; target: string; animated: boolean; radius: number; maxRadius: number }> = {
-  hero: { src: MODEL_SRC, target: "0m 0.85m 0m", animated: false, radius: BASE_RADIUS, maxRadius: 150 },
+const MODELS: Record<HeroModel, { src: string; target: string; animated: boolean; radius: number; minRadius: number; maxRadius: number }> = {
+  hero: { src: MODEL_SRC, target: "0m 0.85m 0m", animated: false, radius: BASE_RADIUS, minRadius: 95, maxRadius: 150 },
   // Mixamo dance clip (18 s), compressed with gltf-transform: 19.7 MB → 1.5 MB.
   // The clip lifts and shifts the body away from its rest bounds, so the target is
   // set from the dance itself (frames measured): whole figure in frame throughout.
-  dancing: { src: "/models/dancing.glb", target: "-0.43m 0.8m 0m", animated: true, radius: 135, maxRadius: 260 },
+  dancing: { src: "/models/dancing.glb", target: "-0.43m 0.8m 0m", animated: true, radius: 72, minRadius: 50, maxRadius: 120 },
 };
 
 export function HeroModelViewer({ model = "hero" }: { model?: HeroModel } = {}) {
@@ -270,7 +270,7 @@ export function HeroModelViewer({ model = "hero" }: { model?: HeroModel } = {}) 
         interaction-prompt="none"
         interpolation-decay="40"
         camera-orbit={formatOrbit(BASE_THETA, BASE_PHI, spec.radius)}
-        min-camera-orbit="auto 70deg 95%"
+        min-camera-orbit={`auto 70deg ${spec.minRadius}%`}
         max-camera-orbit={`auto 105deg ${spec.maxRadius}%`}
         camera-target={spec.target}
         field-of-view="26deg"
