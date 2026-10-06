@@ -5990,7 +5990,56 @@ body,
   align-content: start;
 }
 
-.pg-about__text {
-  padding: 0 12px;
+/* The About text lives in the canvas, under the buttons; widgets sit in the side gutters */
+.pg-frame--about {
+  height: 1760px;
 }
 
+.pg-about__text {
+  justify-self: center;
+  width: min(100%, 578px);
+  margin-top: 24px;
+  text-align: left;
+  pointer-events: auto;
+}
+
+.pg-about__text .pg-detail__col {
+  box-sizing: border-box;
+  padding: 24px;
+  border: var(--pg-border);
+  border-radius: var(--pg-r-surface);
+  background: var(--background);
+}
+
+
+/* About needs wide side gutters for its widgets; below 1300px it stacks them under the text */
+@media (max-width: 1299px) {
+  .pg-frame--about {
+    height: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    justify-items: center;
+    align-items: start;
+    gap: 16px;
+    padding: 48px 16px;
+  }
+
+  .pg-frame--about .pg-frame__center {
+    position: static;
+    grid-column: 1 / -1;
+    padding: 0 0 16px;
+  }
+
+  .pg-frame--about .pg-widget {
+    position: static;
+    justify-items: center;
+  }
+
+  .pg-frame--about .pg-widget__handle {
+    display: none;
+  }
+
+  .pg-frame--about .pg-note--wide {
+    width: min(360px, 100%);
+  }
+}
