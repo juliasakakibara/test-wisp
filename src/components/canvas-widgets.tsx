@@ -3,6 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { applyColorModePreference, COLOR_MODE_STORAGE_KEY } from "@/lib/color-mode";
+import { notifyThemeChange } from "@/lib/fun-themes";
 
 /* Live widgets for the canvas frames (home hero and About). Words come from the
    site's own copy (lib/about.ts); playful lines are marked as placeholders. */
@@ -88,35 +90,43 @@ function Note({ title, children, wide }: { title: string; children: React.ReactN
   );
 }
 
-/** "Night owl testing AI tools when the world gets quiet": on between 20:00 and 04:00 local. */
+/** "Night owl testing AI tools when the world gets quiet": on between 20:00 and 04:00 local, plus a light/dark switch. */
 export function NightOwlWidget() {
   const time = useLocalTime();
   const hour = time ? Number(time.h) : null;
   const on = hour !== null && (hour >= 20 || hour < 4);
+  const [dark, setDark] = useState(false);
+  useEffect(() => {
+    const sync = () => setDark(document.documentElement.getAttribute("data-color-mode") === "dark");
+    sync();
+    const mo = new MutationObserver(sync);
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-color-mode"] });
+    return () => mo.disconnect();
+  }, []);
+
+  function toggle() {
+    const next = dark ? "light" : "dark";
+    try {
+      localStorage.setItem(COLOR_MODE_STORAGE_KEY, next);
+    } catch {
+      // storage blocked: the switch still works for this visit
+    }
+    applyColorModePreference(next);
+    notifyThemeChange();
+  }
+
   return (
     <div className="pg-dark pg-owl">
       <p className="pg-owl__moon" aria-hidden="true">{on ? "☾" : "☼"}</p>
       <p>night owl mode: {hour === null ? "…" : on ? "on" : "off"}</p>
       <p className="pg-dark__muted">testing AI tools when the world gets quiet</p>
+      <button type="button" className="pg-mini-btn pg-mini-btn--on-dark" aria-pressed={dark} onClick={toggle}>
+        {dark ? "lights on ☼" : "lights off ☾"}
+      </button>
     </div>
   );
 }
 
-export function CatWidget() {
-  return (
-    <Note title="Cat person">
-      <svg className="pg-cat" viewBox="0 0 64 48" aria-hidden="true">
-        <path d="M10 44 V16 L18 4 L26 14 H38 L46 4 L54 16 V44 Z" />
-        <circle cx="24" cy="26" r="2.5" />
-        <circle cx="40" cy="26" r="2.5" />
-        <path d="M29 34 Q32 37 35 34" />
-      </svg>
-      <p>Devoted. Non-negotiable.</p>
-    </Note>
-  );
-}
-
-/** "3D printer enthusiast": a looping print bar. */
 export function PrinterWidget() {
   return (
     <div className="pg-dark pg-printer">
@@ -130,38 +140,70 @@ export function PrinterWidget() {
 }
 
 /** "My brain has limited RAM — hence the lists." A list you can tick. Placeholder items. */
+
+/** "My brain has limited RAM — hence the lists." Add and remove up to 5; then the RAM is full. Not saved. */
 export function ListsWidget() {
-  const items = ["make a list", "lose the list", "make a better list"];
-  const [done, setDone] = useState<boolean[]>(items.map(() => false));
+  const MAX = 5;
+  const [items, setItems] = useState(["make a list", "lose the list", "make a better list"]);
+  const [draft, setDraft] = useState("");
+  const full = items.length >= MAX;
+
   return (
     <Note title="Limited RAM">
-      <ul className="pg-checklist">
+      <ul className="pg-ram">
         {items.map((item, i) => (
-          <li key={item}>
-            <label>
-              <input
-                type="checkbox"
-                checked={done[i]}
-                onChange={() => setDone((d) => d.map((v, j) => (j === i ? !v : v)))}
-              />
-              <span>{item}</span>
-            </label>
+          <li key={`${i}-${item}`}>
+            <span>{item}</span>
+            <button
+              type="button"
+              className="pg-ram__remove"
+              aria-label={`Remove "${item}"`}
+              onClick={() => setItems((prev) => prev.filter((_, j) => j !== i))}
+            >
+              ×
+            </button>
           </li>
         ))}
       </ul>
+      <form
+        className="pg-ram__add"
+        onSubmit={(event) => {
+          event.preventDefault();
+          const text = draft.trim();
+          if (!text || full) return;
+          setItems((prev) => [...prev, text.slice(0, 40)]);
+          setDraft("");
+        }}
+      >
+        <input
+          aria-label="New list item"
+          value={draft}
+          onChange={(event) => setDraft(event.target.value)}
+          placeholder={full ? "RAM full" : "add an item"}
+          disabled={full}
+          maxLength={40}
+        />
+        <button type="submit" className="pg-mini-btn" disabled={full || !draft.trim()}>
+          +
+        </button>
+      </form>
+      <p className="pg-ram__count" aria-live="polite">
+        {full ? "RAM full. Delete something first." : `${items.length}/${MAX}`}
+      </p>
     </Note>
   );
 }
 
-/** "Ballet, judo, philosophy, architecture" → design and code. */
-export function FieldsWidget() {
-  const fields = ["ballet", "judo", "philosophy", "architecture", "design + code"];
+/** Ballet, judo, philosophy, architecture → design and code, as a timeline. */
+export function TimelineWidget() {
+  const steps = ["ballet", "judo", "philosophy", "architecture", "design + code"];
   return (
-    <Note title="Fields I bounced between" wide>
-      <ol className="pg-path">
-        {fields.map((f, i) => (
-          <li key={f} className={i === fields.length - 1 ? "is-now" : undefined}>
-            {f}
+    <Note title="Fields I bounced between">
+      <ol className="pg-timeline">
+        {steps.map((step, i) => (
+          <li key={step} className={i === steps.length - 1 ? "is-now" : undefined}>
+            <span>{step}</span>
+            {i === steps.length - 1 ? <span className="pg-timeline__now">now</span> : null}
           </li>
         ))}
       </ol>
@@ -169,90 +211,286 @@ export function FieldsWidget() {
   );
 }
 
-/** "Ambidextrous by accident: broke my right arm three times." Swap hands. */
-export function HandsWidget() {
-  const [left, setLeft] = useState(false);
-  return (
-    <Note title="Ambidextrous by accident">
-      <p>Broke my right arm three times; adaptation was mandatory.</p>
-      <button type="button" className="pg-mini-btn" aria-pressed={left} onClick={() => setLeft((v) => !v)}>
-        writing with: {left ? "left" : "right"}
-      </button>
-    </Note>
-  );
-}
+/**
+ * A tiny sketchbook: Julia's drawing on the page (public/sketchbook/julia.png,
+ * optional), visitors draw on top. Nothing is saved; reload for a clean page.
+ */
+export function SketchbookWidget() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const drawing = useRef(false);
+  const [challenge, setChallenge] = useState(false);
+  const [hasMine, setHasMine] = useState(true);
+  const mineRef = useRef<HTMLImageElement>(null);
 
-/** "I see patterns in places that probably don't need patterns." A mirrored dot pattern, reshuffled on press. */
-export function PatternsWidget() {
-  const size = 7;
-  // Seeded first pattern (same on server and client); random ones after a press.
-  const make = (rand: () => number) => {
-    const half = Array.from({ length: size }, () => Array.from({ length: Math.ceil(size / 2) }, () => rand() > 0.55));
-    return half.map((row) => [...row, ...row.slice(0, Math.floor(size / 2)).reverse()]);
+  // The drawing is optional: if the file isn't there (or failed before hydration), hide its slot
+  useEffect(() => {
+    const img = mineRef.current;
+    if (!img) return;
+    const check = () => {
+      if (img.complete && img.naturalWidth === 0) setHasMine(false);
+    };
+    check();
+    img.addEventListener("error", check);
+    return () => img.removeEventListener("error", check);
+  }, []);
+
+  const point = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current!;
+    const r = canvas.getBoundingClientRect();
+    return { x: ((event.clientX - r.left) / r.width) * canvas.width, y: ((event.clientY - r.top) / r.height) * canvas.height };
   };
-  const [grid, setGrid] = useState<boolean[][]>(() => {
-    let seed = 7;
-    return make(() => ((seed = (seed * 16807) % 2147483647) / 2147483647));
-  });
+
+  const start = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx) return;
+    try {
+      canvas.setPointerCapture(event.pointerId);
+    } catch {
+      // capture is a nicety (keeps the stroke when leaving the canvas); draw anyway
+    }
+    drawing.current = true;
+    const p = point(event);
+    ctx.strokeStyle = getComputedStyle(canvas).color;
+    ctx.lineWidth = 3;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+  };
+
+  const move = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    if (!drawing.current) return;
+    const ctx = canvasRef.current?.getContext("2d");
+    if (!ctx) return;
+    const p = point(event);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+  };
+
+  const stop = () => {
+    drawing.current = false;
+  };
+
+  const clear = () => {
+    const canvas = canvasRef.current;
+    canvas?.getContext("2d")?.clearRect(0, 0, canvas.width, canvas.height);
+  };
+
   return (
-    <Note title="Patterns everywhere">
-      <span className="pg-pattern" aria-hidden="true">
-        {grid.flat().map((on, i) => (
-          <span key={i} className={on ? "is-on" : undefined} />
-        ))}
-      </span>
-      <button type="button" className="pg-mini-btn" onClick={() => setGrid(make(Math.random))}>
-        find another ↻
-      </button>
+    <Note title="I like drawing. You too?">
+      <div className="pg-sketch">
+        {hasMine ? (
+          // eslint-disable-next-line @next/next/no-img-element -- optional local drawing, hidden if missing
+          <img ref={mineRef} src="/sketchbook/julia.png" alt="A drawing by Julia" className="pg-sketch__mine" />
+        ) : null}
+        <canvas
+          ref={canvasRef}
+          width={480}
+          height={360}
+          className="pg-sketch__canvas"
+          role="img"
+          aria-label="Sketchbook: draw with a mouse, finger or pen"
+          onPointerDown={start}
+          onPointerMove={move}
+          onPointerUp={stop}
+          onPointerCancel={stop}
+        />
+      </div>
+      {challenge ? <p aria-live="polite">Challenge: draw with your other hand. I broke my right arm three times; it works.</p> : null}
+      <div className="pg-sketch__actions">
+        <button type="button" className="pg-mini-btn" aria-pressed={challenge} onClick={() => setChallenge((v) => !v)}>
+          other-hand challenge
+        </button>
+        <button type="button" className="pg-mini-btn" onClick={clear}>
+          clear
+        </button>
+      </div>
     </Note>
   );
 }
 
-export function AcademyWidget() {
-  return (
-    <Note title="Apple Developer Academy">
-      <ul className="pg-chips">
-        {["Auway", "Hairy", "Byte Verse"].map((app) => (
-          <li key={app}>{app}</li>
-        ))}
-      </ul>
-    </Note>
-  );
+/** Riddles from riddles-api.vercel.app for now (to be swapped for a curated local list). */
+type Riddle = { riddle: string; answer: string };
+
+/** Skip riddles with dark themes until the list is curated. */
+const UNSUITABLE = /\b(dead|death|die[sd]?|dying|kill\w*|murder\w*|blood\w*|coffin|corpse|grave|gun|knife|stab\w*|shot|suicide|poison\w*|drown\w*|hang\w*|bomb|war|weapon|prison|police)\b/i;
+
+async function fetchRiddle(): Promise<Riddle> {
+  for (let tries = 0; tries < 8; tries++) {
+    const res = await fetch("https://riddles-api.vercel.app/random", { cache: "no-store" });
+    if (!res.ok) throw new Error(String(res.status));
+    const r = (await res.json()) as Riddle;
+    if (r?.riddle && r?.answer && !UNSUITABLE.test(`${r.riddle} ${r.answer}`)) return r;
+  }
+  throw new Error("no suitable riddle");
 }
 
-export function ResearchWidget() {
-  return (
-    <Note title="Undergrad research">
-      <p>Agentic accessibility.</p>
-    </Note>
-  );
-}
+/** One riddle, three answers (the other two come from other riddles). Result announced to screen readers. */
+export function QuizWidget() {
+  const [round, setRound] = useState<{ riddle: string; answer: string; options: string[] } | "loading" | "error">("loading");
+  const [picked, setPicked] = useState<string | null>(null);
+  const [nonce, setNonce] = useState(0);
 
-export function ToolsWidget({ columns }: { columns: { title: string; text: string }[] }) {
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([fetchRiddle(), fetchRiddle(), fetchRiddle()])
+      .then(([main, a, b]) => {
+        if (cancelled) return;
+        const options = [main.answer, a.answer, b.answer].sort(() => Math.random() - 0.5);
+        setRound({ riddle: main.riddle, answer: main.answer, options });
+        setPicked(null);
+      })
+      .catch(() => {
+        if (!cancelled) setRound("error");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [nonce]);
+
+  const next = () => {
+    setRound("loading");
+    setNonce((n) => n + 1);
+  };
+
   return (
-    <Note title="What I'm building with" wide>
-      <dl className="pg-tools">
-        {columns.map((c) => (
-          <div key={c.title}>
-            <dt>{c.title}</dt>
-            <dd>{c.text}</dd>
+    <Note title="Riddle me this" wide>
+      {round === "loading" ? <p>Thinking of one…</p> : null}
+      {round === "error" ? (
+        <>
+          <p>The riddles are napping.</p>
+          <button type="button" className="pg-mini-btn" onClick={next}>
+            try again
+          </button>
+        </>
+      ) : null}
+      {typeof round === "object" ? (
+        <>
+          <p className="pg-quiz__q">{round.riddle}</p>
+          <div className="pg-quiz__options" role="group" aria-label="Answers">
+            {round.options.map((option) => (
+              <button
+                key={option}
+                type="button"
+                className={`pg-quiz__option${picked && option === round.answer ? " is-right" : ""}${picked === option && option !== round.answer ? " is-wrong" : ""}`}
+                disabled={picked !== null}
+                onClick={() => setPicked(option)}
+              >
+                {option}
+              </button>
+            ))}
           </div>
-        ))}
-      </dl>
+          <p className="pg-quiz__result" aria-live="polite">
+            {picked === null ? "" : picked === round.answer ? "Correct ✓" : `Not quite. It's “${round.answer}”.`}
+          </p>
+          {picked !== null ? (
+            <button type="button" className="pg-mini-btn" onClick={next}>
+              next riddle →
+            </button>
+          ) : null}
+        </>
+      ) : null}
     </Note>
   );
 }
 
-export function BreakfastWidget() {
+/** Pomodoro (25 / 5) with seconds. Ends with a visual signal; a soft beep only if sound is switched on (muted by default). */
+export function PomodoroWidget() {
+  const LENGTH = { focus: 25 * 60, break: 5 * 60 } as const;
+  const [mode, setMode] = useState<keyof typeof LENGTH>("focus");
+  const [left, setLeft] = useState<number>(LENGTH.focus);
+  const [running, setRunning] = useState(false);
+  const [sound, setSound] = useState(false);
+  const [done, setDone] = useState(false);
+  const endAt = useRef(0);
+  const soundRef = useRef(sound);
+  useEffect(() => {
+    soundRef.current = sound;
+  }, [sound]);
+
+  useEffect(() => {
+    if (!running) return;
+    const id = window.setInterval(() => {
+      const remaining = Math.max(0, Math.round((endAt.current - Date.now()) / 1000));
+      setLeft(remaining);
+      if (remaining === 0) {
+        setRunning(false);
+        setDone(true);
+        if (soundRef.current) beep();
+      }
+    }, 250);
+    return () => window.clearInterval(id);
+  }, [running]);
+
+  const start = () => {
+    endAt.current = Date.now() + left * 1000;
+    setDone(false);
+    setRunning(true);
+  };
+
+  const reset = (next = mode) => {
+    setRunning(false);
+    setDone(false);
+    setMode(next);
+    setLeft(LENGTH[next]);
+  };
+
+  const mm = String(Math.floor(left / 60)).padStart(2, "0");
+  const ss = String(left % 60).padStart(2, "0");
+
   return (
-    <Note title="Lately, it looks like breakfast">
-      <ul className="pg-chips">
-        <li><Link href="/#projects">Pancake</Link></li>
-        <li><Link href="/#projects">Syrup</Link></li>
-        <li><Link href="/#projects">Cloche</Link></li>
-      </ul>
-    </Note>
+    <div className={`pg-dark pg-pomo${done ? " is-done" : ""}`}>
+      <div className="pg-pomo__row">
+        <p className="pg-pomo__time" role="timer" aria-label={`${mode} timer, ${mm} minutes ${ss} seconds left`}>
+          {mm}:{ss}
+        </p>
+        <div className="pg-pomo__controls">
+          <button type="button" className="pg-mini-btn pg-mini-btn--on-dark" onClick={running ? () => setRunning(false) : start}>
+            {running ? "pause" : left === 0 ? "again" : "start"}
+          </button>
+          <button type="button" className="pg-mini-btn pg-mini-btn--on-dark" onClick={() => reset()}>
+            reset
+          </button>
+        </div>
+      </div>
+      <div className="pg-pomo__row">
+        <div className="pg-pomo__modes" role="group" aria-label="Timer">
+          {(["focus", "break"] as const).map((m) => (
+            <button key={m} type="button" className="pg-pomo__mode" aria-pressed={mode === m} onClick={() => reset(m)}>
+              {m} {LENGTH[m] / 60}
+            </button>
+          ))}
+        </div>
+        <button type="button" className="pg-pomo__mode" aria-pressed={sound} onClick={() => setSound((v) => !v)}>
+          sound {sound ? "on" : "off"}
+        </button>
+      </div>
+      <p className="pg-dark__muted" aria-live="assertive">
+        {done ? (mode === "focus" ? "Time for a break." : "Back to it.") : " "}
+      </p>
+    </div>
   );
+}
+
+/** A short, soft two-note beep (Web Audio); only ever called after the visitor switched sound on. */
+function beep() {
+  try {
+    const ctx = new AudioContext();
+    [0, 0.25].forEach((delay, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.frequency.value = i ? 880 : 660;
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime + delay);
+      gain.gain.exponentialRampToValueAtTime(0.15, ctx.currentTime + delay + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + 0.2);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(ctx.currentTime + delay);
+      osc.stop(ctx.currentTime + delay + 0.22);
+    });
+  } catch {
+    // no audio available: the visual signal still shows
+  }
 }
 
 /* ── whoami terminal (About) ───────────────────────────────────────────── */

@@ -3,21 +3,15 @@ import { getConfig } from "@/lib/site-data";
 import { createSiteMetadata } from "@/lib/metadata";
 import { CanvasFrame } from "@/components/CanvasFrame";
 import { DetailBlock } from "@/components/DetailLayout";
-import { ThemeShuffle } from "@/components/ColorSystem";
 import {
-  AcademyWidget,
-  BreakfastWidget,
-  CatWidget,
-  ClockWidget,
-  FieldsWidget,
-  HandsWidget,
   ListsWidget,
   NightOwlWidget,
-  PatternsWidget,
+  PomodoroWidget,
   PrinterWidget,
-  ResearchWidget,
+  QuizWidget,
+  SketchbookWidget,
   TerminalWidget,
-  ToolsWidget,
+  TimelineWidget,
 } from "@/components/canvas-widgets";
 import { HeroVisual } from "@/components/HeroVisual";
 import { ABOUT_CONNECTIONS, ABOUT_DETAILS, ABOUT_TEXT, ABOUT_THINGS, ABOUT_TOOLS } from "@/lib/about";
@@ -55,20 +49,14 @@ export default async function AboutPage() {
           mobile="stack"
           widgets={[
             { id: "figure", label: "3D", node: <HeroVisual model="dancing" />, at: { x: 2, y: 2 } },
-            { id: "fields", label: "Path", node: <FieldsWidget />, at: { x: 2, y: 18.3 } },
-            { id: "terminal", label: "whoami", node: <TerminalWidget />, at: { x: 72, y: 2 } },
-            { id: "clock", label: "Porto Alegre", node: <ClockWidget />, at: { x: 80, y: 15.4 } },
-            { id: "cat", label: "Cat", node: <CatWidget />, at: { x: 2, y: 39.6 } },
-            { id: "owl", label: "Night owl", node: <NightOwlWidget />, at: { x: 74, y: 26.8 } },
-            { id: "printer", label: "3D printer", node: <PrinterWidget />, at: { x: 74, y: 37.1 } },
-            { id: "lists", label: "Lists", node: <ListsWidget />, at: { x: 2, y: 28.5 } },
-            { id: "patterns", label: "Patterns", node: <PatternsWidget />, at: { x: 74, y: 46.2 } },
-            { id: "hands", label: "Hands", node: <HandsWidget />, at: { x: 2, y: 50.4 } },
-            { id: "research", label: "Research", node: <ResearchWidget />, at: { x: 74, y: 60.7 } },
-            { id: "academy", label: "Academy", node: <AcademyWidget />, at: { x: 2, y: 78 } },
-            { id: "tools", label: "Tools", node: <ToolsWidget columns={ABOUT_TOOLS.columns} />, at: { x: 2, y: 61.9 } },
-            { id: "breakfast", label: "Breakfast", node: <BreakfastWidget />, at: { x: 74, y: 78.7 } },
-            { id: "theme", label: "Theme", node: <ThemeShuffle />, at: { x: 74, y: 68.3 } },
+            { id: "timeline", label: "Path", node: <TimelineWidget />, at: { x: 2, y: 21.1 } },
+            { id: "lists", label: "Lists", node: <ListsWidget />, at: { x: 2, y: 34.6 } },
+            { id: "sketch", label: "Sketchbook", node: <SketchbookWidget />, at: { x: 2, y: 49.1 } },
+            { id: "terminal", label: "terminal", node: <TerminalWidget />, at: { x: 72, y: 2 } },
+            { id: "pomodoro", label: "Pomodoro", node: <PomodoroWidget />, at: { x: 72, y: 15.4 } },
+            { id: "owl", label: "Night owl", node: <NightOwlWidget />, at: { x: 72, y: 26 } },
+            { id: "printer", label: "3D printer", node: <PrinterWidget />, at: { x: 72, y: 38 } },
+            { id: "quiz", label: "Riddle", node: <QuizWidget />, at: { x: 72, y: 47.1 } },
           ]}
         >
           <h1 id="about-title" className="pg-hero__title" data-editable="aboutTitle">

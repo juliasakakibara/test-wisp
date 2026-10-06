@@ -5836,25 +5836,11 @@ body,
   color: var(--background);
 }
 
-.pg-mini-btn:focus-visible,
-.pg-checklist input:focus-visible {
+.pg-mini-btn:focus-visible {
   outline: 2px solid var(--foreground);
   outline-offset: 2px;
 }
 
-.pg-cat {
-  width: 64px;
-  height: 48px;
-  fill: none;
-  stroke: var(--foreground);
-  stroke-width: 2;
-  stroke-linejoin: round;
-}
-
-.pg-cat circle {
-  fill: var(--foreground);
-  stroke: none;
-}
 
 .pg-owl__moon {
   font-size: 28px;
@@ -5883,99 +5869,10 @@ body,
   to { transform: translateX(250%); }
 }
 
-.pg-checklist,
-.pg-path,
-.pg-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
 
-.pg-checklist {
-  display: grid;
-  gap: 4px;
-}
 
-.pg-checklist label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 24px;
-  cursor: pointer;
-}
 
-.pg-checklist input {
-  accent-color: var(--foreground);
-}
 
-.pg-checklist input:checked + span {
-  text-decoration: line-through;
-  color: var(--muted-foreground);
-}
-
-.pg-path li,
-.pg-chips li {
-  padding: 4px 10px;
-  border: var(--pg-border);
-  border-radius: 999px;
-}
-
-.pg-path li:not(:last-child)::after {
-  content: " →";
-  color: var(--muted-foreground);
-}
-
-.pg-path li.is-now {
-  background: var(--foreground);
-  color: var(--background);
-}
-
-.pg-chips a,
-.pg-chips a:hover {
-  color: inherit;
-  text-decoration: none;
-}
-
-.pg-pattern {
-  display: grid;
-  grid-template-columns: repeat(7, 12px);
-  gap: 4px;
-}
-
-.pg-pattern span {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--lb-border-muted);
-}
-
-.pg-pattern span.is-on {
-  background: var(--foreground);
-}
-
-.pg-tools {
-  display: grid;
-  gap: 8px;
-  margin: 0;
-}
-
-.pg-tools div {
-  display: grid;
-  grid-template-columns: 64px 1fr;
-  gap: 8px;
-}
-
-.pg-tools dt {
-  font-weight: 600;
-}
-
-.pg-tools dd {
-  margin: 0;
-  color: var(--muted-foreground);
-}
 
 @media (prefers-reduced-motion: reduce) {
   .pg-printer__bar span {
@@ -6090,5 +5987,300 @@ body,
 .pg-widget--figure .hero-visual--dancing {
   width: 260px;
   height: 280px;
+}
+
+/* ── About widgets (round 2) ───────────────────────────────────────────── */
+.pg-mini-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.pg-mini-btn--on-dark {
+  border-color: color-mix(in srgb, var(--lb-neutral-50) 35%, transparent);
+  color: var(--lb-neutral-50);
+}
+
+.pg-mini-btn--on-dark[aria-pressed="true"] {
+  background: var(--lb-neutral-50);
+  color: var(--lb-neutral-900);
+}
+
+.pg-mini-btn--on-dark:focus-visible {
+  outline-color: var(--lb-neutral-50);
+}
+
+/* Pomodoro: a horizontal bar, seconds included */
+.pg-pomo {
+  width: 320px;
+  gap: 8px;
+}
+
+.pg-pomo__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pg-pomo__time {
+  font: 700 40px/1 var(--font-doto), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.pg-pomo__controls,
+.pg-pomo__modes {
+  display: flex;
+  gap: 4px;
+}
+
+.pg-pomo__mode {
+  min-height: 24px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--lb-neutral-400);
+  font: var(--pg-text-ui) var(--font-body);
+  cursor: pointer;
+}
+
+.pg-pomo__mode[aria-pressed="true"] {
+  color: var(--lb-neutral-50);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.pg-pomo__mode:focus-visible {
+  outline: 2px solid var(--lb-neutral-50);
+  outline-offset: 2px;
+}
+
+.pg-pomo.is-done {
+  animation: pg-pomo-flash 0.6s ease-in-out 6 alternate;
+}
+
+@keyframes pg-pomo-flash {
+  to {
+    background: var(--lb-neutral-50);
+    color: var(--lb-neutral-900);
+  }
+}
+
+/* Editable list with a 5-item "RAM" */
+.pg-ram {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pg-ram li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 24px;
+}
+
+.pg-ram__remove {
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted-foreground);
+  font: 16px/1 var(--font-body);
+  cursor: pointer;
+}
+
+.pg-ram__remove:hover,
+.pg-ram__remove:focus-visible {
+  color: var(--foreground);
+  outline: 2px solid var(--foreground);
+  outline-offset: 0;
+}
+
+.pg-ram__add {
+  display: flex;
+  gap: 8px;
+}
+
+.pg-ram__add input {
+  flex: 1;
+  min-width: 0;
+  min-height: 28px;
+  padding: 0 12px;
+  border: var(--pg-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--foreground);
+  font: var(--pg-text-ui) var(--font-body);
+}
+
+.pg-ram__add input:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 2px;
+}
+
+.pg-note .pg-ram__count {
+  font-size: var(--pg-text-micro);
+}
+
+/* Path as a timeline */
+.pg-timeline {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0 0 0 20px;
+  list-style: none;
+}
+
+.pg-timeline::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  background: var(--lb-border-muted);
+}
+
+.pg-timeline li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted-foreground);
+}
+
+.pg-timeline li::before {
+  content: "";
+  position: absolute;
+  left: -19px;
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--muted-foreground);
+  border-radius: 50%;
+  background: var(--lb-neutral-50);
+}
+
+.pg-timeline li.is-now {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.pg-timeline li.is-now::before {
+  border-color: var(--foreground);
+  background: var(--foreground);
+}
+
+.pg-timeline__now {
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--foreground);
+  color: var(--background);
+  font-size: var(--pg-text-micro);
+  font-weight: 400;
+}
+
+/* Sketchbook */
+.pg-sketch {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border: var(--pg-border);
+  border-radius: var(--pg-r-inner);
+  background: var(--background);
+  overflow: hidden;
+}
+
+.pg-sketch__mine,
+.pg-sketch__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.pg-sketch__mine {
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.pg-sketch__canvas {
+  color: var(--foreground);
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.pg-sketch__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Riddle quiz */
+.pg-note .pg-quiz__q {
+  color: var(--foreground);
+}
+
+.pg-quiz__options {
+  display: grid;
+  gap: 4px;
+}
+
+.pg-quiz__option {
+  min-height: 32px;
+  padding: 4px 12px;
+  border: var(--pg-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--foreground);
+  font: var(--pg-text-ui) var(--font-body);
+  text-align: left;
+  cursor: pointer;
+}
+
+.pg-quiz__option:hover:not(:disabled) {
+  background: var(--lb-neutral-200);
+}
+
+.pg-quiz__option:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 2px;
+}
+
+.pg-quiz__option:disabled {
+  cursor: default;
+}
+
+.pg-quiz__option.is-right {
+  border-color: var(--foreground);
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.pg-quiz__option.is-wrong {
+  text-decoration: line-through;
+  color: var(--muted-foreground);
+}
+
+.pg-note .pg-quiz__result {
+  min-height: 18px;
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.pg-note--sketch {
+  width: 280px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pg-pomo.is-done {
+    animation: none;
+    outline: 2px solid var(--lb-neutral-50);
+    outline-offset: -6px;
+  }
 }
 
