@@ -6556,10 +6556,10 @@ body,
   }
 }
 
-/* stacked (no canvas): full size, nothing to pick up */
+/* stacked About (no canvas): same rest/hover scale, growing from the top centre */
 @media (max-width: 1099px) {
   .pg-frame--about .pg-widget {
-    scale: 1;
+    transform-origin: top center;
   }
 }
 
