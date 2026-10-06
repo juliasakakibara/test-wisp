@@ -5527,6 +5527,8 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
   --pg-text-body: 14px;
   /* 3 · one line height for every display title */
   --pg-lh-display: 1.1;
+  /* 5 · one hairline, in the theme's own border colour (follows dark themes) */
+  --pg-border: 1px solid var(--lb-border-muted);
 }
 
 .pg-frame,
@@ -5639,3 +5641,17 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
 .theme-switcher__face {
   padding: 0 4px;
 }
+
+/* 5 · every hairline from the theme (fixed rgba(0,0,0,.1) vanished on dark themes) */
+.pg-pill,
+a.pg-pill:hover,
+.pg-arrow,
+.pg-back,
+.pg-back:hover,
+.pg-frame,
+.pg-color,
+.pg-color__button:not(.pg-color__button--primary),
+.pg-detail__preview {
+  border: var(--pg-border);
+}
+
