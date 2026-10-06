@@ -6066,61 +6066,97 @@ body,
   }
 }
 
-/* Editable list with a 5-item "RAM" */
+/* Editable list with a 5-item "RAM": numbered, edited in place */
 .pg-ram {
   display: grid;
-  gap: 4px;
+  gap: 2px;
   margin: 0;
-  padding: 0;
-  list-style: none;
+  padding: 0 0 0 20px;
+  list-style: decimal;
 }
 
-.pg-ram li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+.pg-ram__item::marker {
+  color: var(--muted-foreground);
+}
+
+.pg-ram__item {
+  position: relative;
   min-height: 24px;
 }
 
-.pg-ram__remove {
-  width: 24px;
-  height: 24px;
+.pg-ram__item form {
+  display: contents;
+}
+
+.pg-ram__text {
+  width: 100%;
+  min-height: 24px;
+  box-sizing: border-box;
+  padding: 0 28px 0 0;
   border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--muted-foreground);
-  font: 16px/1 var(--font-body);
-  cursor: pointer;
-}
-
-.pg-ram__remove:hover,
-.pg-ram__remove:focus-visible {
-  color: var(--foreground);
-  outline: 2px solid var(--foreground);
-  outline-offset: 0;
-}
-
-.pg-ram__add {
-  display: flex;
-  gap: 8px;
-}
-
-.pg-ram__add input {
-  flex: 1;
-  min-width: 0;
-  min-height: 28px;
-  padding: 0 12px;
-  border: var(--pg-border);
-  border-radius: 999px;
+  border-radius: 4px;
   background: transparent;
   color: var(--foreground);
   font: var(--pg-text-ui) var(--font-body);
 }
 
-.pg-ram__add input:focus-visible {
-  outline: 2px solid var(--foreground);
+.pg-ram__text:focus-visible {
+  outline: 1px solid var(--muted-foreground);
   outline-offset: 2px;
+}
+
+.pg-ram__text::placeholder {
+  color: var(--muted-foreground);
+}
+
+/* × only shows while the list is pointed at (or worked with by keyboard) */
+.pg-ram__remove {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  background: transparent;
+  color: var(--muted-foreground);
+  font: 16px/1 var(--font-body);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--pg-dur-fast) ease, color var(--pg-dur-fast) ease;
+}
+
+.pg-ram:is(:hover, :focus-within) .pg-ram__remove {
+  opacity: 1;
+}
+
+.pg-ram__remove:hover {
+  color: var(--foreground);
+}
+
+.pg-ram__remove:focus-visible {
+  opacity: 1;
+  color: var(--foreground);
+  outline: 1px solid var(--foreground);
+  outline-offset: 0;
+  border-radius: 4px;
+}
+
+/* The add line: a faint last item, shown while the list is pointed at */
+.pg-ram__new {
+  opacity: 0;
+  transition: opacity var(--pg-dur-fast) ease;
+}
+
+.pg-ram:is(:hover, :focus-within) .pg-ram__new {
+  opacity: 1;
+}
+
+/* Touch screens have no hover: keep the × and the add line visible */
+@media (hover: none) {
+  .pg-ram__remove,
+  .pg-ram__new {
+    opacity: 1;
+  }
 }
 
 .pg-note .pg-ram__count {

@@ -139,9 +139,11 @@ export function PrinterWidget() {
   );
 }
 
-/** "My brain has limited RAM — hence the lists." A list you can tick. Placeholder items. */
-
-/** "My brain has limited RAM — hence the lists." Add and remove up to 5; then the RAM is full. Not saved. */
+/**
+ * "My brain has limited RAM — hence the lists." A numbered list you edit in place:
+ * click an item to rewrite it, × to drop it, type on the faint last line to add.
+ * Five items max, then the RAM is full. Not saved.
+ */
 export function ListsWidget() {
   const MAX = 5;
   const [items, setItems] = useState(["make a list", "lose the list", "make a better list"]);
@@ -149,44 +151,51 @@ export function ListsWidget() {
   const full = items.length >= MAX;
 
   return (
-    <Note title="Limited RAM">
-      <ul className="pg-ram">
+    <Note title="Limited RAM List">
+      <ol className="pg-ram">
         {items.map((item, i) => (
-          <li key={`${i}-${item}`}>
-            <span>{item}</span>
+          <li key={i} className="pg-ram__item">
+            <input
+              className="pg-ram__text"
+              aria-label={`Item ${i + 1}`}
+              value={item}
+              maxLength={40}
+              onChange={(event) => setItems((prev) => prev.map((v, j) => (j === i ? event.target.value : v)))}
+              onBlur={() => setItems((prev) => prev.filter((v) => v.trim() !== ""))}
+            />
             <button
               type="button"
               className="pg-ram__remove"
-              aria-label={`Remove "${item}"`}
+              aria-label={`Remove item ${i + 1}: ${item}`}
               onClick={() => setItems((prev) => prev.filter((_, j) => j !== i))}
             >
               ×
             </button>
           </li>
         ))}
-      </ul>
-      <form
-        className="pg-ram__add"
-        onSubmit={(event) => {
-          event.preventDefault();
-          const text = draft.trim();
-          if (!text || full) return;
-          setItems((prev) => [...prev, text.slice(0, 40)]);
-          setDraft("");
-        }}
-      >
-        <input
-          aria-label="New list item"
-          value={draft}
-          onChange={(event) => setDraft(event.target.value)}
-          placeholder={full ? "RAM full" : "add an item"}
-          disabled={full}
-          maxLength={40}
-        />
-        <button type="submit" className="pg-mini-btn" disabled={full || !draft.trim()}>
-          +
-        </button>
-      </form>
+        {full ? null : (
+          <li className="pg-ram__item pg-ram__new">
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                const text = draft.trim();
+                if (!text) return;
+                setItems((prev) => [...prev, text.slice(0, 40)]);
+                setDraft("");
+              }}
+            >
+              <input
+                className="pg-ram__text"
+                aria-label="Add an item (press Enter)"
+                value={draft}
+                onChange={(event) => setDraft(event.target.value)}
+                placeholder="add an item"
+                maxLength={40}
+              />
+            </form>
+          </li>
+        )}
+      </ol>
       <p className="pg-ram__count" aria-live="polite">
         {full ? "RAM full. Delete something first." : `${items.length}/${MAX}`}
       </p>
