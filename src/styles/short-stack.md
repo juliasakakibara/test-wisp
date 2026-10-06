@@ -57,7 +57,7 @@ Light and dark aren't separate tokens. They are the same roles with different va
 | `--border` | foreground 10%, **alpha** | every line and hairline |
 | `--surface` | foreground 11% mixed into the background, **opaque** | cards, footer, hover fills |
 | `--surface-hover` | foreground 21%, **opaque** | hover on a card |
-| `--dots` | foreground 16%, alpha | canvas dot grid |
+| `--dots` | foreground 9%, alpha | canvas dot grid |
 | `--palette-mix` | `calc(var(--palette) * 100%)` | strength of every colour detail |
 | `--success` | `--lb-bg-success` | live dot |
 

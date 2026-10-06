@@ -68,7 +68,7 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
   --border: color-mix(in srgb, var(--foreground) 10%, transparent);
   --surface: color-mix(in srgb, var(--foreground) 11%, var(--background));
   --surface-hover: color-mix(in srgb, var(--foreground) 21%, var(--background));
-  --dots: color-mix(in srgb, var(--foreground) 16%, transparent);
+  --dots: color-mix(in srgb, var(--foreground) 9%, transparent);
   --palette-mix: calc(var(--palette) * 100%);
   --success: var(--lb-bg-success);
   /* older site names, same meaning */
