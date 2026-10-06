@@ -14,6 +14,8 @@ type Point = { x: number; y: number };
 
 export type CanvasWidget = {
   id: string;
+  /** What the widget is, shown bold before its name (after Weavy: "IMAGE  Stable Diffusion"). */
+  kind?: string;
   label: string;
   node: ReactNode;
   /** Top-left as a % of the frame on desktop. */
@@ -149,7 +151,8 @@ export function CanvasFrame({ widgets, className, mobile = "canvas", children }:
             onPointerCancel={onPointerUp}
             onKeyDown={onKeyDown(w.id)}
           >
-            {w.label}
+            {w.kind ? <span className="pg-widget__kind">{w.kind}</span> : null}
+            <span className="pg-widget__name">{w.label}</span>
           </button>
           {w.node}
         </section>

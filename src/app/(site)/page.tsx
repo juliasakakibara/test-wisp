@@ -39,11 +39,12 @@ export default async function HomePage() {
         <CanvasFrame
           className="pg-frame--home"
           widgets={[
-            { id: "figure", label: "3D", node: <HeroVisual />, at: { x: 5, y: 4 }, atMobile: { x: 4, y: 2 } },
-            { id: "syrup", label: "Syrup", node: <SyrupWidget />, at: { x: 27, y: 10 } },
-            { id: "clock", label: "Porto Alegre", node: <ClockWidget />, at: { x: 82, y: 6 }, atMobile: { x: 8, y: 78 } },
+            { id: "figure", kind: "3D", label: "Julia", node: <HeroVisual />, at: { x: 5, y: 4 }, atMobile: { x: 4, y: 2 } },
+            { id: "syrup", kind: "Sync", label: "Syrup", node: <SyrupWidget />, at: { x: 27, y: 10 } },
+            { id: "clock", kind: "Time", label: "Porto Alegre", node: <ClockWidget />, at: { x: 82, y: 6 }, atMobile: { x: 8, y: 78 } },
             {
               id: "covers",
+              kind: "Cases",
               label: "Projects",
               node: (
                 <CoversWidget
@@ -58,9 +59,9 @@ export default async function HomePage() {
               at: { x: 5, y: 64 },
               atMobile: { x: 48, y: 67 },
             },
-            { id: "cloche", label: "Cloche", node: <ClocheWidget />, at: { x: 50, y: 70 } },
-            { id: "color", label: "Theme", node: <ThemeShuffle />, at: { x: 75, y: 50 }, atMobile: { x: 7, y: 17.5 } },
-            { id: "sticky", label: "Tip", node: <StickyWidget>Drag anything around, then shuffle the theme.</StickyWidget>, at: { x: 8, y: 41 } },
+            { id: "cloche", kind: "Terminal", label: "Cloche", node: <ClocheWidget />, at: { x: 50, y: 70 } },
+            { id: "color", kind: "Theme", label: "Shuffle", node: <ThemeShuffle />, at: { x: 75, y: 50 }, atMobile: { x: 7, y: 17.5 } },
+            { id: "sticky", kind: "Note", label: "How to", node: <StickyWidget>Drag anything around, then shuffle the theme.</StickyWidget>, at: { x: 8, y: 41 } },
           ]}
         >
           <h1 id="hero-title" className="pg-hero__title" data-editable="heroTitle">

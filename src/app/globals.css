@@ -6475,20 +6475,20 @@ body,
   color: color-mix(in srgb, var(--ink-blue) calc(var(--palette) * 55%), var(--muted-foreground));
 }
 
-/* Widget tabs as plain labels (after Weavy's node labels): always there, quiet;
-   they darken when the widget is hovered, focused or dragged. The 24px row keeps
-   the target size (WCAG 2.5.8). */
+/* Widget tabs as plain labels (after Weavy's node labels): KIND in bold caps, the
+   name in spaced caps; small and dark, no background. The 24px row keeps the
+   target size (WCAG 2.5.8). */
 .pg-widget__handle {
+  gap: calc(var(--unit) * 3);
   padding: 0;
   background: transparent;
-  color: var(--muted-foreground);
-  font: var(--font-weight) var(--font-size)/1 var(--font-body);
-  text-transform: none;
-  letter-spacing: 0;
-  transition: color var(--duration-fast) var(--ease);
+  color: var(--foreground);
+  font: var(--font-weight) var(--font-size-small)/1 var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
 }
 
-.pg-widget:is(:hover, :focus-within) .pg-widget__handle,
-.pg-widget__handle:active {
-  color: var(--foreground);
+.pg-widget__kind {
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.02em;
 }
