@@ -35,30 +35,36 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
   --ink-blue: var(--lb-blue-600); /* Bic ballpoint, for handwriting */
   /* the classic terminal aubergine; dark in both modes. Not a Pancake colour yet */
   --terminal: #300a24;
+  /* Greys, not inversion (base themes): raised surfaces step away from the page,
+     and dark widgets stay dark in both modes. --raise is how far a raised surface
+     moves toward the text colour: 0 in light (white on white, with a hairline). */
+  --raise: 0%;
+  --inverse-surface-base: var(--lb-neutral-900);
+  --inverse-ink-base: var(--lb-neutral-50);
   --terminal-ink: #ffffff;
   --on-sticky: var(--lb-neutral-900);
 }
 
 /* 1 · Inputs: dark (same roles, other values) */
 html:root[data-theme="dark"]:not([data-env="admin"]):not([data-fun-theme]) {
-  --background: var(--lb-neutral-950);
+  --background: var(--lb-neutral-900); /* dark grey page, not black */
   --foreground: var(--lb-neutral-100);
   --green: var(--lb-green-400);
-  --green-inverse: var(--lb-green-700);
-  --yellow-inverse: var(--lb-yellow-800);
-  --cyan-inverse: var(--lb-cyan-700);
   --ink-blue: var(--lb-blue-400);
+  --raise: 8%; /* raised surfaces a step lighter than the page */
+  --inverse-surface-base: var(--lb-neutral-800); /* dark widgets stay dark */
+  --inverse-ink-base: var(--lb-neutral-100);
 }
 
 @media (prefers-color-scheme: dark) {
   html:root:not([data-theme="light"]):not([data-env="admin"]):not([data-fun-theme]) {
-    --background: var(--lb-neutral-950);
+    --background: var(--lb-neutral-900); /* dark grey page, not black */
     --foreground: var(--lb-neutral-100);
     --green: var(--lb-green-400);
-    --green-inverse: var(--lb-green-700);
-    --yellow-inverse: var(--lb-yellow-800);
-    --cyan-inverse: var(--lb-cyan-700);
     --ink-blue: var(--lb-blue-400);
+    --raise: 8%; /* raised surfaces a step lighter than the page */
+    --inverse-surface-base: var(--lb-neutral-800); /* dark widgets stay dark */
+    --inverse-ink-base: var(--lb-neutral-100);
   }
 }
 
@@ -67,7 +73,10 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
      under them. Surfaces are opaque mixes: they stack and cover images predictably.
      The random theme generator mirrors these numbers (ALPHA in src/lib/random-palette.ts). */
   --muted-foreground: color-mix(in srgb, var(--foreground) var(--muted-opacity), transparent);
-  --inverse-muted: color-mix(in srgb, var(--background) var(--inverse-muted-opacity), transparent);
+  --inverse-surface: color-mix(in srgb, var(--inverse-surface-base) var(--palette-mix), var(--foreground));
+  --inverse-ink: color-mix(in srgb, var(--inverse-ink-base) var(--palette-mix), var(--background));
+  --inverse-muted: color-mix(in srgb, var(--inverse-ink) var(--inverse-muted-opacity), transparent);
+  --raised: color-mix(in srgb, var(--foreground) calc(var(--raise) * var(--palette)), var(--background));
   --border: color-mix(in srgb, var(--foreground) 10%, transparent);
   --surface: color-mix(in srgb, var(--foreground) 11%, var(--background));
   --surface-hover: color-mix(in srgb, var(--foreground) 21%, var(--background));

@@ -4607,7 +4607,7 @@ a.pg-pill:hover {
   padding: 0 calc(var(--unit) * 3);
   border: var(--border-width) solid var(--border);
   border-radius: var(--radius-pill);
-  background: var(--background);
+  background: var(--raised);
   color: var(--foreground);
   font: var(--font-weight) var(--font-size-large)/1 var(--font-body);
   font-style: normal;
@@ -4829,7 +4829,7 @@ a.pg-card__link:hover,
   padding: calc(var(--unit) * 3.5) calc(var(--unit) * 4);
   border: var(--border-width) solid var(--border);
   border-radius: var(--radius-surface);
-  background: var(--background);
+  background: var(--raised);
   font: 11px/1.5 var(--font-body);
 }
 
@@ -4909,7 +4909,7 @@ a.pg-card__link:hover,
   height: 32px;
   border: var(--border-width) solid var(--border);
   border-radius: var(--radius-pill);
-  background: var(--background);
+  background: var(--raised);
   color: var(--foreground);
   font: 16px/1 var(--font-body);
   cursor: pointer;
@@ -5097,7 +5097,7 @@ a.pg-card__link:hover,
   height: 32px;
   border: var(--border-width) solid var(--border);
   border-radius: var(--radius-pill);
-  background: var(--background);
+  background: var(--raised);
   color: var(--foreground);
   font: 400 16px/1 var(--font-body);
   font-style: normal;
@@ -5755,7 +5755,7 @@ body,
   padding: calc(var(--unit) * 4);
   border: var(--border-width) solid var(--border);
   border-radius: var(--radius-surface);
-  background: var(--background);
+  background: var(--raised);
   font-size: var(--font-size);
   line-height: var(--line-height);
 }
@@ -6488,7 +6488,7 @@ body,
 
 /* on dark widgets and the clock the label is light; on the sticky note, ink */
 .pg-widget:has(> .pg-dark, > .pg-clock) > .pg-widget__handle {
-  color: var(--background);
+  color: var(--inverse-ink);
 }
 
 .pg-widget:has(> .pg-sticky) > .pg-widget__handle {
@@ -6572,4 +6572,12 @@ body,
   font-weight: var(--font-weight);
   text-transform: none;
   letter-spacing: 0;
+}
+
+/* Dark widgets (clock, Pomodoro, Modes at night) stay dark in both modes: inside
+   them the theme pair is swapped for the inverse pair (terminals have their own). */
+.pg-widget .pg-dark:not(.pg-term, .pg-tools),
+.pg-widget .pg-clock {
+  --foreground: var(--inverse-surface);
+  --background: var(--inverse-ink);
 }

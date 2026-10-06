@@ -32,6 +32,18 @@ Pancake (--lb-*)  →  Short Stack inputs  →  Short Stack derived  →  site C
 
 Light and dark aren't separate tokens. They are the same roles with different values. A shuffled theme is one more set of values.
 
+**Light vs dark is greys, not inversion (base themes):**
+
+| | Light | Dark |
+|---|---|---|
+| Page (`--background`) | neutral-50 (white) | neutral-900 (#1c1c1c), not black |
+| Raised: notes, Theme card, pills, arrows (`--raised`) | the page, with a hairline (`--raise` 0%) | a step lighter: foreground 8% into the page |
+| Cards, footer (`--surface`) | foreground 11% into the page | same formula, so lighter grey |
+| Dark widgets: clock, Pomodoro, Modes at night (`--inverse-surface` / `--inverse-ink`) | neutral-900 / white | neutral-800 / neutral-100; they stay dark |
+| Terminals | aubergine | aubergine |
+
+Inside dark widgets the theme pair is swapped for the inverse pair, so their prompt and clock colours use the bright steps in both modes. Shuffled themes fold all of this back (`--palette: 0`): raised = page, and dark widgets = foreground/background, as before.
+
 **Colour details (base themes only):** a few restrained colours, each with one job.
 
 | Where | Colour |
