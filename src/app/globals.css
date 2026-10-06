@@ -6492,3 +6492,29 @@ body,
   font-weight: var(--font-weight-bold);
   letter-spacing: 0.02em;
 }
+
+/* Widgets rest a little smaller and come up to full size when you interact with
+   them (hover, keyboard focus, dragging). Only the content scales; the label stays put. */
+.pg-widget > :not(.pg-widget__handle) {
+  scale: 0.88;
+  transform-origin: top left;
+  transition: scale var(--duration-slow) var(--ease);
+}
+
+.pg-widget:is(:hover, :focus-within) > :not(.pg-widget__handle),
+.pg-widget:has(.pg-widget__handle:active) > :not(.pg-widget__handle) {
+  scale: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pg-widget > :not(.pg-widget__handle) {
+    transition: none;
+  }
+}
+
+/* stacked (no canvas): full size, nothing to pick up */
+@media (max-width: 1099px) {
+  .pg-frame--about .pg-widget > :not(.pg-widget__handle) {
+    scale: 1;
+  }
+}
