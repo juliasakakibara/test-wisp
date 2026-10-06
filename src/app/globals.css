@@ -6958,7 +6958,7 @@ a.pg-theme-card:hover {
    theme cards. Shuffled themes grey the cover (colour overlays would show as
    boxes around a transparent image). */
 .pg-card__frame {
-  width: 80%;
+  width: 100%; /* the cover fills the space between the tag and the name */
   height: 100%;
   aspect-ratio: auto;
   overflow: visible;
