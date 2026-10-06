@@ -5788,7 +5788,9 @@ body,
   pointer-events: auto;
 }
 
-.pg-about__actions .pg-pill {
+/* Same width at rest and on hover (a hover-only min-width reset made them shrink and flicker) */
+.pg-about__actions .pg-pill,
+.pg-about__actions a.pg-pill:hover {
   min-width: 160px;
 }
 
@@ -5842,39 +5844,11 @@ body,
 }
 
 
-.pg-printer__bar {
-  display: block;
-  height: 6px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--lb-neutral-50) 20%, transparent);
-  overflow: hidden;
-}
-
-.pg-printer__bar span {
-  display: block;
-  width: 40%;
-  height: 100%;
-  border-radius: inherit;
-  background: var(--lb-neutral-50);
-  animation: pg-print 3.2s linear infinite;
-}
-
-@keyframes pg-print {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(250%); }
-}
 
 
 
 
 
-
-@media (prefers-reduced-motion: reduce) {
-  .pg-printer__bar span {
-    animation: none;
-    transform: translateX(60%);
-  }
-}
 
 /* About: the intro sits at the top of the canvas so it reads on load */
 .pg-frame--about .pg-frame__center {
@@ -6004,10 +5978,11 @@ body,
   outline-color: var(--lb-neutral-50);
 }
 
-/* Pomodoro: settings above, the time, controls below — one left edge for all */
+/* Pomodoro: settings above, the time, controls below — one left edge for all.
+   Three groups, 16px apart; the time sits tight between settings and controls. */
 .pg-pomo {
   width: 320px;
-  gap: 8px;
+  gap: 12px;
 }
 
 .pg-pomo__row {
@@ -6015,11 +5990,17 @@ body,
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  min-height: 28px;
 }
 
 .pg-pomo .pg-pomo__time {
+  margin: 4px 0;
   font: 700 48px/1 var(--font-doto), ui-monospace, monospace;
   font-variant-numeric: tabular-nums;
+}
+
+.pg-pomo .pg-pomo__msg {
+  text-align: right;
 }
 
 .pg-pomo__controls,

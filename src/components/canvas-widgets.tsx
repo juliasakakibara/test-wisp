@@ -131,17 +131,6 @@ export function NightOwlWidget() {
   );
 }
 
-export function PrinterWidget() {
-  return (
-    <div className="pg-dark pg-printer">
-      <p>3D printer</p>
-      <span className="pg-printer__bar" aria-hidden="true">
-        <span />
-      </span>
-      <p className="pg-dark__muted">printing something nobody asked for</p>
-    </div>
-  );
-}
 
 /**
  * "My brain has limited RAM — hence the lists." A numbered list you edit in place:
@@ -224,14 +213,37 @@ export function TimelineWidget() {
   );
 }
 
-/** Riddles from riddles-api.vercel.app for now (to be swapped for a curated local list). */
-type Riddle = { riddle: string; answer: string };
+/** A riddle: the API sends riddle + answer; classics also carry accepted answers, a hint and the why. */
+type Riddle = { riddle: string; answer: string; accept?: string[]; hint?: string; why?: string };
+
+/** Classic logic puzzles, mixed in with the API riddles (half the time). */
+const CLASSICS: Riddle[] = [
+  { riddle: "How many squares are on a 3×3 board, counting every size?", answer: "14", accept: ["14", "fourteen"], hint: "Count the 1×1s, the 2×2s and the 3×3.", why: "9 + 4 + 1 = 14." },
+  { riddle: "How many squares are on a 4×4 board, counting every size?", answer: "30", accept: ["30", "thirty"], hint: "1×1, 2×2, 3×3 and 4×4: they're all square numbers.", why: "16 + 9 + 4 + 1 = 30." },
+  { riddle: "How many squares are on a chessboard (8×8), counting every size?", answer: "204", accept: ["204"], hint: "Add up the square numbers from 1 to 64.", why: "64 + 49 + 36 + 25 + 16 + 9 + 4 + 1 = 204." },
+  { riddle: "A bat and a ball cost $1.10. The bat costs $1 more than the ball. How much is the ball?", answer: "5 cents", accept: ["5 cents", "5c", "0.05", "$0.05", "five cents", "5"], hint: "It isn't 10 cents: then the bat would be $1.10.", why: "Ball $0.05 + bat $1.05 = $1.10." },
+  { riddle: "5 machines make 5 widgets in 5 minutes. How long do 100 machines take to make 100 widgets?", answer: "5 minutes", accept: ["5 minutes", "5 min", "5", "five minutes"], hint: "How long does one machine take for one widget?", why: "Each machine makes one widget in 5 minutes." },
+  { riddle: "I'm tall when I'm young and short when I'm old. What am I?", answer: "A candle", accept: ["candle"], hint: "It lights up a birthday." },
+  { riddle: "What has keys but can't open a single lock?", answer: "A piano", accept: ["piano", "keyboard"], hint: "Black and white, and it plays." },
+];
 
 /** Skip riddles with dark themes until the list is curated. */
 const UNSUITABLE = /\b(dead|death|die[sd]?|dying|kill\w*|murder\w*|blood\w*|coffin|corpse|grave|gun|knife|stab\w*|shot|suicide|poison\w*|drown\w*|hang\w*|bomb|war|weapon|prison|police)\b/i;
 
 /** About three lines in the widget (≈45 characters a line). */
 const MAX_RIDDLE_CHARS = 130;
+
+/** Half the time a classic (never the same one twice in a row), otherwise the API. */
+let lastClassic = -1;
+async function nextRiddle(): Promise<Riddle> {
+  if (Math.random() < 0.5) {
+    let i = Math.floor(Math.random() * CLASSICS.length);
+    if (i === lastClassic) i = (i + 1) % CLASSICS.length;
+    lastClassic = i;
+    return CLASSICS[i];
+  }
+  return fetchRiddle().catch(() => CLASSICS[Math.floor(Math.random() * CLASSICS.length)]);
+}
 
 async function fetchRiddle(): Promise<Riddle> {
   for (let tries = 0; tries < 12; tries++) {
@@ -253,22 +265,22 @@ const normalise = (text: string) =>
     .replace(/\s+/g, " ")
     .trim();
 
-/** "A mirror, or a pool of water" → ["mirror", "pool of water"]. */
-const acceptedAnswers = (answer: string) =>
-  answer
-    .split(/,|\bor\b|\//i)
-    .map(normalise)
-    .filter(Boolean);
+/** "A mirror, or a pool of water" → ["mirror", "pool of water"]; classics list theirs. */
+const acceptedAnswers = (r: Riddle) =>
+  (r.accept ?? r.answer.split(/,|\bor\b|\//i)).map(normalise).filter(Boolean);
 
-function isRight(guess: string, answer: string) {
+function isRight(guess: string, r: Riddle) {
   const g = normalise(guess);
   if (!g) return false;
-  return acceptedAnswers(answer).some((a) => a === g || (g.length >= 3 && (a.includes(g) || g.includes(a))));
+  // numbers must match exactly ("14", not "1"); words may be part of a longer answer
+  return acceptedAnswers(r).some((a) => a === g || (!/^\d/.test(g) && g.length >= 3 && (a.includes(g) || g.includes(a))));
 }
 
-/** One hint: first letter and length of the shortest accepted answer (API answers can be wordy). */
-function hintFor(answer: string) {
-  const main = [...acceptedAnswers(answer)].sort((a, b) => a.length - b.length)[0] ?? normalise(answer);
+/** One hint: the classic's own, or first letter and length of the shortest accepted answer. */
+function hintFor(r: Riddle) {
+  if (r.hint) return r.hint;
+  const answer = r.answer;
+  const main = [...acceptedAnswers(r)].sort((a, b) => a.length - b.length)[0] ?? normalise(answer);
   const words = main.split(" ").length;
   return `Starts with “${main[0]?.toUpperCase()}”, ${main.replace(/ /g, "").length} letters${words > 1 ? ` in ${words} words` : ""}.`;
 }
@@ -283,7 +295,7 @@ export function QuizWidget() {
 
   useEffect(() => {
     let cancelled = false;
-    fetchRiddle()
+    nextRiddle()
       .then((r) => {
         if (cancelled) return;
         setRiddle(r);
@@ -320,13 +332,13 @@ export function QuizWidget() {
       {typeof riddle === "object" ? (
         <>
           <p className="pg-quiz__q">{riddle.riddle}</p>
-          {hint && !finished ? <p className="pg-quiz__hint">{hintFor(riddle.answer)}</p> : null}
+          {hint && !finished ? <p className="pg-quiz__hint">{hintFor(riddle)}</p> : null}
           {finished ? null : (
             <form
               className="pg-quiz__form"
               onSubmit={(event) => {
                 event.preventDefault();
-                if (guess.trim()) setState(isRight(guess, riddle.answer) ? "right" : "wrong");
+                if (guess.trim()) setState(isRight(guess, riddle) ? "right" : "wrong");
               }}
             >
               <input
@@ -348,6 +360,7 @@ export function QuizWidget() {
             {state === "right" ? `Correct ✓ ${riddle.answer}.` : null}
             {state === "wrong" ? "Not quite. Try again?" : null}
             {state === "shown" ? `It's “${riddle.answer}”.` : null}
+            {finished && riddle.why ? ` ${riddle.why}` : null}
           </p>
           <div className="pg-quiz__actions">
             {finished ? null : (
@@ -432,6 +445,7 @@ export function PomodoroWidget() {
       <p className="pg-pomo__time" role="timer" aria-label={`${mode} timer, ${mm} minutes ${ss} seconds left`}>
         {mm}:{ss}
       </p>
+      <div className="pg-pomo__row">
       <div className="pg-pomo__controls">
         <button
           type="button"
@@ -455,9 +469,10 @@ export function PomodoroWidget() {
           reset
         </button>
       </div>
-      <p className="pg-dark__muted" aria-live="assertive">
-        {done ? (mode === "focus" ? "Time for a break." : "Back to it.") : "\u00a0"}
+      <p className="pg-dark__muted pg-pomo__msg" aria-live="assertive">
+        {done ? (mode === "focus" ? "Time for a break." : "Back to it.") : ""}
       </p>
+      </div>
     </div>
   );
 }

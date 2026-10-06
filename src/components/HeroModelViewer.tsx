@@ -82,17 +82,18 @@ function parseOrbit(orbit: string): { theta: number; phi: number } | null {
 
 export type HeroModel = "hero" | "dancing";
 
-const MODELS: Record<HeroModel, { src: string; target: string; animated: boolean; radius: number; minRadius: number; maxRadius: number }> = {
-  hero: { src: MODEL_SRC, target: "0m 0.85m 0m", animated: false, radius: BASE_RADIUS, minRadius: 95, maxRadius: 150 },
+const MODELS: Record<HeroModel, { src: string; target: string; animated: boolean; orbit: boolean; radius: number; minRadius: number; maxRadius: number }> = {
+  hero: { src: MODEL_SRC, target: "0m 0.85m 0m", animated: false, orbit: true, radius: BASE_RADIUS, minRadius: 95, maxRadius: 150 },
   // Mixamo dance clip (18 s), compressed with gltf-transform: 19.7 MB → 1.5 MB.
   // The clip lifts and shifts the body away from its rest bounds, so the target is
   // set from the dance itself (frames measured): whole figure in frame throughout.
-  dancing: { src: "/models/dancing.glb", target: "-0.43m 0.8m 0m", animated: true, radius: 72, minRadius: 50, maxRadius: 120 },
+  dancing: { src: "/models/dancing.glb", target: "-0.43m 0.8m 0m", animated: true, orbit: false, radius: 72, minRadius: 50, maxRadius: 120 },
 };
 
 export function HeroModelViewer({ model = "hero" }: { model?: HeroModel } = {}) {
   const spec = MODELS[model];
   const radiusRef = useRef(spec.radius);
+  const orbitRef = useRef(spec.orbit);
   // Client-only component (loaded with ssr: false), so window is safe here
   const playMotion = spec.animated && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const viewerRef = useRef<ModelViewerElement>(null);
@@ -151,7 +152,8 @@ export function HeroModelViewer({ model = "hero" }: { model?: HeroModel } = {}) 
 
     viewer.cameraOrbit = formatOrbit(BASE_THETA, BASE_PHI, radiusRef.current);
 
-    if (prefersReducedMotion()) return;
+    // The dancer keeps its measured framing: no drag-to-orbit, no mouse follow
+    if (prefersReducedMotion() || !orbitRef.current) return;
 
     const pointer = { x: 0, y: 0 };
     const current = { theta: BASE_THETA, phi: BASE_PHI };
@@ -261,7 +263,7 @@ export function HeroModelViewer({ model = "hero" }: { model?: HeroModel } = {}) 
         autoplay={playMotion}
         alt="Interactive 3D portfolio model"
         loading="lazy"
-        camera-controls
+        camera-controls={spec.orbit}
         disable-zoom
         disable-pan
         shadow-intensity={LIGHTING.light.shadowIntensity}
