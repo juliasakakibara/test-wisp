@@ -17,6 +17,8 @@ const VARS = ({ palette: p, fonts }: Theme): Record<string, string> => ({
   "--foreground": p.fg,
   "--accent": p.fg,
   "--on-accent": p.bg,
+  // colour details are for the base themes only
+  "--palette": "0",
   "--muted-opacity": `${Math.round(p.mutedAlpha * 100)}%`,
   "--inverse-muted-opacity": `${Math.round(p.invertedMutedAlpha * 100)}%`,
   // Duotone for project images: shadows take the darker colour, highlights the lighter
@@ -71,21 +73,37 @@ function useCurrentTheme(): Theme | null {
 const same = (a: Theme | null, b: Theme | null) =>
   !!a && !!b && a.palette.bg === b.palette.bg && a.palette.fg === b.palette.fg && a.fonts === b.fonts;
 
-/** Hero widget: the live theme (fonts, pair, contrast), Shuffle and Reset. */
+/** Hero widget: the live theme as a theme card (same anatomy as the section cards), with Shuffle and Reset. */
 export function ThemeShuffle() {
   const theme = useCurrentTheme();
   const p = theme?.palette;
+  const display = theme?.fonts.display ?? { name: "Newsreader", css: "var(--font-display)" };
+  const body = theme?.fonts.body ?? { name: "Geist Mono", css: "var(--font-body)" };
+  // Base theme: the page's own tokens; a served theme: its literal colours
+  const swatches = p ? [p.bg, p.card, p.muted, p.fg] : ["var(--background)", "var(--surface)", "var(--muted-foreground)", "var(--foreground)"];
 
   return (
     <div className="pg-color">
-      <p className="pg-color__fonts">
-        {theme ? `${theme.fonts.display.name} + ${theme.fonts.body.name}` : "Newsreader + Geist Mono"}
-      </p>
-      <p className="pg-color__pair">
-        <span className="pg-color__chip" style={{ background: p?.bg ?? "var(--background)" }} />
-        <span className="pg-color__chip" style={{ background: p?.fg ?? "var(--foreground)" }} />
-        <span aria-live="polite">{p ? `${p.bg} / ${p.fg} · ${p.ratio}:1 ${wcagLevel(p.ratio)}` : "Base · 15.1:1 AAA"}</span>
-      </p>
+      <span className="pg-card__top">
+        <span className="pg-card__title">{theme ? "Shuffled" : "Base"}</span>
+        <span className="pg-card__count">[{p ? p.ratio : 15.1}:1]</span>
+      </span>
+      <span className="pg-card__preview pg-card__preview--topping pg-color__preview" style={p ? { background: p.bg } : undefined}>
+        <span className="pg-theme-font" style={{ color: p?.fg, fontFamily: display.css }}>
+          {display.name}
+        </span>
+        <span className="pg-theme-body" style={{ color: p?.muted, fontFamily: body.css }}>
+          + {body.name}
+        </span>
+        <span className="pg-swatches" aria-hidden="true">
+          {swatches.map((c, i) => (
+            <span key={i} className="pg-swatch" style={{ background: c }} />
+          ))}
+        </span>
+      </span>
+      <span className="pg-card__meta" aria-live="polite">
+        {p ? `${p.bg} / ${p.fg} · ${wcagLevel(p.ratio)}` : "Base theme · AAA"}
+      </span>
       <div className="pg-color__actions">
         <button type="button" className="pg-color__button pg-color__button--primary" onClick={() => applyTheme(randomTheme())}>
           Shuffle ↻

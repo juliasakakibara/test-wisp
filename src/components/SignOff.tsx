@@ -42,10 +42,10 @@ export function SignOff({ line, wordmark, links }: { line: string; wordmark: str
       <div className="pg-footer__sign">
         <p className="pg-footer__line">{line}</p>
         <span className="pg-footer__dots" aria-hidden="true">
-          <span style={{ background: "var(--background)" }} />
-          <span style={{ background: "var(--muted)" }} />
-          <span style={{ background: "var(--muted-foreground)" }} />
-          <span style={{ background: "var(--foreground)" }} />
+          <span className="pg-footer__dot pg-footer__dot--1" />
+          <span className="pg-footer__dot pg-footer__dot--2" />
+          <span className="pg-footer__dot pg-footer__dot--3" />
+          <span className="pg-footer__dot pg-footer__dot--4" />
         </span>
       </div>
       <div className="pg-footer__bottom">

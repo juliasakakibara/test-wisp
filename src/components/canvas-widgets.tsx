@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 
 /* Live widgets for the canvas frames (home hero and About). Words come from the
    site's own copy (lib/about.ts); playful lines are marked as placeholders. */
@@ -66,13 +66,22 @@ export function SyrupWidget() {
   );
 }
 
+/** A sticky note with the canvas's one instruction. */
+export function StickyWidget({ children }: { children: ReactNode }) {
+  return <p className="pg-sticky">{children}</p>;
+}
+
 export function ClocheWidget() {
   return (
     <div className="pg-dark pg-cloche">
-      <p>$ git commit -m &quot;new case&quot;</p>
-      <p className="pg-dark__muted">cloche: 0 client names ✓</p>
       <p>
-        [main 4f2c1a] new case<span className="pg-dark__caret" aria-hidden="true" />
+        <span className="pg-term-green">$</span> git commit -m <span className="pg-term-yellow">&quot;new case&quot;</span>
+      </p>
+      <p className="pg-dark__muted">
+        cloche: 0 client names <span className="pg-term-green">✓</span>
+      </p>
+      <p>
+        <span className="pg-term-cyan">[main 4f2c1a]</span> new case<span className="pg-dark__caret" aria-hidden="true" />
       </p>
     </div>
   );

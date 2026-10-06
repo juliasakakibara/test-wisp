@@ -21,18 +21,38 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
   /* how strong muted text is: foreground over background, and background over foreground */
   --muted-opacity: 70%;
   --inverse-muted-opacity: 60%;
+  /* Colour details: a few restrained colours, base themes only. --palette is 1 here
+     and 0 when shuffled; each use mixes its colour with the theme colour it stands in
+     for (see --palette-mix), so a shuffled theme keeps its own two colours.
+     "-inverse" = on foreground-coloured widgets (clock, terminals). */
+  --palette: 1;
+  --green: var(--lb-green-700); /* text on the grey footer: 600 lands at 4.3:1 */
+  --green-inverse: var(--lb-green-400);
+  --yellow-inverse: var(--lb-yellow-400);
+  --cyan: var(--lb-cyan-500);
+  --cyan-inverse: var(--lb-cyan-400);
+  --sticky: var(--lb-yellow-300);
+  --on-sticky: var(--lb-neutral-900);
 }
 
 /* 1 · Inputs: dark (same roles, other values) */
 html:root[data-theme="dark"]:not([data-env="admin"]):not([data-fun-theme]) {
   --background: var(--lb-neutral-950);
   --foreground: var(--lb-neutral-100);
+  --green: var(--lb-green-400);
+  --green-inverse: var(--lb-green-700);
+  --yellow-inverse: var(--lb-yellow-800);
+  --cyan-inverse: var(--lb-cyan-700);
 }
 
 @media (prefers-color-scheme: dark) {
   html:root:not([data-theme="light"]):not([data-env="admin"]):not([data-fun-theme]) {
     --background: var(--lb-neutral-950);
     --foreground: var(--lb-neutral-100);
+    --green: var(--lb-green-400);
+    --green-inverse: var(--lb-green-700);
+    --yellow-inverse: var(--lb-yellow-800);
+    --cyan-inverse: var(--lb-cyan-700);
   }
 }
 
@@ -46,6 +66,7 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
   --surface: color-mix(in srgb, var(--foreground) 11%, var(--background));
   --surface-hover: color-mix(in srgb, var(--foreground) 21%, var(--background));
   --dots: color-mix(in srgb, var(--foreground) 16%, transparent);
+  --palette-mix: calc(var(--palette) * 100%);
   --success: var(--lb-bg-success);
   /* older site names, same meaning */
   --muted: var(--surface);

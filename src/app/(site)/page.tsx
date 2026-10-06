@@ -3,7 +3,7 @@ import { getConfig } from "@/lib/site-data";
 import { getProjects, isPlayground, projectCategory } from "@/lib/projects";
 import { createSiteMetadata } from "@/lib/metadata";
 import { CanvasFrame } from "@/components/CanvasFrame";
-import { ClocheWidget, ClockWidget, CoversWidget, SyrupWidget } from "@/components/canvas-widgets";
+import { ClocheWidget, ClockWidget, CoversWidget, StickyWidget, SyrupWidget } from "@/components/canvas-widgets";
 import { HeroVisual } from "@/components/HeroVisual";
 import { ThemeShuffle } from "@/components/ColorSystem";
 import { PlaygroundCard, PlaygroundSection } from "@/components/PlaygroundSection";
@@ -59,14 +59,15 @@ export default async function HomePage() {
               atMobile: { x: 48, y: 67 },
             },
             { id: "cloche", label: "Cloche", node: <ClocheWidget />, at: { x: 50, y: 70 } },
-            { id: "color", label: "Theme", node: <ThemeShuffle />, at: { x: 72, y: 74 }, atMobile: { x: 7, y: 17.5 } },
+            { id: "color", label: "Theme", node: <ThemeShuffle />, at: { x: 75, y: 50 }, atMobile: { x: 7, y: 17.5 } },
+            { id: "sticky", label: "Tip", node: <StickyWidget>Drag anything around, then shuffle the theme.</StickyWidget>, at: { x: 8, y: 41 } },
           ]}
         >
           <h1 id="hero-title" className="pg-hero__title" data-editable="heroTitle">
             {config.heroTitle}
           </h1>
           <p className="pg-hero__lead">
-            A freelance UX engineer who designs and builds. Drag anything around, then shuffle the theme.
+            A freelance UX engineer who designs and builds.
           </p>
         </CanvasFrame>
       </section>

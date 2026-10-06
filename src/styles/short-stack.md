@@ -22,8 +22,27 @@ Pancake (--lb-*)  →  Short Stack inputs  →  Short Stack derived  →  site C
 | `--muted-opacity` | 70% | 70% | computed: the faintest that passes AA |
 | `--inverse-muted-opacity` | 60% | 60% | computed |
 | `--font-body`, `--font-display` | Pancake families | same | a random pair |
+| `--palette` | 1 | 1 | 0 (switches the colour details off) |
+| `--green` / `--green-inverse` | green-700 / green-400 | green-400 / green-700 | (folded) |
+| `--yellow-inverse`, `--cyan-inverse` | yellow-400, cyan-400 | yellow-800, cyan-700 | (folded) |
+| `--cyan` | cyan-500 | same | (folded) |
+| `--sticky` / `--on-sticky` | yellow-300 / neutral-900 | same | (folded) |
 
 Light and dark aren't separate tokens. They are the same roles with different values. A shuffled theme is one more set of values.
+
+**Colour details (base themes only):** a few restrained colours, each with one job.
+
+| Where | Colour |
+|---|---|
+| Clock digits, footer stamp | green |
+| Cloche terminal | `$` and `✓` green, message yellow, commit hash cyan |
+| Tutorial | a yellow sticky note on the canvas ("Drag anything around…") |
+| Footer dots | accent yellow, green, cyan, foreground |
+| Project covers | full colour (shuffled themes keep the duotone) |
+
+- **"-inverse"** means the colour sits on a foreground-coloured widget (clock, terminals), so it flips steps between light and dark.
+- **Mechanism:** every use is `color-mix(in srgb, var(--colour) var(--palette-mix), var(--stand-in))`, where the stand-in is the colour the element would have without the detail. With `--palette: 0`, a shuffled theme gets exactly its own colours back. The duotone uses `--palette` as a number: `grayscale(calc(1 - var(--palette)))`.
+- **Contrast:** green on the grey footer needs green-700 (600 gives 4.3:1).
 
 ## 2 · Derived: never set directly
 
@@ -35,6 +54,7 @@ Light and dark aren't separate tokens. They are the same roles with different va
 | `--surface` | foreground 11% mixed into the background, **opaque** | cards, footer, hover fills |
 | `--surface-hover` | foreground 21%, **opaque** | hover on a card |
 | `--dots` | foreground 16%, alpha | canvas dot grid |
+| `--palette-mix` | `calc(var(--palette) * 100%)` | strength of every colour detail |
 | `--success` | `--lb-bg-success` | live dot |
 
 **Why two kinds of derivation:**

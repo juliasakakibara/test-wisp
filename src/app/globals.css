@@ -6384,3 +6384,82 @@ body,
   }
 }
 
+
+/* ══ Colour details (base themes only) ═══════════════════════════════════════
+   A few restrained colours (src/styles/short-stack.css). Each mixes its colour at
+   --palette-mix with the theme colour it stands in for, so shuffled themes
+   (--palette: 0) keep their own two colours. */
+
+/* clock and footer stamp: green time */
+.pg-clock {
+  color: color-mix(in srgb, var(--green-inverse) var(--palette-mix), var(--background));
+}
+
+.pg-footer__stamp {
+  color: color-mix(in srgb, var(--green) var(--palette-mix), var(--foreground));
+}
+
+/* terminal colours on the Cloche widget */
+.pg-term-green {
+  color: color-mix(in srgb, var(--green-inverse) var(--palette-mix), var(--background));
+}
+
+.pg-term-yellow {
+  color: color-mix(in srgb, var(--yellow-inverse) var(--palette-mix), var(--background));
+}
+
+.pg-term-cyan {
+  color: color-mix(in srgb, var(--cyan-inverse) var(--palette-mix), var(--background));
+}
+
+/* footer dots: the base colours; shuffled, the theme's four roles as before */
+.pg-footer__dot--1 { background: color-mix(in srgb, var(--accent) var(--palette-mix), var(--background)); }
+.pg-footer__dot--2 { background: color-mix(in srgb, var(--green) var(--palette-mix), var(--muted)); }
+.pg-footer__dot--3 { background: color-mix(in srgb, var(--cyan) var(--palette-mix), var(--muted-foreground)); }
+.pg-footer__dot--4 { background: var(--foreground); }
+
+/* the tutorial as a sticky note */
+.pg-sticky {
+  width: 168px;
+  min-height: 128px;
+  margin: 0;
+  box-sizing: border-box;
+  padding: calc(var(--unit) * 4);
+  border-radius: var(--radius-small);
+  background: color-mix(in srgb, var(--sticky) var(--palette-mix), var(--surface));
+  color: color-mix(in srgb, var(--on-sticky) var(--palette-mix), var(--foreground));
+  font-size: var(--font-size-large);
+  line-height: var(--line-height-tight);
+  box-shadow: 0 calc(var(--unit) * 2) calc(var(--unit) * 4) -2px color-mix(in srgb, var(--foreground) 12%, transparent);
+  rotate: -2deg;
+}
+
+/* project covers keep their real colours in base themes; the duotone is for shuffled ones */
+@media (hover: hover) {
+  .pg-card__image,
+  .pg-covers__image {
+    filter: grayscale(calc(1 - var(--palette))) contrast(calc(1 + 0.05 * (1 - var(--palette))));
+  }
+
+  .pg-card__preview:not(.pg-card__preview--topping)::before,
+  .pg-card__preview:not(.pg-card__preview--topping)::after,
+  .pg-covers__card::before,
+  .pg-covers__card::after {
+    opacity: calc(1 - var(--palette));
+  }
+}
+
+/* the Theme widget reads like a theme card */
+.pg-color .pg-color__preview {
+  height: 132px;
+  border: var(--border-width) solid var(--border);
+}
+
+.pg-color .pg-theme-font {
+  font-size: var(--font-size-display-1);
+  line-height: var(--line-height-display);
+}
+
+.pg-color .pg-card__meta {
+  color: var(--muted-foreground);
+}
