@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { DM_Sans, Fraunces, Inter, JetBrains_Mono } from "next/font/google";
 // Pancake 2 topping tokens (--lb-*) first; globals.css maps the site's tokens onto them.
 import "../styles/pancake/theme.css";
+// Extra toppings for the live switch, each scoped to :root[data-topping="<name>"].
+import "../styles/pancake/toppings/pancake.css";
+import "../styles/pancake/toppings/crepe.css";
 import "./globals.css";
 import { getConfig, getTheme } from "@/lib/site-data";
 import { SiteChrome } from "@/components/SiteChrome";
@@ -14,6 +17,9 @@ import { generateSiteThemeCss } from "@/lib/theme-utils";
 
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
+// Crêpe Expectations topping fonts: not preloaded, downloaded only when that topping is picked.
+const fraunces = Fraunces({ variable: "--font-fraunces", subsets: ["latin"], preload: false });
+const dmSans = DM_Sans({ variable: "--font-dm-sans", subsets: ["latin"], preload: false });
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getConfig();
@@ -62,7 +68,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${jetbrainsMono.variable}`}
+      className={`${inter.variable} ${jetbrainsMono.variable} ${fraunces.variable} ${dmSans.variable}`}
       suppressHydrationWarning
     >
       <head>

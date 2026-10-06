@@ -20,7 +20,7 @@ function currentNavKey(pathname: string): NavKey | null {
   if (pathname.startsWith("/styleguide")) return "styleguide";
   if (pathname.startsWith("/about")) return "about";
   if (pathname.startsWith("/playground")) return "playground";
-  if (pathname === "/" || pathname.startsWith("/projects")) return "work";
+  if (pathname.startsWith("/projects")) return "work";
   return null;
 }
 
@@ -125,7 +125,7 @@ export function SiteNav() {
             about
           </SiteLink>
           <SiteLink
-            href="/#work"
+            href="/projects"
             className="nav-item"
             current={current === "work"}
             onClick={close}

@@ -6,7 +6,7 @@ type HeroSectionProps = {
   config: Pick<SiteConfig, "heroTitle">;
 };
 
-const EMPHASIS_PATTERN = /(unconventional|unusual)/gi;
+const EMPHASIS_PATTERN = /(unconventional|unusual|\bone\b)/gi;
 
 function renderHeroTitle(title: string): ReactNode[] {
   const nodes: ReactNode[] = [];

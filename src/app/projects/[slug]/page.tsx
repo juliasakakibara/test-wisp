@@ -60,7 +60,7 @@ export default async function ProjectPage({ params }: Params) {
       />
 
       <nav className="project-nav" aria-label="Project">
-        <Link href="/#work" className="project-nav__back link">
+        <Link href="/projects" className="project-nav__back link">
           ← Projects
         </Link>
       </nav>

@@ -23,7 +23,7 @@ export function GetInTouch({ email, githubUrl, linkedinUrl }: GetInTouchProps) {
           <h3 className="get-in-touch__heading">Sitemap</h3>
           <SiteLink href="/">Home</SiteLink>
           <SiteLink href="/about">About</SiteLink>
-          <SiteLink href="/#work">Projects</SiteLink>
+          <SiteLink href="/projects">Projects</SiteLink>
           <SiteLink href="/playground">Playground</SiteLink>
           <SiteLink href="/styleguide">Style guide</SiteLink>
         </div>

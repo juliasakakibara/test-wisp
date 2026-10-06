@@ -3967,17 +3967,383 @@ a:not(.featured-card__link):hover,
 
 /* Reserve the bold-italic width so hovering doesn't push the next item */
 .link[data-text] {
-  display: inline-grid;
+  /* column flex: the text plus a 0-height bold copy; width = the wider one, text stays centred */
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .link[data-text]::after {
   content: attr(data-text);
-  grid-area: 1 / 1;
   height: 0;
   overflow: hidden;
   visibility: hidden;
   font-style: italic;
   font-weight: 600;
   pointer-events: none;
+}
+
+/* ── Live topping switch (experiment) ──────────────────────────────────────
+   Julia is the base topping (theme.css). Picking another sets
+   data-topping on <html>; its scoped tokens win, and this bridge lets them
+   reach type and shape too, not only colour. */
+:root[data-topping="crepe"] {
+  /* next/font hashes family names, so point the topping's families at the loaded fonts */
+  --lb-font-family-1: var(--font-fraunces), Georgia, serif;
+  --lb-font-family-2: var(--font-dm-sans), system-ui, sans-serif;
+}
+
+/* Same weight as the admin theme scope (theme-utils PUBLIC_SITE_SCOPE), so toppings win
+   on the public site and never leak into the admin or the Fun themes */
+:root[data-topping]:not([data-env="admin"]):not([data-fun-theme]) {
+  --font-family: var(--lb-font-family-2);
+  --font-body: var(--lb-font-family-2);
+  --font-display: var(--lb-font-family-1);
+  --radius: var(--lb-radius-interactive);
+  --radius-card: var(--lb-radius-surface);
+}
+
+:root[data-topping] body {
+  font-family: var(--font-body);
+}
+
+:root[data-topping] :is(h1, h2, h3, .hero-title, .featured-card__title) {
+  font-family: var(--font-display);
+}
+
+:root[data-topping] :is(.hero-tag, .get-in-touch) {
+  border-radius: var(--lb-radius-badge);
+}
+
+:root[data-topping] .get-in-touch {
+  border-radius: var(--radius-card);
+}
+
+:root[data-topping] .featured-card__media {
+  border-radius: var(--radius-card);
+}
+
+/* Smooth the swap; nothing moves, only colour, type and corners change */
+:root[data-topping-swapping] *,
+:root[data-topping-swapping] *::before,
+:root[data-topping-swapping] *::after {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, border-radius 0.4s ease !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-topping-swapping] * {
+    transition: none !important;
+  }
+}
+
+/* Topping switch: a quiet segmented control under the hero tags */
+.topping-switch {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-1);
+  margin: var(--space-4) auto 0;
+  padding: 0;
+  border: 0;
+}
+
+.topping-switch__legend {
+  float: left;
+  width: 100%;
+  margin-bottom: var(--space-1);
+  font-size: var(--type-caption);
+  color: var(--muted-foreground);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.topping-switch__options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--lb-radius-full);
+}
+
+.topping-switch__option {
+  position: relative;
+  cursor: pointer;
+}
+
+.topping-switch__input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.topping-switch__label {
+  display: block;
+  min-height: 36px;
+  padding: 8px 16px;
+  font-size: var(--type-meta);
+  line-height: 20px;
+  border-radius: var(--lb-radius-full);
+  color: var(--foreground);
+}
+
+.topping-switch__input:checked + .topping-switch__label {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 600;
+}
+
+.topping-switch__input:focus-visible + .topping-switch__label {
+  outline: 2px solid var(--foreground);
+  outline-offset: 2px;
+}
+
+.topping-switch__note {
+  margin: 0;
+  font-size: var(--type-caption);
+  color: var(--muted-foreground);
+}
+
+/* Experiment: the 3D figure sits under the headline instead of over it */
+.hero-headline .hero-visual {
+  top: auto;
+  bottom: 0;
+  transform: translate(-50%, 0);
+  width: calc(var(--hero-model-size) * 0.8);
+  height: calc(var(--hero-model-height) * 0.75);
+}
+
+.hero-headline {
+  padding-bottom: calc(var(--hero-model-height) * 0.75);
+}
+
+/* ── Hero canvas (experiment, after weave.figma.com) ───────────────────── */
+.hero-canvas-section {
+  width: 100%;
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-3) var(--space-6);
+  box-sizing: border-box;
+}
+
+.hero-canvas-title {
+  max-width: 26ch;
+  margin: 0 auto var(--space-6);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.1rem + 3vw, 3.5rem);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.hero-canvas {
+  position: relative;
+  height: 680px;
+  border-radius: var(--radius-card);
+  background-color: var(--background);
+  background-image: radial-gradient(circle, var(--border) 1px, transparent 1.2px);
+  background-size: 20px 20px;
+}
+
+.hero-canvas__wires {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-canvas__wires path {
+  fill: none;
+  stroke: var(--muted-foreground);
+  stroke-opacity: 0.45;
+  stroke-width: 1.5;
+}
+
+.hero-canvas__wires circle {
+  fill: var(--background);
+  stroke: var(--muted-foreground);
+  stroke-width: 1.5;
+}
+
+.hero-node {
+  position: absolute;
+  width: 220px;
+  display: grid;
+  gap: 6px;
+}
+
+.hero-node--figure {
+  width: min(320px, 28%);
+}
+
+.hero-node--theme {
+  width: auto;
+}
+
+.hero-node__handle {
+  display: flex;
+  gap: var(--space-2);
+  align-items: baseline;
+  width: 100%;
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  color: var(--foreground);
+  font: inherit;
+  text-align: left;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.hero-node__handle:active {
+  cursor: grabbing;
+}
+
+.hero-node__handle:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 2px;
+}
+
+.hero-node__label,
+.hero-node__meta {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.hero-node__meta {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 400;
+  color: var(--muted-foreground);
+}
+
+.hero-node__body {
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  background: var(--background);
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.hero-node--figure .hero-node__body {
+  height: 340px;
+  background: color-mix(in srgb, var(--foreground) 3%, var(--background));
+}
+
+.hero-node--figure .hero-visual {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-node__text {
+  display: grid;
+  gap: var(--space-1);
+  padding: 12px;
+  font-size: var(--type-meta);
+  line-height: 1.5;
+}
+
+.hero-node__text p {
+  margin: 0;
+  color: var(--muted-foreground);
+}
+
+.hero-node__project {
+  display: grid;
+  color: inherit;
+  text-decoration: none;
+}
+
+.hero-node__media {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3;
+  background: var(--muted);
+  overflow: hidden;
+}
+
+.hero-node__image {
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.hero-node__project:hover .hero-node__image {
+  transform: scale(1.05);
+}
+
+.hero-node__title {
+  padding: 8px 12px;
+  font-size: var(--type-meta);
+  font-weight: var(--font-weight-medium);
+}
+
+.topping-switch--node {
+  margin: 0;
+  padding: 8px;
+}
+
+.topping-switch--node .topping-switch__legend {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+.topping-switch--node .topping-switch__note {
+  display: none;
+}
+
+/* Phones: no free canvas — the cards stack, wires off */
+@media (max-width: 767px) {
+  .hero-canvas {
+    height: auto;
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-2);
+  }
+
+  .hero-canvas__wires {
+    display: none;
+  }
+
+  .hero-node,
+  .hero-node--figure {
+    position: static;
+    width: 100%;
+  }
+
+  .hero-node__handle {
+    cursor: default;
+    pointer-events: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-node__image {
+    transition: none;
+  }
+}
+
+/* Projects page: link on to the Playground under the grid */
+.page-more {
+  margin: var(--space-8) 0 0;
+  font-size: var(--type-lead);
+}
+
+.page-more span {
+  color: var(--muted-foreground);
+  font-size: var(--type-meta);
 }
 
