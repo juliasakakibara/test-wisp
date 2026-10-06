@@ -15,15 +15,25 @@ Pancake (--lb-*)  →  Short Stack inputs  →  Short Stack derived  →  site C
 
 | Token | Light | Dark | Shuffle |
 |---|---|---|---|
-| `--background` | `--lb-neutral-50` (#fff) | `--lb-neutral-950` | random |
-| `--foreground` | `--lb-neutral-900` | `--lb-neutral-100` | random, AA against the background |
+| `--background` | #f6f4ef, warm off-white (trial) | `--lb-neutral-950` | random |
+| `--foreground` | #0b0a09, warm near-black (trial) | `--lb-neutral-100` | random, AA against the background |
 | `--accent` | `--lb-yellow-400` | same | = foreground |
-| `--on-accent` | `--lb-neutral-900` | same | = background |
+| `--on-accent` | = foreground | same | = background |
+| `--accent-edge` | = foreground | same | = foreground |
+| `--decor` | `--lb-violet-500` | `--lb-violet-400` | = foreground |
+| `--dots-opacity` | 30% | 30% | 16% |
+| `--live` | `--lb-green-500` | `--lb-green-600` | = background |
 | `--muted-opacity` | 70% | 70% | computed: the faintest that passes AA |
 | `--inverse-muted-opacity` | 60% | 60% | computed |
 | `--font-body`, `--font-display` | Pancake families | same | a random pair |
 
 Light and dark aren't separate tokens. They are the same roles with different values. A shuffled theme is one more set of values.
+
+**Colour details (base themes only).** `--decor` (the canvas dot grid) and `--live` (the status dot on dark widgets) bring a little colour into the default light and dark themes. Each has one job (after Caldera: one action colour, plus colours that are never used on controls). Shuffle folds them into the theme's own two colours, so a random palette stays duotone.
+
+**The yellow pill:** a bright yellow fill can't reach 3:1 against a light page. The yellows that do are mustard/ochre (#b88100), so the pill keeps the bright yellow and gets a foreground edge (`--accent-edge`). Its dark label is 10.9:1.
+
+**Trial (2026-10-06):** the warm neutrals, `--decor` and `--live` were added to see how they feel. The neutrals are literal values, not Pancake yet; if they stay, they move into a topping.
 
 ## 2 · Derived: never set directly
 
@@ -34,8 +44,7 @@ Light and dark aren't separate tokens. They are the same roles with different va
 | `--border` | foreground 10%, **alpha** | every line and hairline |
 | `--surface` | foreground 11% mixed into the background, **opaque** | cards, footer, hover fills |
 | `--surface-hover` | foreground 21%, **opaque** | hover on a card |
-| `--dots` | foreground 16%, alpha | canvas dot grid |
-| `--success` | `--lb-bg-success` | live dot |
+| `--dots` | `--decor` at `--dots-opacity`, alpha | canvas dot grid |
 
 **Why two kinds of derivation:**
 - **Text and lines use alpha** (Raster's idea). They sit on many different surfaces and should adapt to whatever is under them.

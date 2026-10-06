@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 /* Live widgets for the canvas frames (home hero and About). Words come from the
    site's own copy (lib/about.ts); playful lines are marked as placeholders. */
@@ -42,11 +42,25 @@ export function ClockWidget() {
   );
 }
 
+/** The page's live --foreground (Short Stack input), following theme and mode changes. */
+function subscribeTheme(onChange: () => void) {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "style"] });
+  document.addEventListener("themechange", onChange);
+  return () => {
+    observer.disconnect();
+    document.removeEventListener("themechange", onChange);
+  };
+}
+const readForeground = () =>
+  getComputedStyle(document.documentElement).getPropertyValue("--foreground").trim().toUpperCase();
+
 export function SyrupWidget() {
+  const hex = useSyncExternalStore(subscribeTheme, readForeground, () => "");
   return (
     <div className="pg-dark pg-syrup">
-      <p className="pg-dark__row"><span>FIGMA</span><span>color/ink</span><span>#1C1C1C</span></p>
-      <p className="pg-dark__row"><span>CODE</span><span>--lb-fg</span><span>#1C1C1C</span></p>
+      <p className="pg-dark__row"><span>FIGMA</span><span>color/foreground</span><span>{hex}</span></p>
+      <p className="pg-dark__row"><span>CODE</span><span>--foreground</span><span>{hex}</span></p>
       <p className="pg-dark__status"><span className="pg-dark__dot" aria-hidden="true" /> in sync</p>
     </div>
   );

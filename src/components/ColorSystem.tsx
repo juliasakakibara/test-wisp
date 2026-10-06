@@ -17,6 +17,11 @@ const VARS = ({ palette: p, fonts }: Theme): Record<string, string> => ({
   "--foreground": p.fg,
   "--accent": p.fg,
   "--on-accent": p.bg,
+  "--accent-edge": p.fg,
+  // colour details collapse into the theme: dots in the text colour, the live dot in the paper colour
+  "--decor": p.fg,
+  "--dots-opacity": "16%",
+  "--live": p.bg,
   "--muted-opacity": `${Math.round(p.mutedAlpha * 100)}%`,
   "--inverse-muted-opacity": `${Math.round(p.invertedMutedAlpha * 100)}%`,
   // Duotone for project images: shadows take the darker colour, highlights the lighter

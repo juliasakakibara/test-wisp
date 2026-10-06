@@ -4526,7 +4526,7 @@ body {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--success);
+  background: var(--live);
   animation: pg-pulse 1.6s ease-in-out infinite;
 }
 
@@ -4639,13 +4639,14 @@ a.pg-pill:hover {
   border-radius: var(--radius-pill);
   background: var(--background);
   color: var(--foreground);
-  font: 400 14px/1 var(--font-body);
+  font: var(--font-weight) var(--font-size-large)/1 var(--font-body);
   font-style: normal;
   text-decoration: none;
 }
 
 .pg-pill--signal,
 a.pg-pill--signal:hover {
+  border-color: var(--accent-edge);
   background: var(--accent);
   color: var(--on-accent);
 }
