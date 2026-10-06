@@ -1,0 +1,97 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Short Stack: the site's small token set, after Raster (rsms.me/raster).
+
+   Values come from Pancake (src/styles/pancake/theme.css, `npm run pancake:sync`),
+   but the site's CSS reads only the names below, never --lb-* directly.
+   Docs: src/styles/short-stack.md
+
+   1 · Inputs     what a theme sets (base light/dark here; shuffle writes them inline)
+   2 · Derived    computed from the inputs, so they follow any theme
+   3 · Scales     type, space, shape, motion
+   4 · Bridge     Pancake semantics pointed back at Short Stack, so the few
+                  Pancake-styled parts follow a shuffled theme too
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* 1 · Inputs: light (default) */
+html:root:not([data-env="admin"]):not([data-fun-theme]) {
+  --background: var(--lb-neutral-50);
+  --foreground: var(--lb-neutral-900);
+  --accent: var(--lb-yellow-400);
+  --on-accent: var(--lb-neutral-900);
+  /* how strong muted text is: foreground over background, and background over foreground */
+  --muted-opacity: 70%;
+  --inverse-muted-opacity: 60%;
+}
+
+/* 1 · Inputs: dark (same roles, other values) */
+html:root[data-theme="dark"]:not([data-env="admin"]):not([data-fun-theme]) {
+  --background: var(--lb-neutral-950);
+  --foreground: var(--lb-neutral-100);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:root:not([data-theme="light"]):not([data-env="admin"]):not([data-fun-theme]) {
+    --background: var(--lb-neutral-950);
+    --foreground: var(--lb-neutral-100);
+  }
+}
+
+html:root:not([data-env="admin"]):not([data-fun-theme]) {
+  /* 2 · Derived. Text and lines are true alpha: they follow whatever surface is
+     under them. Surfaces are opaque mixes: they stack and cover images predictably.
+     The random theme generator mirrors these numbers (ALPHA in src/lib/random-palette.ts). */
+  --muted-foreground: color-mix(in srgb, var(--foreground) var(--muted-opacity), transparent);
+  --inverse-muted: color-mix(in srgb, var(--background) var(--inverse-muted-opacity), transparent);
+  --border: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --surface: color-mix(in srgb, var(--foreground) 11%, var(--background));
+  --surface-hover: color-mix(in srgb, var(--foreground) 21%, var(--background));
+  --dots: color-mix(in srgb, var(--foreground) 16%, transparent);
+  --success: var(--lb-bg-success);
+  /* older site names, same meaning */
+  --muted: var(--surface);
+  --primary: var(--foreground);
+  --primary-foreground: var(--background);
+
+  /* 3 · Type */
+  --font-body: var(--lb-font-family-2);
+  --font-display: var(--lb-font-family-1);
+  --font-family: var(--font-body);
+  --font-size-small: var(--lb-font-size-2xs); /* 11: tabs, badges, counters */
+  --font-size: var(--lb-font-size-xs); /* 12: all running text */
+  --font-size-large: var(--lb-font-size-s); /* 14: small headings, nav */
+  --font-size-display-1: var(--lb-font-size-2xl); /* 24 */
+  --font-size-display-2: var(--lb-font-size-4xl); /* 36 */
+  --font-size-display-3: var(--lb-font-size-5xl); /* 48 */
+  --line-height-display: 1.1;
+  --line-height-tight: 1.33; /* labels, captions, small headings */
+  --line-height: 1.5; /* running text */
+  --line-height-loose: 1.65; /* case studies: long reads */
+  --font-weight: var(--lb-font-weight-regular);
+  --font-weight-medium: var(--lb-font-weight-medium);
+  --font-weight-bold: var(--lb-font-weight-semibold);
+
+  /* 3 · Space: one unit, everything is calc(var(--unit) * n) */
+  --unit: var(--lb-size-1x); /* 4px */
+
+  /* 3 · Shape */
+  --radius-pill: var(--lb-radius-full);
+  --radius-surface: var(--lb-radius-surface); /* 24: cards, widgets, panels */
+  --radius-media: var(--lb-radius-12); /* 12: thumbnails, images */
+  --radius-inner: var(--lb-radius-8); /* 8: things inside a padded surface (24 − 16) */
+  --radius-small: var(--lb-radius-4); /* 4: inputs, focus rings on text */
+  --border-width: var(--lb-border-width-thin); /* 1 */
+  --focus-width: var(--lb-border-width-medium); /* 2 */
+
+  /* 3 · Motion */
+  --duration-fast: var(--lb-duration-200); /* hover, colour */
+  --duration-slow: 450ms; /* movement, theme swaps (Pancake stops at 300/500) */
+  --ease: var(--lb-ease-standard);
+
+  /* 4 · Bridge */
+  --lb-fg-default: var(--foreground);
+  --lb-fg-muted: var(--muted-foreground);
+  --lb-fg-inverse: var(--background);
+  --lb-bg-default: var(--background);
+  --lb-bg-strong: var(--surface);
+  --lb-border-muted: var(--border);
+}

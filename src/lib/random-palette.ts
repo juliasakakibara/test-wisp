@@ -1,7 +1,7 @@
 /**
- * Random accessible colour systems (after randoma11y). A theme is two primaries,
- * paper (bg) and ink (fg); globals.css derives every other colour from them with
- * the alphas below (after Raster). The surface alphas are fixed; the two muted
+ * Random accessible colour systems (after randoma11y). A theme sets Short Stack's
+ * inputs, background and foreground (src/styles/short-stack.css), which derives
+ * every other colour from them with the alphas below (after Raster). The surface alphas are fixed; the two muted
  * text alphas are found per theme (the faintest that still passes AA on the
  * hardest surface) and written as numbers, so any AA pair keeps its character.
  */
@@ -11,7 +11,7 @@ export type Palette = {
   fg: string;
   /** Muted text as it lands on the card fill (for display). */
   muted: string;
-  /** Share of ink for muted text, and of paper for muted text on ink widgets. */
+  /** Share of foreground for muted text, and of background for muted text on foreground-coloured widgets. */
   mutedAlpha: number;
   invertedMutedAlpha: number;
   card: string;
@@ -29,21 +29,20 @@ const AA = 4.5;
 /** Derived colours aim a little above AA so rounding never lands them at 4.49. */
 const TARGET = 4.6;
 
-/** Mirrors the derived tokens in globals.css (share of ink, or of paper for inverse). */
+/** Mirrors short-stack.css: share of foreground (of background, for inverse). */
 export const ALPHA = {
-  page: 0.05, // --lb-bg-default
-  card: 0.11, // --lb-bg-strong
-  cardHover: 0.21, // --lb-bg-bolder
-  line: 0.1, // --lb-border-muted
+  card: 0.11, // --surface
+  cardHover: 0.21, // --surface-hover
+  line: 0.1, // --border
   /** Base-theme defaults for the muted alphas; random themes compute their own. */
-  muted: 0.7, // --pg-muted-alpha → --lb-fg-muted
-  invertedMuted: 0.6, // --pg-inverse-muted-alpha → --lb-fg-inverse-muted (paper over ink)
+  muted: 0.7, // --muted-opacity → --muted-foreground
+  invertedMuted: 0.6, // --inverse-muted-opacity → --inverse-muted (background over foreground)
 } as const;
 
-/** The faintest share of `ink` over `on` that still reads at AA on `on` (null if none). */
-function faintestAlpha(ink: Rgb, on: Rgb, from: number): number | null {
+/** The faintest share of `text` over `on` that still reads at AA on `on` (null if none). */
+function faintestAlpha(text: Rgb, on: Rgb, from: number): number | null {
   for (let a = from; a <= 1.0001; a += 0.02) {
-    if (contrast(mix(on, ink, a), on) >= TARGET) return Math.round(a * 100) / 100;
+    if (contrast(mix(on, text, a), on) >= TARGET) return Math.round(a * 100) / 100;
   }
   return null;
 }
@@ -84,7 +83,7 @@ export function randomPalette(random: () => number = Math.random): Palette {
     if (ratio < AA) continue;
 
     // Composite the alphas the way the browser will, then test the hardest pairs:
-    // muted text on the card hover, and muted paper text on ink widgets.
+    // muted text on the card hover, and muted text on foreground-coloured widgets.
     const card = mix(bg, fg, ALPHA.card);
     const cardHover = mix(bg, fg, ALPHA.cardHover);
     const mutedAlpha = faintestAlpha(fg, cardHover, ALPHA.muted);

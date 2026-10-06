@@ -7,22 +7,27 @@ import { randomTheme, type Theme } from "@/lib/themes";
 const CHANGE_EVENT = "themechange";
 const SHUFFLE_EVENT = "themeshuffle";
 
-/** A theme sets only its primaries (and fonts); globals.css derives every other colour from ink and paper. */
+/**
+ * A theme sets only Short Stack's inputs (src/styles/short-stack.css): background,
+ * foreground, accent, the two muted opacities, and fonts. Every other colour is
+ * derived in CSS, so it follows. Set inline on <html>: beats the base, survives navigation.
+ */
 const VARS = ({ palette: p, fonts }: Theme): Record<string, string> => ({
-  "--pg-ink": p.fg,
-  "--pg-paper": p.bg,
-  "--pg-muted-alpha": `${Math.round(p.mutedAlpha * 100)}%`,
-  "--pg-inverse-muted-alpha": `${Math.round(p.invertedMutedAlpha * 100)}%`,
-  "--pg-signal": p.fg,
-  "--pg-signal-ink": p.bg,
+  "--background": p.bg,
+  "--foreground": p.fg,
+  "--accent": p.fg,
+  "--on-accent": p.bg,
+  "--muted-opacity": `${Math.round(p.mutedAlpha * 100)}%`,
+  "--inverse-muted-opacity": `${Math.round(p.invertedMutedAlpha * 100)}%`,
   // Duotone for project images: shadows take the darker colour, highlights the lighter
   "--duo-ink": p.scheme === "light" ? p.fg : p.bg,
   "--duo-paper": p.scheme === "light" ? p.bg : p.fg,
-  "--lb-font-family-1": fonts.display.css,
-  "--lb-font-family-2": fonts.body.css,
   "--font-display": fonts.display.css,
   "--font-body": fonts.body.css,
   "--font-family": fonts.body.css,
+  // Pancake-styled parts (pills' text style) read the families directly
+  "--lb-font-family-1": fonts.display.css,
+  "--lb-font-family-2": fonts.body.css,
 });
 
 let current: Theme | null = null;
