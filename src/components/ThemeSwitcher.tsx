@@ -134,17 +134,15 @@ export function ThemeSwitcher() {
         onChange={(event) => handleChange(event.target.value as SelectValue)}
         aria-label="Theme"
       >
-        <optgroup label="Core">
-          {PUBLIC_COLOR_MODE_OPTIONS.map((option) => (
-            <option key={option.preference} value={option.preference}>
-              {option.preference === "system"
-                ? `System (${resolveEffectiveMode("system")})`
-                : option.preference === "light"
-                  ? "Light"
-                  : "Dark"}
-            </option>
-          ))}
-        </optgroup>
+        {PUBLIC_COLOR_MODE_OPTIONS.map((option) => (
+          <option key={option.preference} value={option.preference}>
+            {option.preference === "system"
+              ? `System (${resolveEffectiveMode("system")})`
+              : option.preference === "light"
+                ? "Light"
+                : "Dark"}
+          </option>
+        ))}
         {allowFun ? (
           <optgroup label="Fun">
             {FUN_THEMES.map((theme) => (

@@ -1,9 +1,10 @@
 import Image from "next/image";
-import Link from "next/link";
 import { format } from "date-fns";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { WispContent } from "@/components/wisp-content-wrapper";
+import { DetailLayout } from "@/components/DetailLayout";
+import { ShareButton } from "@/components/ShareButton";
 import { getConfig } from "@/lib/site-data";
 import { getProject, getProjectSlugs, tagLabel, visibleTags } from "@/lib/projects";
 import {
@@ -52,73 +53,47 @@ export default async function ProjectPage({ params }: Params) {
     : null;
   const disciplines = visibleTags(post.tags);
 
+  const category = disciplines[0] ? tagLabel(disciplines[0].name) : "Case study";
+
   return (
-    <article className="project-page case-page">
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
-
-      <nav className="project-nav" aria-label="Project">
-        <Link href="/projects" className="project-nav__back link">
-          ← Projects
-        </Link>
-      </nav>
-
-      {/* Wireframe "project details": title + lead on the left, details on the right */}
-      <header className="case-header">
-        <div className="case-header__text">
-          <h1 className="case-title">{post.title}</h1>
-          {post.description && <p className="case-lead">{post.description}</p>}
+      {/* Experiment (playground): detail page after playground.nothing.tech's app page */}
+      <DetailLayout
+        backHref="/#projects"
+        backLabel="Back to projects"
+        preview={
+          post.image ? (
+            <Image src={post.image} alt={post.title} fill className="pg-detail__image" priority sizes="360px" />
+          ) : null
+        }
+        title={post.title}
+        meta={year ?? undefined}
+        lead={post.description ?? undefined}
+        actions={
+          <>
+            <a href="mailto:talk.to@juliasakakibara.com.br" className="pg-pill pg-pill--signal pg-pill--center">
+              <span>Get in touch</span>
+            </a>
+            <ShareButton title={post.title} />
+          </>
+        }
+        rows={[
+          { label: "Category", value: category },
+          ...(year ? [{ label: "Year", value: <time dateTime={year}>{year}</time> }] : []),
+          ...(disciplines.length > 1
+            ? [{ label: "Tags", value: disciplines.map((tag) => tagLabel(tag.name).toLowerCase()).join(" / ") }]
+            : []),
+        ]}
+      >
+        <div className="pg-detail__body">
+          <WispContent content={cleanCaseContent(post.content || "", post.image)} />
         </div>
-        <dl className="case-details">
-          <div className="case-details__row">
-            <dt>Type</dt>
-            <dd>Case study</dd>
-          </div>
-          {year && (
-            <div className="case-details__row">
-              <dt>Year</dt>
-              <dd>
-                <time dateTime={year}>{year}</time>
-              </dd>
-            </div>
-          )}
-          {disciplines.length > 0 && (
-            <div className="case-details__row">
-              <dt>Tags</dt>
-              <dd>
-                <ul className="case-tags" aria-label="Disciplines">
-                  {disciplines.map((tag) => (
-                    <li key={tag.id} className="hero-tag">
-                      {tagLabel(tag.name)}
-                    </li>
-                  ))}
-                </ul>
-              </dd>
-            </div>
-          )}
-        </dl>
-      </header>
-
-      {post.image && (
-        <div className="case-cover">
-          <Image
-            src={post.image}
-            alt={post.title}
-            fill
-            className="project-cover-fill"
-            priority
-            sizes="(max-width: 1280px) 100vw, 1200px"
-          />
-        </div>
-      )}
-
-      {/* Wisp HTML laid out by CSS (§13 case page): H2 wide on the left, text in the right column, images full width */}
-      <div className="case-content">
-        <WispContent content={cleanCaseContent(post.content || "", post.image)} />
-      </div>
-    </article>
+      </DetailLayout>
+    </>
   );
 }
 

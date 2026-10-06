@@ -1,20 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { randomPalette, wcagLevel, type Palette } from "@/lib/random-palette";
+import { wcagLevel } from "@/lib/random-palette";
+import { randomTheme, type Theme } from "@/lib/themes";
 
-const CHANGE_EVENT = "colorsystemchange";
+const CHANGE_EVENT = "themechange";
+const SHUFFLE_EVENT = "themeshuffle";
 
-/** Site tokens a palette drives; set inline on <html>, so they beat the base topping and survive navigation. */
-const VARS = (p: Palette): Record<string, string> => ({
+/** Site tokens a theme drives; set inline on <html>, so they beat the base topping and survive navigation. */
+const VARS = ({ palette: p, fonts }: Theme): Record<string, string> => ({
   "--background": p.bg,
   "--foreground": p.fg,
   "--muted-foreground": p.muted,
   "--primary": p.fg,
+  "--primary-foreground": p.bg,
   "--link": p.fg,
   "--link-strong": p.fg,
   "--link-underline": p.fg,
-  "--primary-foreground": p.bg,
   "--border": p.line,
   "--muted": p.card,
   "--lb-bg-default": p.bg,
@@ -29,59 +31,74 @@ const VARS = (p: Palette): Record<string, string> => ({
   "--lb-neutral-900": p.fg,
   "--lb-yellow-400": p.fg,
   "--pg-signal-ink": p.bg,
+  "--lb-font-family-1": fonts.display.css,
+  "--lb-font-family-2": fonts.body.css,
+  "--font-display": fonts.display.css,
+  "--font-body": fonts.body.css,
+  "--font-family": fonts.body.css,
 });
 
-let current: Palette | null = null;
+let current: Theme | null = null;
 
-export function applyPalette(next: Palette) {
+function swap(apply: (root: HTMLElement) => void) {
   const root = document.documentElement;
   root.setAttribute("data-topping-swapping", "");
-  for (const [name, value] of Object.entries(VARS(next))) root.style.setProperty(name, value);
-  root.style.colorScheme = next.scheme;
-  current = next;
+  apply(root);
   window.setTimeout(() => root.removeAttribute("data-topping-swapping"), 450);
   document.dispatchEvent(new CustomEvent(CHANGE_EVENT));
 }
 
-export function resetPalette() {
-  const root = document.documentElement;
-  root.setAttribute("data-topping-swapping", "");
-  if (current) for (const name of Object.keys(VARS(current))) root.style.removeProperty(name);
-  root.style.removeProperty("color-scheme");
-  current = null;
-  window.setTimeout(() => root.removeAttribute("data-topping-swapping"), 450);
-  document.dispatchEvent(new CustomEvent(CHANGE_EVENT));
+export function applyTheme(next: Theme) {
+  swap((root) => {
+    if (current) for (const name of Object.keys(VARS(current))) root.style.removeProperty(name);
+    for (const [name, value] of Object.entries(VARS(next))) root.style.setProperty(name, value);
+    root.style.colorScheme = next.palette.scheme;
+    current = next;
+  });
 }
 
-/** The palette on the page now (null = the base topping), kept in step everywhere. */
-function useCurrentPalette(): Palette | null {
-  const [palette, setPalette] = useState<Palette | null>(current);
+export function resetTheme() {
+  swap((root) => {
+    if (current) for (const name of Object.keys(VARS(current))) root.style.removeProperty(name);
+    root.style.removeProperty("color-scheme");
+    current = null;
+  });
+}
+
+/** The theme on the page now (null = the base), kept in step everywhere. */
+function useCurrentTheme(): Theme | null {
+  const [theme, setTheme] = useState<Theme | null>(current);
   useEffect(() => {
-    const sync = () => setPalette(current);
+    const sync = () => setTheme(current);
     document.addEventListener(CHANGE_EVENT, sync);
     return () => document.removeEventListener(CHANGE_EVENT, sync);
   }, []);
-  return palette;
+  return theme;
 }
 
-/** Hero widget: the live pair, its contrast, Shuffle and Reset. */
-export function ColorShuffle() {
-  const palette = useCurrentPalette();
+const same = (a: Theme | null, b: Theme | null) =>
+  !!a && !!b && a.palette.bg === b.palette.bg && a.palette.fg === b.palette.fg && a.fonts === b.fonts;
+
+/** Hero widget: the live theme (fonts, pair, contrast), Shuffle and Reset. */
+export function ThemeShuffle() {
+  const theme = useCurrentTheme();
+  const p = theme?.palette;
 
   return (
     <div className="pg-color">
+      <p className="pg-color__fonts">
+        {theme ? `${theme.fonts.display.name} + ${theme.fonts.body.name}` : "Newsreader + Geist Mono"}
+      </p>
       <p className="pg-color__pair">
-        <span className="pg-color__chip" style={{ background: palette?.bg ?? "var(--background)" }} />
-        <span className="pg-color__chip" style={{ background: palette?.fg ?? "var(--foreground)" }} />
-        <span aria-live="polite">
-          {palette ? `${palette.bg} / ${palette.fg} · ${palette.ratio}:1 ${wcagLevel(palette.ratio)}` : "Base · 15.1:1 AAA"}
-        </span>
+        <span className="pg-color__chip" style={{ background: p?.bg ?? "var(--background)" }} />
+        <span className="pg-color__chip" style={{ background: p?.fg ?? "var(--foreground)" }} />
+        <span aria-live="polite">{p ? `${p.bg} / ${p.fg} · ${p.ratio}:1 ${wcagLevel(p.ratio)}` : "Base · 15.1:1 AAA"}</span>
       </p>
       <div className="pg-color__actions">
-        <button type="button" className="pg-color__button pg-color__button--primary" onClick={() => applyPalette(randomPalette())}>
+        <button type="button" className="pg-color__button pg-color__button--primary" onClick={() => applyTheme(randomTheme())}>
           Shuffle ↻
         </button>
-        <button type="button" className="pg-color__button" onClick={resetPalette} disabled={!palette}>
+        <button type="button" className="pg-color__button" onClick={resetTheme} disabled={!theme}>
           Reset
         </button>
       </div>
@@ -89,50 +106,54 @@ export function ColorShuffle() {
   );
 }
 
-/** Section cards: four random AA systems; press one to serve the page in it. */
-export function ColorSystemCards({ count = 4 }: { count?: number }) {
-  const active = useCurrentPalette();
-  const [palettes, setPalettes] = useState<Palette[] | null>(null);
+/** Section cards: four random themes; press one to serve the page in it. */
+export function ThemeCards({ count = 4 }: { count?: number }) {
+  const active = useCurrentTheme();
+  const [themes, setThemes] = useState<Theme[] | null>(null);
 
   // Random only after mount, so the server and the first client render agree.
   useEffect(() => {
-    const shuffle = () => setPalettes(Array.from({ length: count }, () => randomPalette()));
+    const shuffle = () => setThemes(Array.from({ length: count }, () => randomTheme()));
     shuffle();
-    document.addEventListener("colorsystemshuffle", shuffle);
-    return () => document.removeEventListener("colorsystemshuffle", shuffle);
+    document.addEventListener(SHUFFLE_EVENT, shuffle);
+    return () => document.removeEventListener(SHUFFLE_EVENT, shuffle);
   }, [count]);
 
   return (
     <>
-      {(palettes ?? Array.from({ length: count }, () => null)).map((p, i) => (
-        <li key={p ? `${p.bg}${p.fg}` : i} className="pg-card">
+      {(themes ?? Array.from({ length: count }, () => null)).map((t, i) => (
+        <li key={t ? `${i}-${t.palette.bg}${t.palette.fg}` : i} className="pg-card">
           <button
             type="button"
             className="pg-card__link pg-card__button"
-            aria-pressed={p !== null && active?.bg === p.bg && active.fg === p.fg}
-            disabled={!p}
-            onClick={() => p && applyPalette(p)}
+            aria-pressed={same(t, active)}
+            disabled={!t}
+            onClick={() => t && applyTheme(t)}
           >
             <span className="pg-card__top">
-              <span className="pg-card__title">System {String(i + 1).padStart(2, "0")}</span>
-              <span className="pg-card__count">{p ? `[${p.ratio}:1]` : "[ ]"}</span>
+              <span className="pg-card__title">Theme {String(i + 1).padStart(2, "0")}</span>
+              <span className="pg-card__count">{t ? `[${t.palette.ratio}:1]` : "[ ]"}</span>
             </span>
-            <span className="pg-card__preview pg-card__preview--topping" style={p ? { background: p.bg } : undefined}>
-              {p ? (
+            <span className="pg-card__preview pg-card__preview--topping" style={t ? { background: t.palette.bg } : undefined}>
+              {t ? (
                 <>
-                  <span className="pg-swatch-type" style={{ color: p.fg }}>
-                    Aa
+                  <span className="pg-theme-font" style={{ color: t.palette.fg, fontFamily: t.fonts.display.css }}>
+                    {t.fonts.display.name}
+                  </span>
+                  <span className="pg-theme-body" style={{ color: t.palette.muted, fontFamily: t.fonts.body.css }}>
+                    + {t.fonts.body.name}
                   </span>
                   <span className="pg-swatches" aria-hidden="true">
-                    {[p.bg, p.card, p.muted, p.fg].map((c) => (
-                      <span key={c} className="pg-swatch" style={{ background: c }} />
+                    {/* Keyed by role: two roles can share a colour (muted falls back to fg) */}
+                    {(["bg", "card", "muted", "fg"] as const).map((role) => (
+                      <span key={role} className="pg-swatch" style={{ background: t.palette[role] }} />
                     ))}
                   </span>
                 </>
               ) : null}
             </span>
             <span className="pg-card__meta">
-              {p ? `${p.bg} / ${p.fg} · ${wcagLevel(p.ratio)} · ${active?.bg === p.bg && active.fg === p.fg ? "served now" : "tap to serve"}` : "mixing…"}
+              {t ? `${t.palette.bg} / ${t.palette.fg} · ${wcagLevel(t.palette.ratio)} · ${same(t, active) ? "served now" : "tap to serve"}` : "mixing…"}
             </span>
           </button>
         </li>
@@ -141,11 +162,11 @@ export function ColorSystemCards({ count = 4 }: { count?: number }) {
   );
 }
 
-/** Section action: four new systems. */
-export function ShuffleSystemsButton() {
+/** Section action: four new themes. */
+export function ShuffleThemesButton() {
   return (
-    <button type="button" className="pg-pill" onClick={() => document.dispatchEvent(new CustomEvent("colorsystemshuffle"))}>
-      <span>Shuffle systems</span>
+    <button type="button" className="pg-pill" onClick={() => document.dispatchEvent(new CustomEvent(SHUFFLE_EVENT))}>
+      <span>Shuffle themes</span>
       <span aria-hidden="true">↻</span>
     </button>
   );

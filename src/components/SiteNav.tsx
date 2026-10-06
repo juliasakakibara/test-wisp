@@ -125,7 +125,7 @@ export function SiteNav() {
             about
           </SiteLink>
           <SiteLink
-            href="/projects"
+            href="/#projects"
             className="nav-item"
             current={current === "work"}
             onClick={close}
@@ -133,7 +133,7 @@ export function SiteNav() {
             projects
           </SiteLink>
           <SiteLink
-            href="/playground"
+            href="/#playground"
             className="nav-item"
             current={current === "playground"}
             onClick={close}

@@ -1,5 +1,3 @@
-import { FooterSocial } from "@/components/FooterSocial";
-import { GetInTouch } from "@/components/GetInTouch";
 import { SignOff } from "@/components/SignOff";
 
 /** Contact address from the wireframe ("Get in touch"). */
@@ -39,20 +37,18 @@ export function SiteChrome({
         {children}
       </main>
 
-      <footer className="site-footer">
-        <div className="footer-container footer-container--touch">
-          {/* Experiment (playground): live date + sign-off line; copy is a placeholder for the personality pass */}
-          <SignOff line="Same batter, any brand." />
-          <GetInTouch email={CONTACT_EMAIL} githubUrl={config.githubUrl} linkedinUrl={config.linkedinUrl} />
-        </div>
-        <div className="footer-container">
-          <p className="footer-text" data-editable="footerText">
-            {config.footerText}
-          </p>
-          <div className="footer-end">
-            <FooterSocial githubUrl={config.githubUrl} linkedinUrl={config.linkedinUrl} />
-          </div>
-        </div>
+      {/* Experiment (playground): footer after playground.nothing.tech; copy is a placeholder for the personality pass */}
+      <footer className="site-footer site-footer--pg">
+        <SignOff
+          line="Same batter, any brand."
+          wordmark="Julia Sakakibara"
+          links={[
+            { label: "Email", href: `mailto:${CONTACT_EMAIL}` },
+            { label: "LinkedIn", href: config.linkedinUrl, external: true },
+            { label: "GitHub", href: config.githubUrl, external: true },
+            { label: "Style guide", href: "/styleguide" },
+          ]}
+        />
       </footer>
     </>
   );

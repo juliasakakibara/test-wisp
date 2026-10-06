@@ -9,10 +9,11 @@ import {
   useState,
   type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
+  type CSSProperties,
   type ReactNode,
 } from "react";
 import { HeroVisual } from "@/components/HeroVisual";
-import { ColorShuffle } from "@/components/ColorSystem";
+import { ThemeShuffle } from "@/components/ColorSystem";
 
 export type CanvasProject = {
   slug: string;
@@ -29,14 +30,16 @@ type Widget = { id: WidgetKind; label: string };
 const WIDGETS: Widget[] = [
   { id: "figure", label: "3D" },
   { id: "syrup", label: "Syrup" },
-  { id: "clock", label: "São Paulo" },
+  { id: "clock", label: "Porto Alegre" },
   { id: "covers", label: "Projects" },
   { id: "cloche", label: "Cloche" },
-  { id: "color", label: "Color system" },
+  { id: "color", label: "Theme" },
 ];
 
+type Layout = Record<WidgetKind, { x: number; y: number }>;
+
 /** Top-left position of each widget as a % of the frame, so the layout scales. */
-const LAYOUT: Record<WidgetKind, { x: number; y: number }> = {
+const LAYOUT: Layout = {
   figure: { x: 5, y: 4 },
   syrup: { x: 27, y: 10 },
   clock: { x: 82, y: 6 },
@@ -45,9 +48,20 @@ const LAYOUT: Record<WidgetKind, { x: number; y: number }> = {
   color: { x: 72, y: 74 },
 };
 
+/** Phones: same idea as the reference's mobile frame — smaller widgets above, headline in the lower half. */
+const MOBILE_LAYOUT: Layout = {
+  figure: { x: 3, y: 2 },
+  clock: { x: 64, y: 3 },
+  syrup: { x: 3, y: 20 },
+  covers: { x: 52, y: 18 },
+  cloche: { x: 30, y: 33 },
+  color: { x: 6, y: 45 },
+};
+
+const PHONE_MQ = "(max-width: 767px)";
 const KEY_STEP = 2;
 
-/** São Paulo time, ticking; empty until mounted so server and client markup agree. */
+/** Porto Alegre time (IANA zone America/Sao_Paulo: same clock), ticking; empty until mounted so server and client agree. */
 function ClockWidget() {
   const [time, setTime] = useState<{ h: string; m: string } | null>(null);
   useEffect(() => {
@@ -61,7 +75,7 @@ function ClockWidget() {
     return () => window.clearInterval(id);
   }, []);
   return (
-    <div className="pg-clock" role="img" aria-label={time ? `São Paulo, ${time.h}:${time.m}` : "São Paulo time"}>
+    <div className="pg-clock" role="img" aria-label={time ? `Porto Alegre, ${time.h}:${time.m}` : "Porto Alegre time"}>
       <span>{time?.h ?? "--"}</span>
       <span>{time?.m ?? "--"}</span>
     </div>
@@ -111,7 +125,14 @@ export function HeroCanvas({ projects, children }: { projects: CanvasProject[]; 
   const canvasRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef(new Map<string, HTMLElement>());
   const drag = useRef<{ id: WidgetKind; dx: number; dy: number } | null>(null);
-  const [pos, setPos] = useState(LAYOUT);
+  // Both layouts live in state; CSS picks one per breakpoint, so server and client markup agree.
+  const [layouts, setLayouts] = useState({ desktop: LAYOUT, mobile: MOBILE_LAYOUT });
+  const which = () => (window.matchMedia(PHONE_MQ).matches ? "mobile" : "desktop");
+  const setPos = (id: WidgetKind, next: { x: number; y: number }) =>
+    setLayouts((prev) => {
+      const key = which();
+      return { ...prev, [key]: { ...prev[key], [id]: next } };
+    });
   const [top, setTop] = useState<WidgetKind | null>(null);
 
   /** Keep a widget fully inside the frame. */
@@ -129,10 +150,11 @@ export function HeroCanvas({ projects, children }: { projects: CanvasProject[]; 
     const canvas = canvasRef.current?.getBoundingClientRect();
     if (!canvas) return;
     event.currentTarget.setPointerCapture(event.pointerId);
+    const p = layouts[which()][id];
     drag.current = {
       id,
-      dx: ((event.clientX - canvas.left) / canvas.width) * 100 - pos[id].x,
-      dy: ((event.clientY - canvas.top) / canvas.height) * 100 - pos[id].y,
+      dx: ((event.clientX - canvas.left) / canvas.width) * 100 - p.x,
+      dy: ((event.clientY - canvas.top) / canvas.height) * 100 - p.y,
     };
     setTop(id);
   };
@@ -143,7 +165,7 @@ export function HeroCanvas({ projects, children }: { projects: CanvasProject[]; 
     if (!d || !canvas) return;
     const x = ((event.clientX - canvas.left) / canvas.width) * 100 - d.dx;
     const y = ((event.clientY - canvas.top) / canvas.height) * 100 - d.dy;
-    setPos((prev) => ({ ...prev, [d.id]: clamp(d.id, x, y) }));
+    setPos(d.id, clamp(d.id, x, y));
   };
 
   const onPointerUp = () => {
@@ -162,7 +184,8 @@ export function HeroCanvas({ projects, children }: { projects: CanvasProject[]; 
     if (!delta) return;
     event.preventDefault();
     setTop(id);
-    setPos((prev) => ({ ...prev, [id]: clamp(id, prev[id].x + delta[0], prev[id].y + delta[1]) }));
+    const p = layouts[which()][id];
+    setPos(id, clamp(id, p.x + delta[0], p.y + delta[1]));
   };
 
   const body = (id: WidgetKind): ReactNode => {
@@ -178,16 +201,12 @@ export function HeroCanvas({ projects, children }: { projects: CanvasProject[]; 
       case "covers":
         return <CoversWidget projects={projects} />;
       case "color":
-        return <ColorShuffle />;
+        return <ThemeShuffle />;
     }
   };
 
   return (
     <div ref={canvasRef} className="pg-frame">
-      {["tl", "tm1", "tm2", "tr", "bl", "bm1", "bm2", "br"].map((m) => (
-        <span key={m} className={`pg-frame__mark pg-frame__mark--${m}`} aria-hidden="true" />
-      ))}
-
       <div className="pg-frame__center">{children}</div>
 
       <p id="pg-frame-help" className="visually-hidden">
@@ -202,7 +221,15 @@ export function HeroCanvas({ projects, children }: { projects: CanvasProject[]; 
             else nodeRefs.current.delete(w.id);
           }}
           className={`pg-widget pg-widget--${w.id}`}
-          style={{ left: `${pos[w.id].x}%`, top: `${pos[w.id].y}%`, zIndex: top === w.id ? 4 : 3 }}
+          style={
+            {
+              "--dx": `${layouts.desktop[w.id].x}%`,
+              "--dy": `${layouts.desktop[w.id].y}%`,
+              "--mx": `${layouts.mobile[w.id].x}%`,
+              "--my": `${layouts.mobile[w.id].y}%`,
+              zIndex: top === w.id ? 4 : 3,
+            } as CSSProperties
+          }
           aria-label={w.label}
         >
           <button

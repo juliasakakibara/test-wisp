@@ -4,7 +4,7 @@ import { getProjects, isPlayground, projectCategory } from "@/lib/projects";
 import { createSiteMetadata } from "@/lib/metadata";
 import { HeroCanvas } from "@/components/HeroCanvas";
 import { PlaygroundCard, PlaygroundSection } from "@/components/PlaygroundSection";
-import { ColorSystemCards, ShuffleSystemsButton } from "@/components/ColorSystem";
+import { ShuffleThemesButton, ThemeCards } from "@/components/ColorSystem";
 
 export const revalidate = 60;
 
@@ -44,7 +44,7 @@ export default async function HomePage() {
             {config.heroTitle}
           </h1>
           <p className="pg-hero__lead">
-            A freelance UX engineer who designs and builds. Drag anything around, then shuffle the colours.
+            A freelance UX engineer who designs and builds. Drag anything around, then shuffle the theme.
           </p>
         </HeroCanvas>
       </section>
@@ -53,30 +53,29 @@ export default async function HomePage() {
         id="projects"
         title="Projects"
         lead="Case studies: design systems, Figma tools and AI products."
-        primary={{ label: "Start a project", href: "mailto:talk.to@juliasakakibara.com.br" }}
-        seeAll={{ label: "See all", href: "/projects" }}
+        scrollLabel="projects"
       >
-        {work.slice(0, 4).map((post) => (
+        {work.map((post) => (
           <PlaygroundCard key={post.id} post={post} />
         ))}
       </PlaygroundSection>
 
       <PlaygroundSection
-        id="color-systems"
-        title="Color systems"
-        lead="Same system, any colour. Random palettes, every text pair checked for WCAG AA."
-        extra={<ShuffleSystemsButton />}
+        id="themes"
+        title="Themes"
+        lead="Same system, any brand. Random palettes and font pairs, every text pair checked for WCAG AA."
+        extra={<ShuffleThemesButton />}
       >
-        <ColorSystemCards />
+        <ThemeCards />
       </PlaygroundSection>
 
       <PlaygroundSection
         id="playground"
         title="Playground"
         lead="Older projects and experiments: apps, 3D, hardware."
-        seeAll={{ label: "See all", href: "/playground" }}
+        scrollLabel="playground projects"
       >
-        {playground.slice(0, 4).map((post) => (
+        {playground.map((post) => (
           <PlaygroundCard key={post.id} post={post} />
         ))}
       </PlaygroundSection>

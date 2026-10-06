@@ -89,8 +89,10 @@ export function getFunTheme(id: FunThemeId): FunThemeTokens {
 }
 
 /** Routes where Fun themes apply and appear in the switcher. */
+/** Experiment (playground): Fun themes are off; random AA themes replace them (components/ColorSystem). */
 export function pathAllowsFunThemes(pathname: string): boolean {
-  return pathname === "/" || pathname === "/styleguide" || pathname.startsWith("/styleguide/");
+  void pathname;
+  return false;
 }
 
 export function readStoredFunTheme(): FunThemeId | null {

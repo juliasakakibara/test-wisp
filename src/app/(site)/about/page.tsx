@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { getConfig } from "@/lib/site-data";
 import { createSiteMetadata } from "@/lib/metadata";
+import { DetailBlock, DetailLayout } from "@/components/DetailLayout";
+import { HeroVisual } from "@/components/HeroVisual";
 import {
   ABOUT_CONNECTIONS,
   ABOUT_DETAILS,
@@ -21,86 +23,64 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-/** Same skeleton as the case page (wireframe "about" frame). */
+/** Experiment (playground): same detail layout as a case (after playground.nothing.tech's app page). */
 export default async function AboutPage() {
   const config = await getConfig();
 
   return (
-    <article className="case-page about-page" aria-labelledby="about-title">
-      <header className="case-header">
-        <div className="case-header__text">
-          <h1 id="about-title" className="case-title" data-editable="aboutTitle">
-            {config.aboutTitle}
-          </h1>
-          <p className="case-lead" data-editable="aboutIntro">
-            {config.aboutIntro}
-          </p>
-        </div>
-        <dl className="case-details">
-          {ABOUT_DETAILS.map((row) => (
-            <div key={row.label} className="case-details__row">
-              <dt>{row.label}</dt>
-              <dd>{row.value}</dd>
+    <DetailLayout
+      backHref="/"
+      backLabel="Back to home"
+      preview={<HeroVisual />}
+      title={config.aboutTitle}
+      titleProps={{ "data-editable": "aboutTitle" }}
+      meta="UX engineer"
+      lead={config.aboutIntro}
+      leadProps={{ "data-editable": "aboutIntro" }}
+      actions={
+        <>
+          <a href="mailto:talk.to@juliasakakibara.com.br" className="pg-pill pg-pill--signal pg-pill--center">
+            <span>Get in touch</span>
+          </a>
+          <a href={config.linkedinUrl} className="pg-pill pg-pill--center" target="_blank" rel="noopener noreferrer">
+            <span>LinkedIn ↗</span>
+          </a>
+        </>
+      }
+      rows={[...ABOUT_DETAILS, { label: "Based in", value: "Porto Alegre, Brazil" }]}
+    >
+      <DetailBlock title={ABOUT_TEXT.heading}>
+        {ABOUT_TEXT.body.map((paragraph) => (
+          <p key={paragraph}>{paragraph}</p>
+        ))}
+      </DetailBlock>
+
+      <DetailBlock title={ABOUT_THINGS.heading}>
+        <dl className="pg-detail__rows pg-detail__rows--stacked">
+          {ABOUT_THINGS.items.map((item) => (
+            <div key={item.title} className="pg-detail__row">
+              <dt>{item.title}</dt>
+              <dd>{item.text}</dd>
             </div>
           ))}
-          <div className="case-details__row">
-            <dt>Contact</dt>
-            <dd>
-              <a href="#get-in-touch-title" className="link">
-                Get in touch ↓
-              </a>
-            </dd>
-          </div>
         </dl>
-      </header>
+      </DetailBlock>
 
-      <section className="split-section">
-        <div className="split-section__right">
-          <h2 className="split-section__heading">{ABOUT_TEXT.heading}</h2>
-          {ABOUT_TEXT.body.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
-        </div>
-      </section>
+      <DetailBlock title={ABOUT_CONNECTIONS.heading}>
+        <p>{ABOUT_CONNECTIONS.lead}</p>
+        <p>{ABOUT_CONNECTIONS.body}</p>
+      </DetailBlock>
 
-      <section className="about-block" aria-labelledby="about-things">
-        <h2 id="about-things" className="visually-hidden">
-          {ABOUT_THINGS.heading}
-        </h2>
-        <ul className="card-row card-row--3">
-          {ABOUT_THINGS.items.map((item) => (
-            <li key={item.title} className="text-card">
-              <span className="featured-card__kicker">{ABOUT_THINGS.heading}</span>
-              <h3 className="text-card__title">{item.title}</h3>
-              <p className="text-card__text">{item.text}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="about-block">
-        <h2 className="wide-heading">{ABOUT_CONNECTIONS.heading}</h2>
-        <div className="split-section">
-          <div className="split-section__right">
-            <h3 className="split-section__heading">{ABOUT_CONNECTIONS.lead}</h3>
-            <p>{ABOUT_CONNECTIONS.body}</p>
-          </div>
-        </div>
-      </section>
-
-      <section className="about-block" aria-labelledby="about-tools">
-        <h2 id="about-tools" className="wide-heading wide-heading--small">
-          {ABOUT_TOOLS.heading}
-        </h2>
-        <ul className="card-row card-row--4">
+      <DetailBlock title={ABOUT_TOOLS.heading}>
+        <dl className="pg-detail__rows">
           {ABOUT_TOOLS.columns.map((column) => (
-            <li key={column.title} className="text-column">
-              <h3 className="text-column__title">{column.title}</h3>
-              <p className="text-column__text">{column.text}</p>
-            </li>
+            <div key={column.title} className="pg-detail__row">
+              <dt>{column.title}</dt>
+              <dd>{column.text}</dd>
+            </div>
           ))}
-        </ul>
-      </section>
-    </article>
+        </dl>
+      </DetailBlock>
+    </DetailLayout>
   );
 }

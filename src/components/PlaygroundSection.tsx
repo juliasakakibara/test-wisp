@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { tagLabel, visibleTags, type ProjectSummary } from "@/lib/projects";
+import { ScrollRow } from "@/components/ScrollRow";
 
 type Action = { label: string; href: string };
 
@@ -14,13 +15,15 @@ type PlaygroundSectionProps = {
   seeAll?: Action;
   /** Extra controls in the actions row (e.g. a button). */
   extra?: ReactNode;
+  /** Cards scroll sideways with ← → buttons instead of wrapping into a grid. */
+  scrollLabel?: string;
   children: ReactNode;
 };
 
 /** Section after playground.nothing.tech: serif title + mono lead, two pill actions, a 4-column grid. */
-export function PlaygroundSection({ id, title, lead, primary, seeAll, extra, children }: PlaygroundSectionProps) {
+export function PlaygroundSection({ id, title, lead, primary, seeAll, extra, scrollLabel, children }: PlaygroundSectionProps) {
   return (
-    <section className="pg-section" aria-labelledby={`${id}-title`}>
+    <section id={id} className="pg-section" aria-labelledby={`${id}-title`}>
       <header className="pg-section__head">
         <div>
           <h2 id={`${id}-title`} className="pg-section__title">
@@ -44,7 +47,7 @@ export function PlaygroundSection({ id, title, lead, primary, seeAll, extra, chi
           ) : null}
         </div>
       </header>
-      <ul className="pg-grid">{children}</ul>
+      {scrollLabel ? <ScrollRow label={scrollLabel}>{children}</ScrollRow> : <ul className="pg-grid">{children}</ul>}
     </section>
   );
 }

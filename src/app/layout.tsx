@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { Doto, Geist_Mono, Inter, JetBrains_Mono, Newsreader } from "next/font/google";
+import { DM_Sans, Doto, Fraunces, Geist_Mono, Instrument_Serif, Inter, JetBrains_Mono, Newsreader, Space_Grotesk } from "next/font/google";
 // Pancake 2 topping tokens (--lb-*) first; globals.css maps the site's tokens onto them.
 import "../styles/pancake/theme.css";
 import "./globals.css";
@@ -18,6 +18,11 @@ const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 const newsreader = Newsreader({ variable: "--font-newsreader", subsets: ["latin"], weight: ["300", "400"], style: ["normal", "italic"] });
 const doto = Doto({ variable: "--font-doto", subsets: ["latin"], weight: ["700"] });
+// Theme font pairs (src/lib/themes.ts): not preloaded, downloaded only when a theme uses them.
+const fraunces = Fraunces({ variable: "--font-fraunces", subsets: ["latin"], preload: false });
+const dmSans = DM_Sans({ variable: "--font-dm-sans", subsets: ["latin"], preload: false });
+const instrumentSerif = Instrument_Serif({ variable: "--font-instrument-serif", subsets: ["latin"], weight: "400", preload: false });
+const spaceGrotesk = Space_Grotesk({ variable: "--font-space-grotesk", subsets: ["latin"], preload: false });
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getConfig();
@@ -66,7 +71,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${jetbrainsMono.variable} ${geistMono.variable} ${newsreader.variable} ${doto.variable}`}
+      className={`${inter.variable} ${jetbrainsMono.variable} ${geistMono.variable} ${newsreader.variable} ${doto.variable} ${fraunces.variable} ${dmSans.variable} ${instrumentSerif.variable} ${spaceGrotesk.variable}`}
       suppressHydrationWarning
     >
       <head>
