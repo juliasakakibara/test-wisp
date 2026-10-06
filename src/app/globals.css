@@ -5984,3 +5984,13 @@ body,
   }
 }
 
+/* About: the intro sits at the top of the canvas so it reads on load */
+.pg-frame--about .pg-frame__center {
+  inset: 64px 0 auto 0;
+  align-content: start;
+}
+
+.pg-about__text {
+  padding: 0 12px;
+}
+
