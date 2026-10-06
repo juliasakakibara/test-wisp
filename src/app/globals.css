@@ -6641,7 +6641,7 @@ a.pg-card__link:hover {
 
 a.pg-card__link:hover,
 .pg-card__button:hover {
-  background: var(--surface);
+  background: var(--hover-surface);
 }
 
 .pg-card__title {
@@ -6705,28 +6705,36 @@ a.pg-card__link:hover,
     overflow: visible;
   }
 
+  /* every option the same width (the widest) and the height of the pill buttons */
   .site-nav .nav-list {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: stretch;
     gap: calc(var(--unit) * 2);
-    width: auto;
+    width: max-content;
   }
 
   .site-nav .nav-item,
   .site-nav .link.nav-item {
     display: flex;
     flex-direction: column; /* links keep their bold-width reserve as a second, zero-height row */
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    width: fit-content;
+    width: auto;
     min-width: 0;
-    min-height: 48px;
-    padding: 0 calc(var(--unit) * 6);
+    height: 32px;
+    min-height: 32px;
+    box-sizing: border-box;
+    padding: 0 calc(var(--unit) * 4);
     border-bottom: 0;
     border-radius: var(--radius-pill);
     background: var(--raised);
     box-shadow: 0 2px 8px color-mix(in srgb, var(--foreground) 10%, transparent);
+  }
+
+  .site-nav .nav-item:not(.is-current):hover,
+  .site-nav .theme-switcher:hover .theme-switcher__face {
+    background: var(--hover-surface);
   }
 
   .site-nav .nav-item.is-current,
@@ -6738,16 +6746,19 @@ a.pg-card__link:hover,
   }
 
   .site-nav .theme-switcher {
-    width: fit-content;
+    width: auto;
     margin-top: 0;
   }
 
   .site-nav .theme-switcher .theme-switcher__face {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    width: fit-content;
-    min-height: 48px;
-    padding: 0 calc(var(--unit) * 6);
+    width: 100%;
+    height: 32px;
+    min-height: 32px;
+    box-sizing: border-box;
+    padding: 0 calc(var(--unit) * 4);
+    font-size: var(--font-size-large);
     border-radius: var(--radius-pill);
     background: var(--raised);
   }
