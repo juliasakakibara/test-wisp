@@ -5525,6 +5525,8 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
   --pg-text-micro: 10px;
   --pg-text-ui: 12px;
   --pg-text-body: 14px;
+  /* 3 · one line height for every display title */
+  --pg-lh-display: 1.1;
 }
 
 .pg-frame,
@@ -5581,5 +5583,14 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
   .pg-dark {
     font-size: var(--pg-text-micro);
   }
+}
+
+/* 3 · display titles share one line height */
+.pg-hero__title,
+.pg-section__title,
+.pg-detail__title,
+.pg-footer__line,
+.pg-theme-font {
+  line-height: var(--pg-lh-display);
 }
 
