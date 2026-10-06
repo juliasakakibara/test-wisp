@@ -5842,11 +5842,6 @@ body,
 }
 
 
-.pg-owl__moon {
-  font-size: 28px;
-  line-height: 1;
-}
-
 .pg-printer__bar {
   display: block;
   height: 6px;
@@ -6333,6 +6328,105 @@ body,
     animation: none;
     outline: 2px solid var(--lb-neutral-50);
     outline-offset: -6px;
+  }
+}
+
+/* Night owl: a day/night switch that only re-colours this widget */
+.pg-owl {
+  display: grid;
+  gap: 8px;
+  width: 248px;
+  box-sizing: border-box;
+  transition: background-color var(--pg-dur-slow) ease, color var(--pg-dur-slow) ease;
+}
+
+.pg-owl p {
+  margin: 0;
+}
+
+.pg-owl__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pg-owl .pg-owl__label {
+  color: inherit;
+  font-weight: 600;
+}
+
+.pg-owl--day .pg-owl__line {
+  color: var(--muted-foreground);
+}
+
+.pg-owl--night .pg-owl__line {
+  color: var(--lb-neutral-400);
+}
+
+.pg-owl__topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pg-owl__topics li {
+  padding: 2px 8px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: var(--pg-text-micro);
+}
+
+.pg-switch {
+  position: relative;
+  width: 48px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.pg-switch__thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 11px;
+  line-height: 1;
+  transition: transform var(--pg-dur-fast) ease;
+}
+
+/* knob in the widget's text colour, its glyph in the card colour */
+.pg-owl--day .pg-switch__thumb {
+  background: var(--foreground);
+  color: var(--lb-neutral-50);
+}
+
+.pg-owl--night .pg-switch__thumb {
+  background: var(--lb-neutral-50);
+  color: var(--lb-neutral-900);
+  transform: translateX(24px);
+}
+
+.pg-switch:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pg-owl,
+  .pg-switch__thumb {
+    transition: none;
   }
 }
 

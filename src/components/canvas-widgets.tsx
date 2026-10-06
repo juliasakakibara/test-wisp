@@ -3,8 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { applyColorModePreference, COLOR_MODE_STORAGE_KEY } from "@/lib/color-mode";
-import { notifyThemeChange } from "@/lib/fun-themes";
 
 /* Live widgets for the canvas frames (home hero and About). Words come from the
    site's own copy (lib/about.ts); playful lines are marked as placeholders. */
@@ -90,39 +88,44 @@ function Note({ title, children, wide }: { title: string; children: React.ReactN
   );
 }
 
-/** "Night owl testing AI tools when the world gets quiet": on between 20:00 and 04:00 local, plus a light/dark switch. */
+/**
+ * Night owl: a day/night switch that only re-colours this widget, and what Julia
+ * is into at that hour. Starts from Porto Alegre time (night 20:00–04:00).
+ */
+const OWL = {
+  day: { label: "day mode", line: "Daytime is for systems:", topics: ["design systems", "tokens", "UI", "interactions"] },
+  night: { label: "night mode", line: "After dark I'm making:", topics: ["IoT", "3D prints", "AR/VR", "AI tools"] },
+} as const;
+
 export function NightOwlWidget() {
   const time = useLocalTime();
   const hour = time ? Number(time.h) : null;
-  const on = hour !== null && (hour >= 20 || hour < 4);
-  const [dark, setDark] = useState(false);
-  useEffect(() => {
-    const sync = () => setDark(document.documentElement.getAttribute("data-color-mode") === "dark");
-    sync();
-    const mo = new MutationObserver(sync);
-    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-color-mode"] });
-    return () => mo.disconnect();
-  }, []);
-
-  function toggle() {
-    const next = dark ? "light" : "dark";
-    try {
-      localStorage.setItem(COLOR_MODE_STORAGE_KEY, next);
-    } catch {
-      // storage blocked: the switch still works for this visit
-    }
-    applyColorModePreference(next);
-    notifyThemeChange();
-  }
+  const nightNow = hour !== null && (hour >= 20 || hour < 4);
+  const [choice, setChoice] = useState<boolean | null>(null);
+  const night = choice ?? nightNow;
+  const view = night ? OWL.night : OWL.day;
 
   return (
-    <div className="pg-dark pg-owl">
-      <p className="pg-owl__moon" aria-hidden="true">{on ? "☾" : "☼"}</p>
-      <p>night owl mode: {hour === null ? "…" : on ? "on" : "off"}</p>
-      <p className="pg-dark__muted">testing AI tools when the world gets quiet</p>
-      <button type="button" className="pg-mini-btn pg-mini-btn--on-dark" aria-pressed={dark} onClick={toggle}>
-        {dark ? "lights on ☼" : "lights off ☾"}
-      </button>
+    <div className={`pg-owl ${night ? "pg-dark pg-owl--night" : "pg-note pg-owl--day"}`}>
+      <div className="pg-owl__head">
+        <p className="pg-owl__label">{view.label}</p>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={night}
+          aria-label="Night mode"
+          className="pg-switch"
+          onClick={() => setChoice(!night)}
+        >
+          <span className="pg-switch__thumb" aria-hidden="true">{night ? "☾" : "☼"}</span>
+        </button>
+      </div>
+      <p className="pg-owl__line">{view.line}</p>
+      <ul className="pg-owl__topics" aria-live="polite">
+        {view.topics.map((t) => (
+          <li key={t}>{t}</li>
+        ))}
+      </ul>
     </div>
   );
 }
