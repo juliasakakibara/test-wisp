@@ -6577,23 +6577,27 @@ body,
 
 /* Dark widgets (clock, Pomodoro, Modes at night) stay dark in both modes: inside
    them the theme pair is swapped for the inverse pair (terminals have their own). */
-.pg-widget .pg-dark:not(.pg-term, .pg-tools) {
+.pg-widget .pg-dark:not(.pg-term, .pg-tools, .pg-pomo) {
   --foreground: var(--inverse-surface);
   --background: var(--inverse-ink);
 }
 
-/* the clock follows the greys: raised and light in light mode, dark in dark mode */
-.pg-widget--clock {
+/* the clock and Pomodoro follow the greys: raised and light in light mode, dark in dark mode */
+.pg-widget--clock,
+.pg-widget--pomodoro {
   --clock-bg: color-mix(in srgb, var(--clock-surface) var(--palette-mix), var(--foreground));
   --clock-fg: color-mix(in srgb, var(--clock-ink) var(--palette-mix), var(--background));
 }
 
-.pg-widget .pg-clock {
+.pg-widget .pg-clock,
+.pg-widget .pg-pomo {
   --foreground: var(--clock-bg);
   --background: var(--clock-fg);
   --green-inverse: var(--code-green);
+  --inverse-muted: color-mix(in srgb, var(--clock-fg) calc(var(--inverse-muted-opacity) + 14% * var(--palette)), transparent);
 }
 
-.pg-widget--clock:has(> .pg-clock) > .pg-widget__handle {
+.pg-widget--clock:has(> .pg-clock) > .pg-widget__handle,
+.pg-widget--pomodoro:has(> .pg-pomo) > .pg-widget__handle {
   color: var(--clock-fg);
 }

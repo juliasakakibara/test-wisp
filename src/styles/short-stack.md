@@ -39,8 +39,8 @@ Light and dark aren't separate tokens. They are the same roles with different va
 | Page (`--background`) | off-white #f8f8f8 (foreground 3% into white), not pure white | neutral-900 (#1c1c1c), not black |
 | Raised: notes, Theme card, pills, arrows (`--raised`) | a step darker: foreground 4% into the page (#efefef) | a step lighter: foreground 8% into the page |
 | Cards, footer (`--surface`) | foreground 11% into the page | same formula, so lighter grey |
-| Dark widgets: Pomodoro, Modes at night (`--inverse-surface` / `--inverse-ink`) | neutral-900 / white | neutral-800 / neutral-100; they stay dark |
-| Clock | raised grey (#efefef), dark-green digits | neutral-800, bright-green digits |
+| Dark widgets: Modes at night (`--inverse-surface` / `--inverse-ink`) | neutral-900 / white | neutral-800 / neutral-100; they stay dark |
+| Clock, Pomodoro | raised grey (#efefef), dark-green digits | neutral-800, bright-green digits |
 | Terminals | raised grey (#efefef, same as the clock), dark text, darker prompt colours | aubergine (#300a24) with white text, bright prompt colours |
 
 Inside dark widgets the theme pair is swapped for the inverse pair, so their prompt and clock colours use the bright steps in both modes. Shuffled themes fold all of this back (`--palette: 0`): raised = page, and dark widgets = foreground/background, as before.
