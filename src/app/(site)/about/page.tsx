@@ -47,7 +47,7 @@ export default async function AboutPage() {
           mobile="stack"
           widgets={[
             // Scattered but on the dot grid (CSS snaps to 16px); x stays inside the gutters down to 1100px
-            { id: "figure", label: "3D", node: <HeroVisual model="dancing" />, at: { x: 1.5, y: 1 } },
+            { id: "figure", label: "dancing.glb", node: <HeroVisual model="dancing" />, at: { x: 1.5, y: 1 } },
             { id: "timeline", label: "Fields I bounced between", node: <TimelineWidget />, at: { x: 4, y: 24 } },
             { id: "lists", label: "Limited RAM List", node: <ListsWidget />, at: { x: 1.5, y: 47 } },
             { id: "terminal", label: "Terminal", node: <TerminalWidget />, at: { x: 72.5, y: 6 } },

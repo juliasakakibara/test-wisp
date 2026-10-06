@@ -6566,3 +6566,10 @@ body,
 .pg-widget:has(> .pg-term, > .pg-tools) > .pg-widget__handle {
   color: var(--term-ink);
 }
+
+/* the 3D widgets are labelled like the files they load */
+.pg-widget--figure > .pg-widget__handle {
+  font-weight: var(--font-weight);
+  text-transform: none;
+  letter-spacing: 0;
+}

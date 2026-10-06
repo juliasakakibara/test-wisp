@@ -39,7 +39,7 @@ export default async function HomePage() {
         <CanvasFrame
           className="pg-frame--home"
           widgets={[
-            { id: "figure", label: "3D", node: <HeroVisual />, at: { x: 5, y: 4 }, atMobile: { x: 4, y: 2 } },
+            { id: "figure", label: "hero.glb", node: <HeroVisual />, at: { x: 5, y: 4 }, atMobile: { x: 4, y: 2 } },
             { id: "clock", label: "Time", node: <ClockWidget />, at: { x: 82, y: 6 }, atMobile: { x: 8, y: 78 } },
             {
               id: "covers",
