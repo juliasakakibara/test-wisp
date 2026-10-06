@@ -6947,8 +6947,9 @@ a.pg-theme-card:hover {
 /* Project cards: tags up top (muted caps), the project's name at the bottom */
 .pg-card__name {
   color: var(--foreground);
-  font-size: var(--font-size-large);
+  font-size: var(--font-size);
   line-height: var(--line-height-tight);
+  text-transform: uppercase;
 }
 
 /* Project and playground cards for floating covers (transparent PNGs, after
