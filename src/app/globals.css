@@ -5513,3 +5513,46 @@ html:root[data-theme="dark"]:not([data-env="admin"]):not([data-fun-theme]) {
   }
 }
 
+
+/* ══ Consistency pass (experiment/playground) ══════════════════════════════
+   One place for the values every rule above should share. */
+html:root:not([data-env="admin"]):not([data-fun-theme]) {
+  /* 1 · corners: surfaces, things inside a padded surface (24 − 16), small images */
+  --pg-r-surface: 24px;
+  --pg-r-inner: 8px;
+  --pg-r-thumb: 12px;
+}
+
+.pg-frame,
+.pg-dark,
+.pg-color,
+.pg-detail__preview,
+.pg-detail__body .prose img,
+.pg-card__link,
+.pg-card__button {
+  border-radius: var(--pg-r-surface);
+}
+
+.pg-card__preview {
+  border-radius: var(--pg-r-inner);
+}
+
+.pg-covers__card {
+  border-radius: var(--pg-r-thumb);
+}
+
+@media (max-width: 767px) {
+  .pg-dark {
+    border-radius: var(--pg-r-surface);
+  }
+
+  .pg-covers__card {
+    border-radius: var(--pg-r-thumb);
+  }
+}
+
+@media (max-width: 639px) {
+  .site-nav__panel {
+    border-radius: var(--pg-r-surface);
+  }
+}
