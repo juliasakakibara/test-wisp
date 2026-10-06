@@ -5710,3 +5710,15 @@ a,
   }
 }
 
+
+/* 8 · no tracking on body/UI text (the old site's -0.01em tightened the mono);
+   negative tracking stays only on the large display titles */
+body,
+.site-title {
+  letter-spacing: 0;
+}
+
+.pg-hero__title,
+.pg-detail__title {
+  letter-spacing: -0.01em;
+}
