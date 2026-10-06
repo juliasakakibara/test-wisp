@@ -6100,9 +6100,16 @@ body,
   font: var(--pg-text-ui) var(--font-body);
 }
 
+/* Writing: a single ruled line under the text, like lined paper */
+.pg-ram__text {
+  border-bottom: 1px solid transparent;
+  border-radius: 0;
+}
+
+.pg-ram__text:focus,
 .pg-ram__text:focus-visible {
-  outline: 1px solid var(--muted-foreground);
-  outline-offset: 2px;
+  outline: none;
+  border-bottom-color: var(--foreground);
 }
 
 .pg-ram__text::placeholder {
