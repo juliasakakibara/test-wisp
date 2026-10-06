@@ -28,6 +28,7 @@ Pancake (--lb-*)  →  Short Stack inputs  →  Short Stack derived  →  site C
 | `--cyan` | cyan-500 | same | (folded) |
 | `--sticky` / `--on-sticky` | yellow-300 / neutral-900 | same | (folded) |
 | `--ink-blue` | blue-600 | blue-400 | (folded) |
+| `--terminal` / `--terminal-ink` | #300a24 aubergine / #fff (dark in both modes) | same | (folded) |
 
 Light and dark aren't separate tokens. They are the same roles with different values. A shuffled theme is one more set of values.
 
@@ -36,6 +37,7 @@ Light and dark aren't separate tokens. They are the same roles with different va
 | Where | Colour |
 |---|---|
 | Clock digits, footer stamp | green |
+| Terminals (Home, About) | aubergine background (`--terminal`), bright prompt colours in both modes |
 | Home terminal (Syrup + Cloche) | `$` and `✓` green, message yellow, live hex and commit hash cyan |
 | Tutorial | a yellow sticky note on the canvas ("Drag anything around…") |
 | Footer dots | sticky yellow, green, cyan, foreground |

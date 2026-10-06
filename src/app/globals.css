@@ -6544,3 +6544,25 @@ body,
     scale: 1;
   }
 }
+
+/* Terminals in the classic aubergine (base themes; shuffled ones keep their own
+   dark widget). Inside, the theme pair is swapped for the terminal's, and the
+   prompt colours use their bright steps in both modes. */
+.pg-widget:has(> .pg-term, > .pg-tools) {
+  --term-bg: color-mix(in srgb, var(--terminal) var(--palette-mix), var(--foreground));
+  --term-ink: color-mix(in srgb, var(--terminal-ink) var(--palette-mix), var(--background));
+}
+
+.pg-widget .pg-term,
+.pg-widget .pg-tools {
+  --foreground: var(--term-bg);
+  --background: var(--term-ink);
+  --inverse-muted: color-mix(in srgb, var(--term-ink) var(--inverse-muted-opacity), transparent);
+  --green-inverse: var(--lb-green-400);
+  --yellow-inverse: var(--lb-yellow-400);
+  --cyan-inverse: var(--lb-cyan-400);
+}
+
+.pg-widget:has(> .pg-term, > .pg-tools) > .pg-widget__handle {
+  color: var(--term-ink);
+}

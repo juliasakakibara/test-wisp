@@ -33,6 +33,9 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
   --cyan-inverse: var(--lb-cyan-400);
   --sticky: var(--lb-yellow-300);
   --ink-blue: var(--lb-blue-600); /* Bic ballpoint, for handwriting */
+  /* the classic terminal aubergine; dark in both modes. Not a Pancake colour yet */
+  --terminal: #300a24;
+  --terminal-ink: #ffffff;
   --on-sticky: var(--lb-neutral-900);
 }
 
