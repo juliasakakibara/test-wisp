@@ -6814,12 +6814,6 @@ a.pg-card__link:hover,
   line-height: var(--line-height-display);
 }
 
-.pg-theme-card__name {
-  margin-top: calc(var(--unit) * 1);
-  font-size: var(--font-size-large);
-  line-height: var(--line-height-tight);
-}
-
 .pg-theme-card__specs {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -6932,4 +6926,20 @@ a.pg-theme-card:hover {
   .pg-theme-card {
     transition: none;
   }
+}
+
+/* Theme cards: the heading font, its body font under it; no separate name row */
+.pg-card__button.pg-theme-card {
+  grid-template-rows: auto 1fr auto;
+}
+
+.pg-theme-card__fonts {
+  display: grid;
+  align-content: center;
+  gap: calc(var(--unit) * 1.5);
+}
+
+.pg-theme-card .pg-theme-body {
+  color: var(--card-muted, var(--muted-foreground));
+  font-size: var(--font-size-large);
 }

@@ -167,10 +167,16 @@ export function ThemeCards({ count = 4 }: { count?: number }) {
               <span className="pg-card__title">Theme</span>
               <span className="pg-card__count">{same(t, active) ? "served" : String(i + 1).padStart(2, "0")}</span>
             </span>
-            <span className="pg-theme-font" style={t ? { fontFamily: t.fonts.display.css } : undefined}>
-              {t ? t.fonts.display.name : ""}
+            <span className="pg-theme-card__fonts">
+              <span className="pg-theme-font" style={t ? { fontFamily: t.fonts.display.css } : undefined}>
+                {t ? t.fonts.display.name : "mixing…"}
+              </span>
+              {t ? (
+                <span className="pg-theme-body" style={{ fontFamily: t.fonts.body.css }}>
+                  + {t.fonts.body.name}
+                </span>
+              ) : null}
             </span>
-            <span className="pg-theme-card__name">{t ? `${t.fonts.display.name} + ${t.fonts.body.name}` : "mixing…"}</span>
             <span className="pg-theme-card__specs">
               <span>
                 <b>Pair</b>
