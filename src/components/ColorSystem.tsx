@@ -18,12 +18,10 @@ const VARS = ({ palette: p, fonts }: Theme): Record<string, string> => ({
   "--accent": p.fg,
   "--on-accent": p.bg,
   "--accent-edge": p.fg,
-  // colour details collapse into the theme: dots in the text colour, the live dot in the paper colour
-  "--decor": p.fg,
-  "--dots-opacity": "16%",
-  "--live": p.bg,
   "--muted-opacity": `${Math.round(p.mutedAlpha * 100)}%`,
   "--inverse-muted-opacity": `${Math.round(p.invertedMutedAlpha * 100)}%`,
+  // the playful palette is for the base themes only: fold it into this theme's colours
+  "--palette": "0%",
   // Duotone for project images: shadows take the darker colour, highlights the lighter
   "--duo-ink": p.scheme === "light" ? p.fg : p.bg,
   "--duo-paper": p.scheme === "light" ? p.bg : p.fg,

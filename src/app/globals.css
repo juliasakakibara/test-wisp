@@ -6385,3 +6385,87 @@ body,
   }
 }
 
+
+/* ══ Palette (playful, base themes only) ════════════════════════════════════
+   After GSAP: every widget and home section owns one colour family. A family is
+   a strong colour (the widget's tab) and a wash (its card). Mixed at --palette
+   strength, so shuffled themes (--palette: 0%) fall back to their own colours:
+   tabs to the foreground, washes to the background or card surface.
+   Families live in src/styles/short-stack.css. */
+.pg-widget,
+.pg-section {
+  --hue: var(--foreground);
+  --hue-wash: var(--background);
+  --hue-on: var(--background);
+  --tint: color-mix(in srgb, var(--hue) var(--palette), var(--foreground));
+  --tint-on: color-mix(in srgb, var(--hue-on) var(--palette), var(--background));
+  --tint-wash: color-mix(in srgb, var(--hue-wash) var(--palette), var(--background));
+  --tint-card: color-mix(in srgb, var(--hue-wash) var(--palette), var(--surface-hover));
+}
+
+/* one family per widget id (shared across pages) */
+.pg-widget--figure,
+.pg-widget--quiz,
+.pg-widget--color,
+#projects {
+  --hue: var(--palette-green);
+  --hue-wash: var(--palette-green-wash);
+  --hue-on: var(--palette-on);
+}
+
+.pg-widget--syrup,
+.pg-widget--terminal {
+  --hue: var(--palette-blue);
+  --hue-wash: var(--palette-blue-wash);
+  --hue-on: var(--palette-on);
+}
+
+.pg-widget--clock,
+.pg-widget--timeline,
+#playground {
+  --hue: var(--palette-orange);
+  --hue-wash: var(--palette-orange-wash);
+  --hue-on: var(--palette-on);
+}
+
+.pg-widget--covers,
+.pg-widget--lists,
+.pg-widget--pomodoro {
+  --hue: var(--palette-pink);
+  --hue-wash: var(--palette-pink-wash);
+  --hue-on: var(--palette-on);
+}
+
+.pg-widget--cloche,
+.pg-widget--owl,
+#themes {
+  --hue: var(--palette-lilac);
+  --hue-wash: var(--palette-lilac-wash);
+  --hue-on: var(--palette-on);
+}
+
+/* where the families show */
+.pg-widget__handle {
+  background: var(--tint);
+  color: var(--tint-on);
+}
+
+.pg-widget .pg-note,
+.pg-widget .pg-color {
+  background: var(--tint-wash);
+}
+
+/* Dark widgets take the family's strong colour: inside them, the theme's two
+   colours are swapped for the tint and its text colour, so every rule that
+   paints "foreground on background" follows. Shuffled, they stay dark. */
+.pg-widget .pg-dark,
+.pg-widget .pg-clock {
+  --foreground: var(--tint);
+  --background: var(--tint-on);
+  --inverse-muted: color-mix(in srgb, var(--tint-on) var(--inverse-muted-opacity), transparent);
+}
+
+.pg-section a.pg-card__link:hover,
+.pg-section .pg-card__button:hover {
+  background: var(--tint-card);
+}
