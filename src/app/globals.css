@@ -6705,8 +6705,14 @@ a.pg-card__link:hover,
     overflow: visible;
   }
 
+  .site-nav.is-open .site-nav__panel {
+    transform: none; /* the pills animate themselves; the panel stays put */
+  }
+
   /* every option the same width (the widest) and the height of the pill buttons */
   .site-nav .nav-list {
+    margin: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -6728,13 +6734,21 @@ a.pg-card__link:hover,
     padding: 0 calc(var(--unit) * 4);
     border-bottom: 0;
     border-radius: var(--radius-pill);
-    background: var(--raised);
+    background: var(--hover-surface); /* white (lighter grey in dark), so the options read over the page */
     box-shadow: 0 2px 8px color-mix(in srgb, var(--foreground) 10%, transparent);
   }
 
   .site-nav .nav-item:not(.is-current):hover,
   .site-nav .theme-switcher:hover .theme-switcher__face {
-    background: var(--hover-surface);
+    background: var(--widget-surface);
+  }
+
+  /* the theme option sits in the same 32px row as the others */
+  .site-nav .nav-list .theme-switcher {
+    display: flex;
+    height: 32px;
+    min-height: 0;
+    padding: 0;
   }
 
   .site-nav .nav-item.is-current,
@@ -6760,7 +6774,8 @@ a.pg-card__link:hover,
     padding: 0 calc(var(--unit) * 4);
     font-size: var(--font-size-large);
     border-radius: var(--radius-pill);
-    background: var(--raised);
+    background: var(--hover-surface);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--foreground) 10%, transparent);
   }
 
   /* the pills drop in one after another */
