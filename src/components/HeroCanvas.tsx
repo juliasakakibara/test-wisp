@@ -48,14 +48,14 @@ const LAYOUT: Layout = {
   color: { x: 72, y: 74 },
 };
 
-/** Phones: same idea as the reference's mobile frame — smaller widgets above, headline in the lower half. */
+/** Phones: 3D and Theme first (top), the headline centred as on desktop, the rest below it. */
 const MOBILE_LAYOUT: Layout = {
-  figure: { x: 3, y: 2 },
-  clock: { x: 64, y: 3 },
-  syrup: { x: 3, y: 20 },
-  covers: { x: 52, y: 18 },
-  cloche: { x: 30, y: 33 },
-  color: { x: 6, y: 45 },
+  figure: { x: 4, y: 2 },
+  color: { x: 7, y: 19 },
+  syrup: { x: 3, y: 68 },
+  covers: { x: 52, y: 67.5 },
+  clock: { x: 4, y: 83 },
+  cloche: { x: 40, y: 84 },
 };
 
 const PHONE_MQ = "(max-width: 767px)";

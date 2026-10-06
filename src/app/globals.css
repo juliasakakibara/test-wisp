@@ -5722,3 +5722,17 @@ body,
 .pg-detail__title {
   letter-spacing: -0.01em;
 }
+
+/* Phones: headline centred in the frame like desktop; widgets above and below */
+@media (max-width: 767px) {
+  .pg-frame {
+    height: 1100px;
+  }
+
+  .pg-frame__center {
+    inset: 0;
+    align-content: center;
+    padding: 0 16px;
+  }
+}
+
