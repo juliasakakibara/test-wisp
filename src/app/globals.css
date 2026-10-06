@@ -6994,3 +6994,21 @@ a.pg-card__link:not(.pg-card__button):hover {
 .pg-card__link:is(:hover, :focus-visible) .pg-card__frame .pg-card__image {
   filter: drop-shadow(0 calc(var(--unit) * 2) calc(var(--unit) * 3) color-mix(in srgb, var(--foreground) 18%, transparent));
 }
+
+/* Project cards: no tag row; the name, then its description in the tag style
+   (muted, 12px caps) */
+.pg-card__link:not(.pg-card__button) {
+  grid-template-rows: 1fr auto auto;
+  gap: calc(var(--unit) * 1.5);
+}
+
+.pg-card__desc {
+  color: var(--muted-foreground);
+  font-size: var(--font-size);
+  line-height: var(--line-height-tight);
+  text-transform: uppercase;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

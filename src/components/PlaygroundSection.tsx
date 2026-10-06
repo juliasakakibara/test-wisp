@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { tagLabel, visibleTags, type ProjectSummary } from "@/lib/projects";
+import type { ProjectSummary } from "@/lib/projects";
 import { ScrollRow } from "@/components/ScrollRow";
 
 type Action = { label: string; href: string };
@@ -52,17 +52,12 @@ export function PlaygroundSection({ id, title, lead, primary, seeAll, extra, scr
   );
 }
 
-/** Grey card: mono title and [year] on top, the preview centred, tags at the bottom. */
+/** Grey card: the cover, then the name and its description at the bottom. */
 export function PlaygroundCard({ post }: { post: ProjectSummary }) {
-  const tags = visibleTags(post.tags).map((tag) => tagLabel(tag.name).toLowerCase());
 
   return (
     <li className="pg-card">
       <Link href={`/projects/${post.slug}`} className="pg-card__link">
-        {/* after Berd's cards: the kind up top, the name at the bottom */}
-        <span className="pg-card__top">
-          <span className="pg-card__title">{tags.length > 0 ? tags.join(" / ") : "case study"}</span>
-        </span>
         <span className="pg-card__preview">
           {post.image ? (
             <span className="pg-card__frame">
@@ -71,6 +66,7 @@ export function PlaygroundCard({ post }: { post: ProjectSummary }) {
           ) : null}
         </span>
         <span className="pg-card__name">{post.title}</span>
+        {post.description ? <span className="pg-card__desc">{post.description}</span> : null}
       </Link>
     </li>
   );
