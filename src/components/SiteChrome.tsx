@@ -1,5 +1,6 @@
 import { FooterSocial } from "@/components/FooterSocial";
 import { GetInTouch } from "@/components/GetInTouch";
+import { SignOff } from "@/components/SignOff";
 
 /** Contact address from the wireframe ("Get in touch"). */
 const CONTACT_EMAIL = "talk.to@juliasakakibara.com.br";
@@ -40,6 +41,8 @@ export function SiteChrome({
 
       <footer className="site-footer">
         <div className="footer-container footer-container--touch">
+          {/* Experiment (playground): live date + sign-off line; copy is a placeholder for the personality pass */}
+          <SignOff line="Same batter, any brand." />
           <GetInTouch email={CONTACT_EMAIL} githubUrl={config.githubUrl} linkedinUrl={config.linkedinUrl} />
         </div>
         <div className="footer-container">
