@@ -6009,7 +6009,7 @@ body,
   outline-color: var(--lb-neutral-50);
 }
 
-/* Pomodoro: a horizontal bar, seconds included */
+/* Pomodoro: settings above, the time, controls below — one left edge for all */
 .pg-pomo {
   width: 320px;
   gap: 8px;
@@ -6022,15 +6022,24 @@ body,
   gap: 12px;
 }
 
-.pg-pomo__time {
-  font: 700 40px/1 var(--font-doto), ui-monospace, monospace;
+.pg-pomo .pg-pomo__time {
+  font: 700 48px/1 var(--font-doto), ui-monospace, monospace;
   font-variant-numeric: tabular-nums;
 }
 
 .pg-pomo__controls,
 .pg-pomo__modes {
   display: flex;
-  gap: 4px;
+  gap: 8px;
+}
+
+/* Text buttons keep their padding for the hit area but line their text up with the edges */
+.pg-pomo__modes {
+  margin-left: -8px;
+}
+
+.pg-pomo__row > .pg-pomo__mode {
+  margin-right: -8px;
 }
 
 .pg-pomo__mode {

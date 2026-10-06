@@ -426,6 +426,7 @@ export function PomodoroWidget() {
       if (remaining === 0) {
         setRunning(false);
         setDone(true);
+        buzz();
         if (soundRef.current) beep();
       }
     }, 250);
@@ -451,19 +452,6 @@ export function PomodoroWidget() {
   return (
     <div className={`pg-dark pg-pomo${done ? " is-done" : ""}`}>
       <div className="pg-pomo__row">
-        <p className="pg-pomo__time" role="timer" aria-label={`${mode} timer, ${mm} minutes ${ss} seconds left`}>
-          {mm}:{ss}
-        </p>
-        <div className="pg-pomo__controls">
-          <button type="button" className="pg-mini-btn pg-mini-btn--on-dark" onClick={running ? () => setRunning(false) : start}>
-            {running ? "pause" : left === 0 ? "again" : "start"}
-          </button>
-          <button type="button" className="pg-mini-btn pg-mini-btn--on-dark" onClick={() => reset()}>
-            reset
-          </button>
-        </div>
-      </div>
-      <div className="pg-pomo__row">
         <div className="pg-pomo__modes" role="group" aria-label="Timer">
           {(["focus", "break"] as const).map((m) => (
             <button key={m} type="button" className="pg-pomo__mode" aria-pressed={mode === m} onClick={() => reset(m)}>
@@ -475,11 +463,46 @@ export function PomodoroWidget() {
           sound {sound ? "on" : "off"}
         </button>
       </div>
+      <p className="pg-pomo__time" role="timer" aria-label={`${mode} timer, ${mm} minutes ${ss} seconds left`}>
+        {mm}:{ss}
+      </p>
+      <div className="pg-pomo__controls">
+        <button
+          type="button"
+          className="pg-mini-btn pg-mini-btn--on-dark"
+          onClick={() => {
+            tap();
+            if (running) setRunning(false);
+            else start();
+          }}
+        >
+          {running ? "pause" : left === 0 ? "again" : "start"}
+        </button>
+        <button
+          type="button"
+          className="pg-mini-btn pg-mini-btn--on-dark"
+          onClick={() => {
+            tap();
+            reset();
+          }}
+        >
+          reset
+        </button>
+      </div>
       <p className="pg-dark__muted" aria-live="assertive">
-        {done ? (mode === "focus" ? "Time for a break." : "Back to it.") : " "}
+        {done ? (mode === "focus" ? "Time for a break." : "Back to it.") : "\u00a0"}
       </p>
     </div>
   );
+}
+
+/** Haptics where the browser offers them (Android Chrome; iOS Safari has no Vibration API). */
+function tap() {
+  navigator.vibrate?.(10);
+}
+
+function buzz() {
+  navigator.vibrate?.([200, 100, 200]);
 }
 
 /** A short, soft two-note beep (Web Audio); only ever called after the visitor switched sound on. */
