@@ -7012,3 +7012,16 @@ a.pg-card__link:not(.pg-card__button):hover {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* The description shows on hover or keyboard focus; its space is kept so the cover
+   doesn't jump. Touch screens have no hover, so they always show it. */
+@media (hover: hover) {
+  .pg-card__desc {
+    opacity: 0;
+    transition: opacity var(--duration-fast) var(--ease);
+  }
+
+  .pg-card__link:is(:hover, :focus-visible) .pg-card__desc {
+    opacity: 1;
+  }
+}
