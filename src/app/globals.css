@@ -3945,7 +3945,7 @@ a,
   text-underline-offset: 0.2em;
 }
 
-a:not(.featured-card__link):hover,
+a:not(.featured-card__link, .pg-pill, .pg-back, .pg-covers, .pg-footer__top-link, .pg-card__link):hover,
 .link:hover,
 .nav-item:hover,
 .link.is-current,
@@ -6232,44 +6232,42 @@ body,
   font-weight: 400;
 }
 
-/* Sketchbook */
-.pg-sketch {
-  position: relative;
-  aspect-ratio: 4 / 3;
-  border: var(--pg-border);
-  border-radius: var(--pg-r-inner);
-  background: var(--background);
-  overflow: hidden;
-}
-
-.pg-sketch__mine,
-.pg-sketch__canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.pg-sketch__mine {
-  object-fit: contain;
-  pointer-events: none;
-}
-
-.pg-sketch__canvas {
+/* Riddle quiz */
+.pg-note .pg-quiz__q {
   color: var(--foreground);
-  cursor: crosshair;
-  touch-action: none;
 }
 
-.pg-sketch__actions {
+.pg-quiz__form {
+  display: flex;
+  gap: 8px;
+}
+
+.pg-quiz__form input {
+  flex: 1;
+  min-width: 0;
+  min-height: 28px;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--lb-border-muted);
+  border-radius: 0;
+  background: transparent;
+  color: var(--foreground);
+  font: var(--pg-text-ui) var(--font-body);
+}
+
+.pg-quiz__form input:focus {
+  outline: none;
+  border-bottom-color: var(--foreground);
+}
+
+.pg-quiz__actions {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
 
-/* Riddle quiz */
-.pg-note .pg-quiz__q {
-  color: var(--foreground);
+.pg-note .pg-quiz__hint {
+  font-style: italic;
 }
 
 .pg-quiz__options {
@@ -6319,10 +6317,6 @@ body,
   font-weight: 600;
 }
 
-.pg-note--sketch {
-  width: 280px;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .pg-pomo.is-done {
     animation: none;
@@ -6344,40 +6338,29 @@ body,
   margin: 0;
 }
 
-.pg-owl__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+.pg-owl .pg-switch {
+  justify-self: start;
 }
 
-.pg-owl .pg-owl__label {
-  color: inherit;
-  font-weight: 600;
+/* One sentence; the topics are filled tags inside it */
+.pg-owl .pg-owl__line {
+  line-height: 1.9;
 }
 
-.pg-owl--day .pg-owl__line {
-  color: var(--muted-foreground);
-}
-
-.pg-owl--night .pg-owl__line {
-  color: var(--lb-neutral-400);
-}
-
-.pg-owl__topics {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.pg-owl__topics li {
+.pg-owl__tag {
   padding: 2px 8px;
-  border: 1px solid currentColor;
   border-radius: 999px;
-  font-size: var(--pg-text-micro);
+  white-space: nowrap;
+}
+
+.pg-owl--day .pg-owl__tag {
+  background: var(--foreground);
+  color: var(--lb-neutral-50);
+}
+
+.pg-owl--night .pg-owl__tag {
+  background: var(--lb-neutral-50);
+  color: var(--lb-neutral-900);
 }
 
 .pg-switch {

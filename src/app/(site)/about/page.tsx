@@ -9,7 +9,6 @@ import {
   PomodoroWidget,
   PrinterWidget,
   QuizWidget,
-  SketchbookWidget,
   TerminalWidget,
   TimelineWidget,
 } from "@/components/canvas-widgets";
@@ -51,7 +50,6 @@ export default async function AboutPage() {
             { id: "figure", label: "3D", node: <HeroVisual model="dancing" />, at: { x: 2, y: 2 } },
             { id: "timeline", label: "Path", node: <TimelineWidget />, at: { x: 2, y: 21.1 } },
             { id: "lists", label: "Lists", node: <ListsWidget />, at: { x: 2, y: 34.6 } },
-            { id: "sketch", label: "Sketchbook", node: <SketchbookWidget />, at: { x: 2, y: 49.1 } },
             { id: "terminal", label: "terminal", node: <TerminalWidget />, at: { x: 72, y: 2 } },
             { id: "pomodoro", label: "Pomodoro", node: <PomodoroWidget />, at: { x: 72, y: 15.4 } },
             { id: "owl", label: "Night owl", node: <NightOwlWidget />, at: { x: 72, y: 26 } },

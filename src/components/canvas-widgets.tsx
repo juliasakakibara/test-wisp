@@ -93,8 +93,8 @@ function Note({ title, children, wide }: { title: string; children: React.ReactN
  * is into at that hour. Starts from Porto Alegre time (night 20:00–04:00).
  */
 const OWL = {
-  day: { label: "day mode", line: "Daytime is for systems:", topics: ["design systems", "tokens", "UI", "interactions"] },
-  night: { label: "night mode", line: "After dark I'm making:", topics: ["IoT", "3D prints", "AR/VR", "AI tools"] },
+  day: { line: "By day I'm into", topics: ["design systems", "tokens", "UI", "interactions"] },
+  night: { line: "After dark I'm making", topics: ["IoT", "3D prints", "AR/VR", "AI tools"] },
 } as const;
 
 export function NightOwlWidget() {
@@ -104,28 +104,29 @@ export function NightOwlWidget() {
   const [choice, setChoice] = useState<boolean | null>(null);
   const night = choice ?? nightNow;
   const view = night ? OWL.night : OWL.day;
+  const last = view.topics.length - 1;
 
   return (
     <div className={`pg-owl ${night ? "pg-dark pg-owl--night" : "pg-note pg-owl--day"}`}>
-      <div className="pg-owl__head">
-        <p className="pg-owl__label">{view.label}</p>
-        <button
-          type="button"
-          role="switch"
-          aria-checked={night}
-          aria-label="Night mode"
-          className="pg-switch"
-          onClick={() => setChoice(!night)}
-        >
-          <span className="pg-switch__thumb" aria-hidden="true">{night ? "☾" : "☼"}</span>
-        </button>
-      </div>
-      <p className="pg-owl__line">{view.line}</p>
-      <ul className="pg-owl__topics" aria-live="polite">
-        {view.topics.map((t) => (
-          <li key={t}>{t}</li>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={night}
+        aria-label="Night mode"
+        className="pg-switch"
+        onClick={() => setChoice(!night)}
+      >
+        <span className="pg-switch__thumb" aria-hidden="true">{night ? "☾" : "☼"}</span>
+      </button>
+      <p className="pg-owl__line" aria-live="polite">
+        {view.line}{" "}
+        {view.topics.map((t, i) => (
+          <span key={t}>
+            <span className="pg-owl__tag">{t}</span>
+            {i < last - 1 ? ", " : i === last - 1 ? " and " : "."}
+          </span>
         ))}
-      </ul>
+      </p>
     </div>
   );
 }
@@ -223,138 +224,75 @@ export function TimelineWidget() {
   );
 }
 
-/**
- * A tiny sketchbook: Julia's drawing on the page (public/sketchbook/julia.png,
- * optional), visitors draw on top. Nothing is saved; reload for a clean page.
- */
-export function SketchbookWidget() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const drawing = useRef(false);
-  const [challenge, setChallenge] = useState(false);
-  const [hasMine, setHasMine] = useState(true);
-  const mineRef = useRef<HTMLImageElement>(null);
-
-  // The drawing is optional: if the file isn't there (or failed before hydration), hide its slot
-  useEffect(() => {
-    const img = mineRef.current;
-    if (!img) return;
-    const check = () => {
-      if (img.complete && img.naturalWidth === 0) setHasMine(false);
-    };
-    check();
-    img.addEventListener("error", check);
-    return () => img.removeEventListener("error", check);
-  }, []);
-
-  const point = (event: React.PointerEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current!;
-    const r = canvas.getBoundingClientRect();
-    return { x: ((event.clientX - r.left) / r.width) * canvas.width, y: ((event.clientY - r.top) / r.height) * canvas.height };
-  };
-
-  const start = (event: React.PointerEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext("2d");
-    if (!canvas || !ctx) return;
-    try {
-      canvas.setPointerCapture(event.pointerId);
-    } catch {
-      // capture is a nicety (keeps the stroke when leaving the canvas); draw anyway
-    }
-    drawing.current = true;
-    const p = point(event);
-    ctx.strokeStyle = getComputedStyle(canvas).color;
-    ctx.lineWidth = 3;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y);
-  };
-
-  const move = (event: React.PointerEvent<HTMLCanvasElement>) => {
-    if (!drawing.current) return;
-    const ctx = canvasRef.current?.getContext("2d");
-    if (!ctx) return;
-    const p = point(event);
-    ctx.lineTo(p.x, p.y);
-    ctx.stroke();
-  };
-
-  const stop = () => {
-    drawing.current = false;
-  };
-
-  const clear = () => {
-    const canvas = canvasRef.current;
-    canvas?.getContext("2d")?.clearRect(0, 0, canvas.width, canvas.height);
-  };
-
-  return (
-    <Note title="I like drawing. You too?">
-      <div className="pg-sketch">
-        {hasMine ? (
-          // eslint-disable-next-line @next/next/no-img-element -- optional local drawing, hidden if missing
-          <img ref={mineRef} src="/sketchbook/julia.png" alt="A drawing by Julia" className="pg-sketch__mine" />
-        ) : null}
-        <canvas
-          ref={canvasRef}
-          width={480}
-          height={360}
-          className="pg-sketch__canvas"
-          role="img"
-          aria-label="Sketchbook: draw with a mouse, finger or pen"
-          onPointerDown={start}
-          onPointerMove={move}
-          onPointerUp={stop}
-          onPointerCancel={stop}
-        />
-      </div>
-      {challenge ? <p aria-live="polite">Challenge: draw with your other hand. I broke my right arm three times; it works.</p> : null}
-      <div className="pg-sketch__actions">
-        <button type="button" className="pg-mini-btn" aria-pressed={challenge} onClick={() => setChallenge((v) => !v)}>
-          other-hand challenge
-        </button>
-        <button type="button" className="pg-mini-btn" onClick={clear}>
-          clear
-        </button>
-      </div>
-    </Note>
-  );
-}
-
 /** Riddles from riddles-api.vercel.app for now (to be swapped for a curated local list). */
 type Riddle = { riddle: string; answer: string };
 
 /** Skip riddles with dark themes until the list is curated. */
 const UNSUITABLE = /\b(dead|death|die[sd]?|dying|kill\w*|murder\w*|blood\w*|coffin|corpse|grave|gun|knife|stab\w*|shot|suicide|poison\w*|drown\w*|hang\w*|bomb|war|weapon|prison|police)\b/i;
 
+/** About three lines in the widget (≈45 characters a line). */
+const MAX_RIDDLE_CHARS = 130;
+
 async function fetchRiddle(): Promise<Riddle> {
-  for (let tries = 0; tries < 8; tries++) {
+  for (let tries = 0; tries < 12; tries++) {
     const res = await fetch("https://riddles-api.vercel.app/random", { cache: "no-store" });
     if (!res.ok) throw new Error(String(res.status));
     const r = (await res.json()) as Riddle;
-    if (r?.riddle && r?.answer && !UNSUITABLE.test(`${r.riddle} ${r.answer}`)) return r;
+    if (r?.riddle && r?.answer && r.riddle.length <= MAX_RIDDLE_CHARS && !UNSUITABLE.test(`${r.riddle} ${r.answer}`)) return r;
   }
   throw new Error("no suitable riddle");
 }
 
-/** One riddle, three answers (the other two come from other riddles). Result announced to screen readers. */
+/** Lower-case, no punctuation, no leading article. */
+const normalise = (text: string) =>
+  text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/^\s*(it s|it is|its|they re|they are|i am|i m)\b/, " ")
+    .replace(/\b(a|an|the|your|my)\b/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+/** "A mirror, or a pool of water" → ["mirror", "pool of water"]. */
+const acceptedAnswers = (answer: string) =>
+  answer
+    .split(/,|\bor\b|\//i)
+    .map(normalise)
+    .filter(Boolean);
+
+function isRight(guess: string, answer: string) {
+  const g = normalise(guess);
+  if (!g) return false;
+  return acceptedAnswers(answer).some((a) => a === g || (g.length >= 3 && (a.includes(g) || g.includes(a))));
+}
+
+/** One hint: first letter and length of the shortest accepted answer (API answers can be wordy). */
+function hintFor(answer: string) {
+  const main = [...acceptedAnswers(answer)].sort((a, b) => a.length - b.length)[0] ?? normalise(answer);
+  const words = main.split(" ").length;
+  return `Starts with “${main[0]?.toUpperCase()}”, ${main.replace(/ /g, "").length} letters${words > 1 ? ` in ${words} words` : ""}.`;
+}
+
+/** A riddle with an open answer and one hint. Results are announced to screen readers. */
 export function QuizWidget() {
-  const [round, setRound] = useState<{ riddle: string; answer: string; options: string[] } | "loading" | "error">("loading");
-  const [picked, setPicked] = useState<string | null>(null);
+  const [riddle, setRiddle] = useState<Riddle | "loading" | "error">("loading");
+  const [guess, setGuess] = useState("");
+  const [state, setState] = useState<"open" | "right" | "wrong" | "shown">("open");
+  const [hint, setHint] = useState(false);
   const [nonce, setNonce] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([fetchRiddle(), fetchRiddle(), fetchRiddle()])
-      .then(([main, a, b]) => {
+    fetchRiddle()
+      .then((r) => {
         if (cancelled) return;
-        const options = [main.answer, a.answer, b.answer].sort(() => Math.random() - 0.5);
-        setRound({ riddle: main.riddle, answer: main.answer, options });
-        setPicked(null);
+        setRiddle(r);
+        setGuess("");
+        setState("open");
+        setHint(false);
       })
       .catch(() => {
-        if (!cancelled) setRound("error");
+        if (!cancelled) setRiddle("error");
       });
     return () => {
       cancelled = true;
@@ -362,14 +300,16 @@ export function QuizWidget() {
   }, [nonce]);
 
   const next = () => {
-    setRound("loading");
+    setRiddle("loading");
     setNonce((n) => n + 1);
   };
 
+  const finished = state === "right" || state === "shown";
+
   return (
     <Note title="Riddle me this" wide>
-      {round === "loading" ? <p>Thinking of one…</p> : null}
-      {round === "error" ? (
+      {riddle === "loading" ? <p>Thinking of one…</p> : null}
+      {riddle === "error" ? (
         <>
           <p>The riddles are napping.</p>
           <button type="button" className="pg-mini-btn" onClick={next}>
@@ -377,30 +317,53 @@ export function QuizWidget() {
           </button>
         </>
       ) : null}
-      {typeof round === "object" ? (
+      {typeof riddle === "object" ? (
         <>
-          <p className="pg-quiz__q">{round.riddle}</p>
-          <div className="pg-quiz__options" role="group" aria-label="Answers">
-            {round.options.map((option) => (
-              <button
-                key={option}
-                type="button"
-                className={`pg-quiz__option${picked && option === round.answer ? " is-right" : ""}${picked === option && option !== round.answer ? " is-wrong" : ""}`}
-                disabled={picked !== null}
-                onClick={() => setPicked(option)}
-              >
-                {option}
+          <p className="pg-quiz__q">{riddle.riddle}</p>
+          {hint && !finished ? <p className="pg-quiz__hint">{hintFor(riddle.answer)}</p> : null}
+          {finished ? null : (
+            <form
+              className="pg-quiz__form"
+              onSubmit={(event) => {
+                event.preventDefault();
+                if (guess.trim()) setState(isRight(guess, riddle.answer) ? "right" : "wrong");
+              }}
+            >
+              <input
+                aria-label="Your answer"
+                value={guess}
+                onChange={(event) => {
+                  setGuess(event.target.value);
+                  if (state === "wrong") setState("open");
+                }}
+                placeholder="your answer"
+                autoComplete="off"
+              />
+              <button type="submit" className="pg-mini-btn" disabled={!guess.trim()}>
+                guess
               </button>
-            ))}
-          </div>
+            </form>
+          )}
           <p className="pg-quiz__result" aria-live="polite">
-            {picked === null ? "" : picked === round.answer ? "Correct ✓" : `Not quite. It's “${round.answer}”.`}
+            {state === "right" ? `Correct ✓ ${riddle.answer}.` : null}
+            {state === "wrong" ? "Not quite. Try again?" : null}
+            {state === "shown" ? `It's “${riddle.answer}”.` : null}
           </p>
-          {picked !== null ? (
+          <div className="pg-quiz__actions">
+            {finished ? null : (
+              <>
+                <button type="button" className="pg-mini-btn" disabled={hint} onClick={() => setHint(true)}>
+                  hint
+                </button>
+                <button type="button" className="pg-mini-btn" onClick={() => setState("shown")}>
+                  show answer
+                </button>
+              </>
+            )}
             <button type="button" className="pg-mini-btn" onClick={next}>
               next riddle →
             </button>
-          ) : null}
+          </div>
         </>
       ) : null}
     </Note>
