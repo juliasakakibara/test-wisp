@@ -6474,3 +6474,21 @@ body,
 .pg-ram .pg-ram__text::placeholder {
   color: color-mix(in srgb, var(--ink-blue) calc(var(--palette) * 55%), var(--muted-foreground));
 }
+
+/* Widget tabs as plain labels (after Weavy's node labels): always there, quiet;
+   they darken when the widget is hovered, focused or dragged. The 24px row keeps
+   the target size (WCAG 2.5.8). */
+.pg-widget__handle {
+  padding: 0;
+  background: transparent;
+  color: var(--muted-foreground);
+  font: var(--font-weight) var(--font-size)/1 var(--font-body);
+  text-transform: none;
+  letter-spacing: 0;
+  transition: color var(--duration-fast) var(--ease);
+}
+
+.pg-widget:is(:hover, :focus-within) .pg-widget__handle,
+.pg-widget__handle:active {
+  color: var(--foreground);
+}

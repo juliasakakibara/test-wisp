@@ -50,7 +50,7 @@ export default async function AboutPage() {
             { id: "figure", label: "3D", node: <HeroVisual model="dancing" />, at: { x: 1.5, y: 1 } },
             { id: "timeline", label: "Path", node: <TimelineWidget />, at: { x: 4, y: 24 } },
             { id: "lists", label: "Lists", node: <ListsWidget />, at: { x: 1.5, y: 47 } },
-            { id: "terminal", label: "terminal", node: <TerminalWidget />, at: { x: 72.5, y: 6 } },
+            { id: "terminal", label: "Terminal", node: <TerminalWidget />, at: { x: 72.5, y: 6 } },
             { id: "pomodoro", label: "Pomodoro", node: <PomodoroWidget />, at: { x: 72, y: 22 } },
             { id: "owl", label: "Modes", node: <NightOwlWidget />, at: { x: 74, y: 38 } },
             { id: "quiz", label: "Riddle", node: <QuizWidget />, at: { x: 72.5, y: 54 } },
