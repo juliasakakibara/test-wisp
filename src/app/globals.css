@@ -5425,7 +5425,7 @@ html:root[data-theme="dark"]:not([data-env="admin"]):not([data-fun-theme]) {
 }
 
 @media (hover: hover) {
-  .pg-card__preview,
+  .pg-card__frame,
   .pg-covers__card {
     isolation: isolate;
   }
@@ -5439,8 +5439,8 @@ html:root[data-theme="dark"]:not([data-env="admin"]):not([data-fun-theme]) {
   }
 
   /* multiply: white → background; screen: black → foreground */
-  .pg-card__preview:not(.pg-card__preview--topping)::before,
-  .pg-card__preview:not(.pg-card__preview--topping)::after,
+  .pg-card__frame::before,
+  .pg-card__frame::after,
   .pg-covers__card::before,
   .pg-covers__card::after {
     content: "";
@@ -5451,13 +5451,13 @@ html:root[data-theme="dark"]:not([data-env="admin"]):not([data-fun-theme]) {
     transition: opacity var(--duration-slow) var(--ease);
   }
 
-  .pg-card__preview:not(.pg-card__preview--topping)::before,
+  .pg-card__frame::before,
   .pg-covers__card::before {
     background: var(--duo-paper);
     mix-blend-mode: multiply;
   }
 
-  .pg-card__preview:not(.pg-card__preview--topping)::after,
+  .pg-card__frame::after,
   .pg-covers__card::after {
     background: var(--duo-ink);
     mix-blend-mode: screen;
@@ -5468,8 +5468,8 @@ html:root[data-theme="dark"]:not([data-env="admin"]):not([data-fun-theme]) {
     filter: none;
   }
 
-  .pg-card__link:is(:hover, :focus-visible) .pg-card__preview::before,
-  .pg-card__link:is(:hover, :focus-visible) .pg-card__preview::after,
+  .pg-card__link:is(:hover, :focus-visible) .pg-card__frame::before,
+  .pg-card__link:is(:hover, :focus-visible) .pg-card__frame::after,
   .pg-covers:is(:hover, :focus-visible) .pg-covers__card::before,
   .pg-covers:is(:hover, :focus-visible) .pg-covers__card::after {
     opacity: 0;
@@ -5479,8 +5479,8 @@ html:root[data-theme="dark"]:not([data-env="admin"]):not([data-fun-theme]) {
 @media (hover: hover) and (prefers-reduced-motion: reduce) {
   .pg-card__image,
   .pg-covers__image,
-  .pg-card__preview::before,
-  .pg-card__preview::after,
+  .pg-card__frame::before,
+  .pg-card__frame::after,
   .pg-covers__card::before,
   .pg-covers__card::after {
     transition: none;
@@ -5646,8 +5646,8 @@ a,
       transform var(--duration-slow) var(--ease);
   }
 
-  .pg-card__preview::before,
-  .pg-card__preview::after,
+  .pg-card__frame::before,
+  .pg-card__frame::after,
   .pg-covers__card::before,
   .pg-covers__card::after {
     transition: opacity var(--duration-slow) var(--ease);
@@ -6406,8 +6406,8 @@ body,
     filter: grayscale(calc(1 - var(--palette))) contrast(calc(1 + 0.05 * (1 - var(--palette))));
   }
 
-  .pg-card__preview:not(.pg-card__preview--topping)::before,
-  .pg-card__preview:not(.pg-card__preview--topping)::after,
+  .pg-card__frame::before,
+  .pg-card__frame::after,
   .pg-covers__card::before,
   .pg-covers__card::after {
     opacity: calc(1 - var(--palette));
@@ -6627,4 +6627,43 @@ body,
 .pg-widget .pg-dark,
 .pg-widget .pg-clock {
   border: 0;
+}
+
+/* Cards after Nothing's playground: square, on the widget grey, a muted caps title
+   with the count on the right, the image as a small centred card (not full-bleed),
+   meta at the bottom. Hover shifts the grey; nothing zooms. */
+.pg-card__link,
+a.pg-card__link:hover {
+  height: auto;
+  aspect-ratio: 1;
+  background: var(--widget-surface);
+}
+
+a.pg-card__link:hover,
+.pg-card__button:hover {
+  background: var(--surface);
+}
+
+.pg-card__title {
+  color: var(--muted-foreground);
+}
+
+.pg-card__preview:not(.pg-card__preview--topping) {
+  display: grid;
+  place-items: center;
+  overflow: visible;
+  background: transparent;
+}
+
+.pg-card__frame {
+  position: relative;
+  width: 58%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--radius-inner);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--foreground) 14%, transparent);
+}
+
+.pg-card__link:hover .pg-card__image {
+  transform: none;
 }

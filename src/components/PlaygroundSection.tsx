@@ -66,7 +66,9 @@ export function PlaygroundCard({ post }: { post: ProjectSummary }) {
         </span>
         <span className="pg-card__preview">
           {post.image ? (
-            <Image src={post.image} alt="" fill sizes="(max-width: 639px) 100vw, 25vw" className="pg-card__image" />
+            <span className="pg-card__frame">
+              <Image src={post.image} alt="" fill sizes="(max-width: 639px) 60vw, 15vw" className="pg-card__image" />
+            </span>
           ) : null}
         </span>
         <span className="pg-card__meta">{tags.length > 0 ? tags.join(" / ") : "case study"}</span>
