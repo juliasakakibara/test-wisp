@@ -6413,7 +6413,7 @@ body,
 }
 
 /* footer dots: the base colours; shuffled, the theme's four roles as before */
-.pg-footer__dot--1 { background: color-mix(in srgb, var(--accent) var(--palette-mix), var(--background)); }
+.pg-footer__dot--1 { background: color-mix(in srgb, var(--sticky) var(--palette-mix), var(--background)); }
 .pg-footer__dot--2 { background: color-mix(in srgb, var(--green) var(--palette-mix), var(--muted)); }
 .pg-footer__dot--3 { background: color-mix(in srgb, var(--cyan) var(--palette-mix), var(--muted-foreground)); }
 .pg-footer__dot--4 { background: var(--foreground); }

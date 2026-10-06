@@ -16,8 +16,8 @@
 html:root:not([data-env="admin"]):not([data-fun-theme]) {
   --background: var(--lb-neutral-50);
   --foreground: var(--lb-neutral-900);
-  --accent: var(--lb-yellow-400);
-  --on-accent: var(--lb-neutral-900);
+  --accent: var(--foreground); /* the action is the ink itself */
+  --on-accent: var(--background);
   /* how strong muted text is: foreground over background, and background over foreground */
   --muted-opacity: 70%;
   --inverse-muted-opacity: 60%;

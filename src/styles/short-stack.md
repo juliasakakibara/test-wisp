@@ -17,8 +17,8 @@ Pancake (--lb-*)  →  Short Stack inputs  →  Short Stack derived  →  site C
 |---|---|---|---|
 | `--background` | `--lb-neutral-50` (#fff) | `--lb-neutral-950` | random |
 | `--foreground` | `--lb-neutral-900` | `--lb-neutral-100` | random, AA against the background |
-| `--accent` | `--lb-yellow-400` | same | = foreground |
-| `--on-accent` | `--lb-neutral-900` | same | = background |
+| `--accent` | = foreground (black action) | same | = foreground |
+| `--on-accent` | = background | same | = background |
 | `--muted-opacity` | 70% | 70% | computed: the faintest that passes AA |
 | `--inverse-muted-opacity` | 60% | 60% | computed |
 | `--font-body`, `--font-display` | Pancake families | same | a random pair |
@@ -37,7 +37,7 @@ Light and dark aren't separate tokens. They are the same roles with different va
 | Clock digits, footer stamp | green |
 | Cloche terminal | `$` and `✓` green, message yellow, commit hash cyan |
 | Tutorial | a yellow sticky note on the canvas ("Drag anything around…") |
-| Footer dots | accent yellow, green, cyan, foreground |
+| Footer dots | sticky yellow, green, cyan, foreground |
 | Project covers | full colour (shuffled themes keep the duotone) |
 
 - **"-inverse"** means the colour sits on a foreground-coloured widget (clock, terminals), so it flips steps between light and dark.
