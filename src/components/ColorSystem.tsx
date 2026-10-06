@@ -114,7 +114,7 @@ export function ThemeShuffle() {
         {display.name}
       </span>
       <span className="pg-theme-body" style={{ fontFamily: body.css }}>
-        + {body.name}
+        {body.name}
       </span>
       <span className="pg-swatches" aria-hidden="true">
         {swatches.map((c, i) => (
@@ -173,7 +173,7 @@ export function ThemeCards({ count = 4 }: { count?: number }) {
               </span>
               {t ? (
                 <span className="pg-theme-body" style={{ fontFamily: t.fonts.body.css }}>
-                  + {t.fonts.body.name}
+                  {t.fonts.body.name}
                 </span>
               ) : null}
             </span>
