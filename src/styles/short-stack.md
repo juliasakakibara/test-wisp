@@ -15,7 +15,7 @@ Pancake (--lb-*)  →  Short Stack inputs  →  Short Stack derived  →  site C
 
 | Token | Light | Dark | Shuffle |
 |---|---|---|---|
-| `--background` | `--lb-neutral-50` (#fff) | `--lb-neutral-950` | random |
+| `--background` | neutral-900 3% into neutral-50 (#f8f8f8) | `--lb-neutral-900` | random |
 | `--foreground` | `--lb-neutral-900` | `--lb-neutral-100` | random, AA against the background |
 | `--accent` | = foreground (black action) | same | = foreground |
 | `--on-accent` | = background | same | = background |
@@ -32,12 +32,12 @@ Pancake (--lb-*)  →  Short Stack inputs  →  Short Stack derived  →  site C
 
 Light and dark aren't separate tokens. They are the same roles with different values. A shuffled theme is one more set of values.
 
-**Light vs dark is greys, not inversion (base themes):**
+**Light vs dark is greys, not inversion (base themes).** In both modes a raised surface is a step from the page toward the text colour, so it is darker in light and lighter in dark. The Theme widget computes the base contrast from the painted colours (16.1:1 light, 15.2:1 dark).
 
 | | Light | Dark |
 |---|---|---|
-| Page (`--background`) | neutral-50 (white) | neutral-900 (#1c1c1c), not black |
-| Raised: notes, Theme card, pills, arrows (`--raised`) | the page, with a hairline (`--raise` 0%) | a step lighter: foreground 8% into the page |
+| Page (`--background`) | off-white #f8f8f8 (foreground 3% into white), not pure white | neutral-900 (#1c1c1c), not black |
+| Raised: notes, Theme card, pills, arrows (`--raised`) | a step darker: foreground 4% into the page (#efefef) | a step lighter: foreground 8% into the page |
 | Cards, footer (`--surface`) | foreground 11% into the page | same formula, so lighter grey |
 | Dark widgets: clock, Pomodoro, Modes at night (`--inverse-surface` / `--inverse-ink`) | neutral-900 / white | neutral-800 / neutral-100; they stay dark |
 | Terminals | aubergine | aubergine |

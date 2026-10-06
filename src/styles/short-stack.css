@@ -14,7 +14,8 @@
 
 /* 1 · Inputs: light (default) */
 html:root:not([data-env="admin"]):not([data-fun-theme]) {
-  --background: var(--lb-neutral-50);
+  /* off-white page (~#f8f8f8), not pure white: base themes only, shuffle sets its own */
+  --background: color-mix(in srgb, var(--lb-neutral-900) 3%, var(--lb-neutral-50));
   --foreground: var(--lb-neutral-900);
   --accent: var(--foreground); /* the action is the ink itself */
   --on-accent: var(--background);
@@ -35,10 +36,10 @@ html:root:not([data-env="admin"]):not([data-fun-theme]) {
   --ink-blue: var(--lb-blue-600); /* Bic ballpoint, for handwriting */
   /* the classic terminal aubergine; dark in both modes. Not a Pancake colour yet */
   --terminal: #300a24;
-  /* Greys, not inversion (base themes): raised surfaces step away from the page,
-     and dark widgets stay dark in both modes. --raise is how far a raised surface
-     moves toward the text colour: 0 in light (white on white, with a hairline). */
-  --raise: 0%;
+  /* Greys, not inversion (base themes): raised surfaces step away from the page
+     toward the text colour (darker in light, lighter in dark), and dark widgets
+     stay dark in both modes. --raise is the size of that step. */
+  --raise: 4%;
   --inverse-surface-base: var(--lb-neutral-900);
   --inverse-ink-base: var(--lb-neutral-50);
   --terminal-ink: #ffffff;

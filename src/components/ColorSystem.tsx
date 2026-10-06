@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { wcagLevel } from "@/lib/random-palette";
+import { useEffect, useState, useSyncExternalStore } from "react";
+import { contrast, wcagLevel } from "@/lib/random-palette";
 import { randomTheme, type Theme } from "@/lib/themes";
 
 const CHANGE_EVENT = "themechange";
@@ -73,10 +73,31 @@ function useCurrentTheme(): Theme | null {
 const same = (a: Theme | null, b: Theme | null) =>
   !!a && !!b && a.palette.bg === b.palette.bg && a.palette.fg === b.palette.fg && a.fonts === b.fonts;
 
+/** Text/page contrast of the base theme as painted now (it differs between light and dark). */
+function subscribeMode(onChange: () => void) {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  document.addEventListener(CHANGE_EVENT, onChange);
+  return () => {
+    observer.disconnect();
+    document.removeEventListener(CHANGE_EVENT, onChange);
+  };
+}
+const toRgb = (css: string) => {
+  // "rgb(r, g, b)" or "color(srgb r g b)" (0–1), as browsers report mixed colours
+  const n = css.match(/[\d.]+/g)?.map(Number) ?? [0, 0, 0];
+  return (css.startsWith("color(") ? n.slice(0, 3).map((v) => v * 255) : n.slice(0, 3)) as [number, number, number];
+};
+function readBaseRatio() {
+  const s = getComputedStyle(document.body);
+  return Math.round(contrast(toRgb(s.backgroundColor), toRgb(s.color)) * 10) / 10;
+}
+
 /** Hero widget: the live theme as a theme card (same anatomy as the section cards), with Shuffle and Reset. */
 export function ThemeShuffle() {
   const theme = useCurrentTheme();
   const p = theme?.palette;
+  const baseRatio = useSyncExternalStore(subscribeMode, readBaseRatio, () => 16);
   const display = theme?.fonts.display ?? { name: "Newsreader", css: "var(--font-display)" };
   const body = theme?.fonts.body ?? { name: "Geist Mono", css: "var(--font-body)" };
   // Base theme: the page's own tokens; a served theme: its literal colours
@@ -86,7 +107,7 @@ export function ThemeShuffle() {
     <div className="pg-color">
       {/* left of this row is the widget's drag label ("Theme"), placed by the canvas */}
       <span className="pg-card__top">
-        <span className="pg-card__count">[{p ? p.ratio : 15.1}:1]</span>
+        <span className="pg-card__count">[{p ? p.ratio : baseRatio}:1]</span>
       </span>
       <span className="pg-card__preview pg-card__preview--topping pg-color__preview" style={p ? { background: p.bg } : undefined}>
         <span className="pg-theme-font" style={{ color: p?.fg, fontFamily: display.css }}>
