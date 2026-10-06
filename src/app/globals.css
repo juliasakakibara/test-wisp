@@ -6619,3 +6619,12 @@ body,
 .pg-widget--pomodoro:has(> .pg-pomo) > .pg-widget__handle {
   color: var(--clock-fg);
 }
+
+/* Widget cards carry no stroke: they all sit on the widget grey, which does the
+   separating (covers keep their paper edge, the sticky note its shadow). */
+.pg-widget .pg-note,
+.pg-widget .pg-color,
+.pg-widget .pg-dark,
+.pg-widget .pg-clock {
+  border: 0;
+}
