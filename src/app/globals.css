@@ -6943,3 +6943,10 @@ a.pg-theme-card:hover {
   color: var(--card-muted, var(--muted-foreground));
   font-size: var(--font-size-large);
 }
+
+/* Project cards: tags up top (muted caps), the project's name at the bottom */
+.pg-card__name {
+  color: var(--foreground);
+  font-size: var(--font-size-large);
+  line-height: var(--line-height-tight);
+}

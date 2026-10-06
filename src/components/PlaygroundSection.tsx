@@ -55,14 +55,13 @@ export function PlaygroundSection({ id, title, lead, primary, seeAll, extra, scr
 /** Grey card: mono title and [year] on top, the preview centred, tags at the bottom. */
 export function PlaygroundCard({ post }: { post: ProjectSummary }) {
   const tags = visibleTags(post.tags).map((tag) => tagLabel(tag.name).toLowerCase());
-  const year = post.publishedAt ? new Date(post.publishedAt).getFullYear() : null;
 
   return (
     <li className="pg-card">
       <Link href={`/projects/${post.slug}`} className="pg-card__link">
+        {/* after Berd's cards: the kind up top, the name at the bottom */}
         <span className="pg-card__top">
-          <span className="pg-card__title">{post.title}</span>
-          {year ? <span className="pg-card__count">[{year}]</span> : null}
+          <span className="pg-card__title">{tags.length > 0 ? tags.join(" / ") : "case study"}</span>
         </span>
         <span className="pg-card__preview">
           {post.image ? (
@@ -71,7 +70,7 @@ export function PlaygroundCard({ post }: { post: ProjectSummary }) {
             </span>
           ) : null}
         </span>
-        <span className="pg-card__meta">{tags.length > 0 ? tags.join(" / ") : "case study"}</span>
+        <span className="pg-card__name">{post.title}</span>
       </Link>
     </li>
   );
